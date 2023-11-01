@@ -46,6 +46,7 @@ class UserModel(models.Model):
 	username = models.CharField(max_length=20)
 	# 密码
 	password = models.CharField(max_length=40)
+	super_user = models.BooleanField()
 
 
 class TagModel(models.Model):
