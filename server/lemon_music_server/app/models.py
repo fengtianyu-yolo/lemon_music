@@ -46,6 +46,7 @@ class UserModel(models.Model):
 	username = models.CharField(max_length=20)
 	# 密码
 	password = models.CharField(max_length=40)
+	# 是否是超级管理员
 	super_user = models.BooleanField()
 
 
