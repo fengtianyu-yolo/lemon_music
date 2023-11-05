@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 class Login(View):
     
-    TEMPLATE = 'templates/login.html'
+    TEMPLATE = 'login.html'
 
     def get(self, request):
         return render(request, template_name=self.TEMPLATE)
