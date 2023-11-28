@@ -138,6 +138,6 @@ const username = ref('一双鱼')
 /* div的选中态怎么设置 */
 
 .main {
-    background-color: #FCFAFA;
+    background-color: #E7E7E7;
 }
 </style>
