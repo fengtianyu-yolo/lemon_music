@@ -16,7 +16,16 @@
                 <label>
                     全部歌曲
                 </label>
-                <button>刷新</button>
+                <div class="loading-container" v-if="isLoading">
+                    <div class="loading">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                </div>
+                
+                <button v-else>刷新</button>
             </div>
         </div>
     </div>
@@ -45,6 +54,8 @@ const cardList = ref([
         type: CARD_TYPE.SINGER
     }
 ])
+
+const isLoading = ref(true)
 
 </script>
 
@@ -89,6 +100,115 @@ const cardList = ref([
 
     font-size: 14px;
     color: #FFFFFF;
+}
+
+.loading-container {
+    width: 106px;
+    height: 38px;
+    background-color: var(--global-highlight-color);
+    border-radius: 19px;
+}
+
+.loading,
+.loading > div {
+  position: relative;
+  box-sizing: border-box;
+}
+
+.loading {
+  display: block;
+  font-size: 0;
+  color: #fff;
+  margin: 0 auto;
+  padding-top: 13px;
+}
+
+.loading.la-dark {
+  color: #333;
+}
+
+.loading > div {
+  display: inline-block;
+  float: none;
+  background-color: currentColor;
+  border: 0 solid currentColor;
+}
+
+.loading {
+  width: 40px;
+  height: 10px;
+}
+
+.loading > div {
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+}
+
+.loading > div:first-child {
+  transform: translateX(0%);
+  animation: ball-newton-cradle-left 1s 0s ease-out infinite;
+}
+
+.loading > div:last-child {
+  transform: translateX(0%);
+  animation: ball-newton-cradle-right 1s 0s ease-out infinite;
+}
+
+.loading.la-sm {
+  width: 20px;
+  height: 4px;
+}
+
+.loading.la-sm > div {
+  width: 4px;
+  height: 4px;
+}
+
+.loading.la-2x {
+  width: 80px;
+  height: 20px;
+}
+
+.loading.la-2x > div {
+  width: 20px;
+  height: 20px;
+}
+
+.loading.la-3x {
+  width: 120px;
+  height: 30px;
+}
+
+.loading.la-3x > div {
+  width: 30px;
+  height: 30px;
+}
+
+@keyframes ball-newton-cradle-left {
+  25% {
+    transform: translateX(-100%);
+    animation-timing-function: ease-in;
+  }
+
+  50% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes ball-newton-cradle-right {
+  50% {
+    transform: translateX(0%);
+  }
+
+  75% {
+    transform: translateX(100%);
+    animation-timing-function: ease-in;
+  }
+
+  100% {
+    transform: translateX(0%);
+  }
 }
 
 </style>
