@@ -105,7 +105,7 @@ const username = ref('一双鱼')
 }
 
 .menu-item-active {
-    background-color: var(--sidebar-selected-color);
+    background-color: var(--global-highlight-color);
 }
 
 .menu-item-icon {

@@ -38,6 +38,8 @@
   --sidebar-background-color: #152259;
   --sidebar-selected-color: #509CDB;
 
+  --global-highlight-color: #509CDB;
+
 }
 
 @media (prefers-color-scheme: dark) {
