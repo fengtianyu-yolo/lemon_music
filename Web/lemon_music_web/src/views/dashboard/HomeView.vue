@@ -22,8 +22,9 @@
         </div>
 
     </div>
-    <HeaderView></HeaderView>
+    
     <div class="main">        
+        <HeaderView></HeaderView>
         <RouterView></RouterView>
     </div>
 </template>
