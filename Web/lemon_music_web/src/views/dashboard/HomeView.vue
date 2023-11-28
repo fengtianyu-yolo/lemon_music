@@ -22,6 +22,7 @@
         </div>
 
     </div>
+    <HeaderView></HeaderView>
     <div class="main">        
         <RouterView></RouterView>
     </div>
@@ -29,7 +30,7 @@
 
 <script setup>
 import { ref } from 'vue';
-
+import HeaderView from './HeaderView.vue';
 
 const menuList = ref([
     {
