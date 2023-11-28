@@ -2,12 +2,12 @@
 // import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 
-import DashboardView from './views/dashboard/DashboardView.vue'
+import HomeView from './views/dashboard/HomeView.vue';
 </script>
 
 <template>
 
-  <DashboardView />
+  <HomeView />
   
 </template>
 
