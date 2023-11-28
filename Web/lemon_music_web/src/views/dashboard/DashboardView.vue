@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 
-                <button v-else>刷新</button>
+                <button @click="refreshData" v-else>刷新</button>
             </div>
         </div>
     </div>
@@ -55,7 +55,11 @@ const cardList = ref([
     }
 ])
 
-const isLoading = ref(true)
+const isLoading = ref(false)
+
+function refreshData() {
+    isLoading.value = !isLoading.value;
+}
 
 </script>
 
