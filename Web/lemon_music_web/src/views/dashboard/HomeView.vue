@@ -10,7 +10,7 @@
             <div class="line"></div>
         </div>
 
-        <div class="menu-container" v-for="menuItem in menuList" >
+        <div class="menu-container" v-for="menuItem in menuList" :key="menuItem.path">
             <RouterLink class="menu-item" active-class="menu-item-active" :to="menuItem.path">
                 <div class="menu-item-icon">
                     <img :src="menuItem.icon">
