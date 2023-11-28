@@ -22,8 +22,8 @@
         </div>
 
     </div>
-    <div class="main">
-        
+    <div class="main">        
+        <RouterView></RouterView>
     </div>
 </template>
 
