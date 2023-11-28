@@ -33,7 +33,7 @@ const cardList = ref([
         lastUpdate: 1701148342000, 
         count: 304,
         newAdd: 38,
-        iconSrc: 'src/assets/music_icon.svg',
+        iconSrc: 'src/assets/dashboard_music_icon.svg',
         type: CARD_TYPE.MUSIC
     },
     {
@@ -41,7 +41,7 @@ const cardList = ref([
         lastUpdate: 1701061942000, 
         count: 12,
         newAdd: 3,
-        iconSrc: '/src/assets/music_icon.svg',
+        iconSrc: '/src/assets/dashboard_singer_icon.svg',
         type: CARD_TYPE.SINGER
     }
 ])
