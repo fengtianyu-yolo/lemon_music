@@ -10,15 +10,15 @@
             <div class="line"></div>
         </div>
 
-        <div class="menu-container" v-for="menu_item in menu_list">
-            <div class="menu-item">
+        <div class="menu-container" v-for="menuItem in menuList" >
+            <RouterLink class="menu-item" active-class="menu-item-active" :to="menuItem.path">
                 <div class="menu-item-icon">
-                    <img :src="menu_item.icon">
+                    <img :src="menuItem.icon">
                 </div>
                 <div class="menu-item-title">
-                    {{ menu_item.title }}
+                    {{ menuItem.title }}
                 </div>
-            </div>
+            </RouterLink>
         </div>
 
     </div>
@@ -31,14 +31,16 @@
 import { ref } from 'vue';
 
 
-const menu_list = ref([
+const menuList = ref([
     {
         icon: 'src/assets/sidebar_home_icon.svg',
-        title: 'Dashboard'
+        title: 'Dashboard',
+        path: '/dashboard'
     },
     {
         icon: 'src/assets/sidebar_lib_icon.svg',
-        title: '曲库管理'
+        title: '曲库管理',
+        path: '/music_lib'
     }
 ])
 
@@ -94,12 +96,16 @@ const username = ref('一双鱼')
 
 .menu-item {
     height: 40px;
-    background-color: var(--sidebar-selected-color);
+    
     border-radius: 4px;
 
     display: flex;
     align-items: center;
     padding-left: 16px;
+}
+
+.menu-item-active {
+    background-color: var(--sidebar-selected-color);
 }
 
 .menu-item-icon {
