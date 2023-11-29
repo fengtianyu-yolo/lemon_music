@@ -1,34 +1,36 @@
 <template>
-    <div class="sidebar">
-        <div class="header">
-            <div class="user-avatar">
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <div class="user-avatar">
 
+                </div>
+                <div class="username">
+                    {{ username }}
+                </div>
+                <div class="line"></div>
             </div>
-            <div class="username">
-                {{ username }}
+
+            <div class="menu-container" v-for="menuItem in menuList" :key="menuItem.path">
+                <RouterLink class="menu-item" active-class="menu-item-active" :to="menuItem.path">
+                    <div class="menu-item-icon">
+                        <img :src="menuItem.icon">
+                    </div>
+                    <div class="menu-item-title">
+                        {{ menuItem.title }}
+                    </div>
+                </RouterLink>
             </div>
-            <div class="line"></div>
+
         </div>
 
-        <div class="menu-container" v-for="menuItem in menuList" :key="menuItem.path">
-            <RouterLink class="menu-item" active-class="menu-item-active" :to="menuItem.path">
-                <div class="menu-item-icon">
-                    <img :src="menuItem.icon">
-                </div>
-                <div class="menu-item-title">
-                    {{ menuItem.title }}
-                </div>
-            </RouterLink>
+        <div class="main">
+            <HeaderView></HeaderView>
+            <RouterView></RouterView>
         </div>
-
-    </div>
-    
-    <div class="main">        
-        <HeaderView></HeaderView>
-        <RouterView></RouterView>
     </div>
 </template>
-
+    
 <script setup>
 import { ref } from 'vue';
 import HeaderView from './HeaderView.vue';
@@ -49,8 +51,14 @@ const menuList = ref([
 const username = ref('一双鱼')
 
 </script>
-
+    
 <style scoped>
+.container {
+    display: grid;
+    grid-template-columns: 240px auto;
+    height: 100vh;
+    width: 100vw;
+}
 
 .sidebar {
     background-color: var(--sidebar-background-color);
@@ -63,14 +71,14 @@ const username = ref('一双鱼')
     border-radius: 32px;
     border-width: 0px;
     background-color: #FFFFFF;
-    
+
     margin: 0 auto;
     margin-top: 26px;
 
 }
 
 .sidebar .header .username {
-    
+
     color: #FFFFFF;
     font-size: 18px;
     font-weight: 600px;
@@ -98,7 +106,7 @@ const username = ref('一双鱼')
 
 .menu-item {
     height: 40px;
-    
+
     border-radius: 4px;
 
     display: flex;
@@ -141,3 +149,4 @@ const username = ref('一双鱼')
     background-color: #E7E7E7;
 }
 </style>
+    
