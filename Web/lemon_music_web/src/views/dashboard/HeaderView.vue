@@ -3,9 +3,9 @@
         <div class="title">
             {{ title }}
         </div>
-        <div class="logout-btn">
+        <Button class="logout-btn" @click="logout">
             Logout
-        </div>
+        </Button>
     </div>
 </template>
 
@@ -14,6 +14,10 @@ import { ref } from 'vue';
 
 
 const title = ref('Dashboard')
+
+function logout() {
+    alert('click logout')
+}
 
 </script>
 
@@ -47,8 +51,9 @@ const title = ref('Dashboard')
     font-size: 14px;
     color: #FFFFFF;    
 
-    text-align: center;
-    padding-top: 9px;
+    text-align: center;    
+
+    display: block;
 }
 
 </style>
