@@ -11,16 +11,25 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: HomeView,
+      meta: {
+        requireAuth: true
+      },
       children: [
         {
           path: '/dashboard',
           name: 'dashboard',
-          component: DashboardView
+          component: DashboardView,
+          meta: {
+            requireAuth: true
+          }
         },
         {
           path: '/music_lib',
           name: 'home',
-          component: MusicLibView
+          component: MusicLibView,
+          meta: {
+            requireAuth: true
+          }
         }
       ]
     },
