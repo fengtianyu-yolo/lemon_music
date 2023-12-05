@@ -5,6 +5,7 @@ import { defineStore } from 'pinia'
 export class User {
     username = ''
     userId = ''
+    token = ''
 
     constructor(userId, username) {        
         this.username = username;
