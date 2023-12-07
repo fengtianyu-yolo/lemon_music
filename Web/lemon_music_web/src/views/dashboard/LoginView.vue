@@ -40,14 +40,24 @@ function login() {
             function (response) {
                 let code = response.data['code']
                 console.log(code)
-                let user = response.data['data']
+                if (code == 0) {
+                    let user = response.data['data']
 
-                let userModel = new User(user['username'], user['user_id'])
-                store.user = userModel
-                store.refreshUser(userModel)
+                    let userModel = new User(user['username'], user['user_id'])
+                    store.user = userModel
+                    store.refreshUser(userModel)
 
-                localStorage.setItem('token', user['token'])
-                router.push('/dashboard')
+                    localStorage.setItem('token', user['token'])
+                    router.push('/dashboard')
+                } else {
+                    alert('用户异常，登录失败')
+                }
+            }
+        )
+        .catch(
+            function (error) {
+                alert('服务器异常，登录失败')
+                console.log(error)
             }
         )
 
