@@ -23,9 +23,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import axios from 'axios'
 
-const filter = ref('')
+const filter = ref('');
 
 const searchValue = ref('')
 
@@ -40,38 +41,28 @@ const filterOptions = ref([
     }
 ])
 
-const listData = ref([
-    {
-        name: '孤勇者',
-        singer: '陈奕迅',
-        format: 'flac',
-        duration: '03:21'
-    },
-    {
-        name: '孤勇者',
-        singer: '陈奕迅',
-        format: 'flac',
-        duration: '03:21'
-    },
-    {
-        name: '孤勇者',
-        singer: '陈奕迅',
-        format: 'flac',
-        duration: '03:21'
-    },
-    {
-        name: '孤勇者',
-        singer: '陈奕迅',
-        format: 'flac',
-        duration: '03:21'
-    },
-    {
-        name: '孤勇者',
-        singer: '陈奕迅',
-        format: 'flac',
-        duration: '03:21'
-    },
-])
+const listData = ref([])
+
+onMounted( () => {
+    // 请求曲库列表 
+    let url = 'http://localhost:8000/api/music_list'
+    axios.get(url)
+    .then(
+        function(response) {
+            let code = response['code'] 
+            if (code == 0) {
+                console.log()
+                listData.value = [{}]
+            }
+        }
+    )
+    .catch(
+        function(err) {
+            console.log(err)
+        }
+    )
+
+})
 
 function search() {
     console.log(searchValue.value)
