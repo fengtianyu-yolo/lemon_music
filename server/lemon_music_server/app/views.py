@@ -27,7 +27,7 @@ class LoginAPI(View):
                 'user_id': '123',
                 'username': '小困子',
                 'avatar': '',
-                'token': ''
+                'token': '12312312312'
             }            
         }
         return HttpResponse(json.dumps(result))

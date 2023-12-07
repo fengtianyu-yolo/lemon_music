@@ -48,7 +48,7 @@ function login() {
                     store.refreshUser(userModel)
 
                     localStorage.setItem('token', user['token'])
-                    router.push('/dashboard')
+                    router.push('dashboard')
                 } else {
                     alert('用户异常，登录失败')
                 }

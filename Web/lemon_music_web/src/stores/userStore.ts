@@ -7,7 +7,8 @@ export class User {
     userId = ''
     token = ''
 
-    constructor(userId, username) {        
+    constructor(token, userId, username) {        
+        this.token = token
         this.username = username;
         this.userId = userId;
     }
@@ -15,7 +16,7 @@ export class User {
 
 export const useUserStore = defineStore('user', () => {
     
-    var localUser = new User('-1', '')
+    var localUser = new User('', '', '')
 
     var localUserString = sessionStorage.getItem('user')    
     if (localUserString == null) {
@@ -23,7 +24,7 @@ export const useUserStore = defineStore('user', () => {
     }
     if (localUserString != null) {
         var localUserObj = JSON.parse(localUserString)
-        localUser = new User(localUserObj['userId'], localUserObj['username']);
+        localUser = new User(localUserObj['token'], localUserObj['userId'], localUserObj['username']);
     } 
     
     const user = ref(localUser)    
