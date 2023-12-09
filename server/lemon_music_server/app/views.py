@@ -31,3 +31,19 @@ class LoginAPI(View):
             }            
         }
         return HttpResponse(json.dumps(result))
+    
+class RefreshList(View):
+
+    def get(self, request):
+        result = {
+            'code': 0,
+            'data': {
+                'list': []
+            }
+        }        
+        return HttpResponse(json.dumps(result)) 
+    
+    def refresh(self): 
+        # 拿到目录下的所有文件 
+        path = '/Volumes/Elements SE/音乐库'
+        pass

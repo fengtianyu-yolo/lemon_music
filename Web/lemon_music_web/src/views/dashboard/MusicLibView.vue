@@ -64,6 +64,23 @@ onMounted( () => {
 
 })
 
+function refresh() {
+    
+    let url = 'http://localhost:8000/refresh_music_list'
+    axios.get(url)
+    .then(
+        function(response) {
+            let code = response['code']
+            console.log(code)
+        }
+    )
+    .catch(
+        function(err) {
+            console.log(err)
+        }
+    )
+}
+
 function search() {
     console.log(searchValue.value)
 }
