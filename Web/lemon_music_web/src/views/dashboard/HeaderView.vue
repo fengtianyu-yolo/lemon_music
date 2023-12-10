@@ -46,7 +46,7 @@ function logout() {
     background-color: var(--global-highlight-color);
     width: 120px;
     height: 40px;
-    border-radius: 8px;
+    border-radius: 4px;
     border-width: 0px;
     font-size: 14px;
     color: #FFFFFF;    
