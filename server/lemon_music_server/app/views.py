@@ -2,6 +2,8 @@ from typing import Any
 from django.shortcuts import render, HttpResponse
 from django.views.generic import View
 from django.shortcuts import render, redirect
+from django.db import models
+from django.forms.models import model_to_dict
 
 import json
 import os
@@ -40,7 +42,22 @@ class LoginAPI(View):
             }            
         }
         return HttpResponse(json.dumps(result))
-    
+
+class SongList(View):
+
+    def get(self, request):
+        songs = SongModel.objects.all()
+        items = []
+        for item in songs:
+            model_dic = model_to_dict(item)
+            items.append(model_dic)
+        
+        result = {
+            'code': 0,
+            'list': items
+        }
+        return HttpResponse(json.dumps(result))
+
 
 class RefreshList(View):
 
@@ -65,7 +82,7 @@ class RefreshList(View):
 
         # 拿到数据库所有文件的id；从对象数组提取对象的属性并转成数组 list(map(lambda obj: obj.xx, obj_list))
         songs = SongModel.objects.all()
-        song_ids = list(map(lambda song: song.id, songs))
+        song_ids = list(map(lambda song: song.song_id, songs))
         print(f"song_id_list = {song_ids}")
         
         # 2 遍历所有的文件  
@@ -117,6 +134,10 @@ class RefreshList(View):
 
     def update_singer(self, song_info: TinyTag):
         singer = song_info.artist
+        if song_info.artist == None:
+            print(f'无法解析到歌手信息 {song_info}')
+            return
+        
         if not SingerModel.objects.filter(singer_name=singer).exists():
             singer_model = SingerModel() 
             singer_model.singer_name = singer
