@@ -6,8 +6,8 @@
                 <option value="name">Name</option>
                 <option value="singer">Singer</option>
             </select> -->
-            <el-select v-model="filter" class="song-filter-select m-2" style="height: 46px;" placeholder="Add filter" size="large">
-                <el-option v-for="option in filterOptions" :key="option.value" :label="option.label" :value="option.value"></el-option>
+            <el-select v-model="filter" class="song-filter-select m-2" placeholder="Add filter" size="large">
+                <el-option v-for="option in filterOptions" :key="option.value" :label="option.label" :value="option.value" class="search-input"></el-option>
             </el-select>
 
             <el-input v-model="searchValue" placeholder="Search for a song by name or singer" @change="search" @input="search"/>
@@ -109,7 +109,19 @@ function rowClassName() {
 }
 
 :deep(.el-input) {
-    
+    height: 46px;
+    --el-border-color: clear;
+    --el-select-border-color-hover: clear;
+    --el-select-input-focus-border-color: clear;
+}
+
+
+:deep(.el-input__wrapper) {
+    background-color: #F0FAFA;
+}
+
+:deep(.el-select .el-input__wrapper) {
+    background-color: #FFFFFF;
 }
 
 .song-filter-select {
@@ -125,7 +137,4 @@ function rowClassName() {
     width: 91%;
 }
 
-.row {
-    height: 48px;
-}
 </style>
