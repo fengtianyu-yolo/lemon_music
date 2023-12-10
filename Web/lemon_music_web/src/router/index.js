@@ -25,7 +25,7 @@ const router = createRouter({
         },
         {
           path: '/music_lib',
-          name: 'home',
+          name: 'musics',
           component: MusicLibView,
           meta: {
             requireAuth: true

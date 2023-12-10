@@ -1,19 +1,18 @@
 <template>
     <div class="header-container">
         <div class="title">
-            {{ title }}
+            <slot></slot>
         </div>
-        <Button class="logout-btn" @click="logout">
+        <el-button class="logout-btn" @click="logout">
             Logout
-        </Button>
+        </el-button>
     </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+// import { ref } from 'vue';
 
-
-const title = ref('Dashboard')
+// const title = ref('Dashboard')
 
 function logout() {
     alert('click logout')

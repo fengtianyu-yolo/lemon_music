@@ -25,7 +25,14 @@
         </div>
 
         <div class="main">
-            <HeaderView></HeaderView>
+            <HeaderView>
+                <div v-if="currentTab == 'dashboard'">
+                    Dashboard
+                </div>
+                <div v-if="currentTab == 'musics'">
+                    <el-button class="refresh-btn" type="primary">刷新</el-button>
+                </div>
+            </HeaderView>
             <RouterView></RouterView>
         </div>
     </div>
@@ -33,6 +40,8 @@
     
 <script setup>
 import { ref } from 'vue';
+import { watch } from 'vue';
+import { useRouter } from 'vue-router'
 import HeaderView from './HeaderView.vue';
 
 const menuList = ref([
@@ -49,6 +58,13 @@ const menuList = ref([
 ])
 
 const username = ref('一双鱼')
+const router = useRouter(); 
+const currentTab = ref('dashboard')
+
+watch(() => router.currentRoute.value.path, () => {
+    console.log('tabs = ' + router.currentRoute.value.name)
+    currentTab.value = router.currentRoute.value.name
+}, {immediate: true, deep: true});
 
 </script>
     
@@ -141,6 +157,12 @@ const username = ref('一双鱼')
     color: #FFFFFF;
 
     padding-left: 16px;
+}
+
+.refresh-btn {
+    width: 120px;
+    height: 40px;
+    background-color: var(--global-highlight-color);
 }
 
 /* div的选中态怎么设置 */
