@@ -10,6 +10,7 @@ import hashlib
 
 from .models import SongModel
 from .models import SingerModel
+from .MediaType import MediaType
 
 # Create your views here.
 
@@ -46,6 +47,7 @@ class RefreshList(View):
     unsupport_files = []
 
     def get(self, request):
+        self.refresh()
         result = {
             'code': 0,
             'data': {
@@ -60,6 +62,11 @@ class RefreshList(View):
         # 拿到目录下的所有文件 
         path = '/Volumes/Elements SE/音乐库'
         song_list = os.listdir(path)
+
+        # 拿到数据库所有文件的id；从对象数组提取对象的属性并转成数组 list(map(lambda obj: obj.xx, obj_list))
+        songs = SongModel.objects.all()
+        song_ids = list(map(lambda song: song.id, songs))
+        print(f"song_id_list = {song_ids}")
         
         # 2 遍历所有的文件  
         for song_name in song_list:    
@@ -67,19 +74,17 @@ class RefreshList(View):
     
             try:
                 tag = TinyTag.get(file_path)
-                print(f'歌曲={tag.title},歌手={tag.artist},时长={tag.duration} 文件名={song_name}') 
-
                 # 获取文件的MD5 
                 file_hash_value = self.checksum(file_path)
                                 
                 # 文件在数据库中是否已经存在；已存在则跳过，不存在则插入到数据库 
-                exist = SongModel.objects.filter(id=file_hash_value).exists()
+                exist = file_hash_value in song_ids
                 
                 if not exist:
                     # 歌手是否已经存在
                     self.update_singer(tag)     
                     # 更新歌曲信息
-                    self.update_song(tag)                                   
+                    self.update_song(tag, file_hash_value, file_path, song_name)
                 
             except Exception as e:
                 print(f"Error reading audio info: {e} {song_name}")
@@ -87,23 +92,43 @@ class RefreshList(View):
                 # 记录未解析文件 
         
 
-    def update_song(self, song_info: TinyTag):
+    def update_song(self, song_info: TinyTag, id: int, file_path: str, file_name: str):
         """
         更新歌曲到数据库
         """
         if song_info.title == None:
-            print(f"没有读取到数据文件= {song_name}")
-            self.unsupport_files.append(song_name)
+            print(f"文件解析失败 = {file_name}")
+            self.unsupport_files.append(file_name)
         else:
             song_name = song_info.title
             singer = song_info.artist 
             duration = song_info.duration
             
+            song = SongModel()
+            song.song_id = id
+            song.song_name = song_name
+            song.media_type = self.file_format(file_name)
+            song.duration = duration
+            song.file_path = file_path
+            song.file_md5 = id
+            song.singer = SingerModel.objects.get(singer_name=singer)
+            song.save()
+            
 
     def update_singer(self, song_info: TinyTag):
         singer = song_info.artist
-        SingerModel.objects.filter()
+        if not SingerModel.objects.filter(singer_name=singer).exists():
+            singer_model = SingerModel() 
+            singer_model.singer_name = singer
+            singer_model.save()
+        else:
+            print(f"歌手已存在 {singer}")
         
+
+    def file_format(self, file_name: str) -> str:
+        suffix = file_name.split('.')[-1]
+        return suffix
+
 
     def checksum(self, filename):
         """
@@ -114,6 +139,5 @@ class RefreshList(View):
             while chunk := f.read(8192):
                 file_hash.update(chunk)
         
-        print(file_hash.hexdigest())
-        return file_hash.digest()
+        return file_hash.hexdigest()
     

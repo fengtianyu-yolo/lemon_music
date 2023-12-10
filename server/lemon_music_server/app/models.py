@@ -6,7 +6,7 @@ class SingerModel(models.Model):
 	歌手表
 	"""
 	# 歌手ID
-	singer_id = models.IntegerField(primary_key=True, auto_created=True)
+	singer_id = models.AutoField(primary_key=True)
 	# 歌手名字 
 	singer_name = models.CharField(max_length=255, null=False, default='')
 
@@ -16,11 +16,11 @@ class SongModel(models.Model):
 	歌曲模型
 	"""
 	# 歌曲ID
-	song_id = models.IntegerField(primary_key=True)
+	song_id = models.CharField(primary_key=True, max_length=64)
 	# 文件名
 	song_name = models.CharField(max_length=255, null=False, default='')
 	# 媒体类型
-	media_type = models.IntegerField(null=True)
+	media_type = models.CharField(null=True, max_length=10)
 	# 歌曲时长 单位:秒
 	duration = models.IntegerField(null=False, default=0)
 	# 文件路径 
@@ -47,7 +47,7 @@ class UserModel(models.Model):
 	# 密码
 	password = models.CharField(max_length=40)
 	# 是否是超级管理员
-	super_user = models.BooleanField()
+	super_user = models.BooleanField(default=False)
 
 
 class TagModel(models.Model):

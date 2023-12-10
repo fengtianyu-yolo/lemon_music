@@ -108,6 +108,10 @@ function rowClassName() {
     display: flex;
 }
 
+:deep(.el-input) {
+    
+}
+
 .song-filter-select {
     width: 132px;
     height: 48px;
