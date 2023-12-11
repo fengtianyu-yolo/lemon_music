@@ -10,9 +10,9 @@
         <div class="table-container">
             <el-table :data="listData" stripe :row-class-name="rowClassName">
             <el-table-column prop="name" label="Name" />
-            <el-table-column prop="singer" label="Singer" width="180" />
-            <el-table-column prop="format" label="格式" width="180" />
-            <el-table-column prop="duration" label="时长" width="180" />
+            <el-table-column prop="singer" label="Singer"  />
+            <el-table-column prop="format" label="格式"  />
+            <el-table-column prop="duration" label="时长"  />
         </el-table>
         </div>
         
@@ -56,11 +56,12 @@ onMounted( () => {
                     const duration = item['duration'] 
                     const media_type = item['media_type']
                     const singer = item['singer']['name']
+                    const formatted_duration = format_duration(duration)
 
                     const obj = {
                         name: song_name,
                         format: media_type,
-                        duration: duration,
+                        duration: formatted_duration,
                         singer: singer
                     }
                     console.log(obj)
@@ -77,6 +78,23 @@ onMounted( () => {
     )
 
 })
+
+function format_duration(duration) {
+
+    function format_number(t) {
+        return t < 10 ? '0'+t : t
+    }
+
+    let result = "00:00"
+    if (duration > 60) {
+        const minutes = Math.floor(duration / 60)
+        const seconds = duration - (minutes * 60) 
+        result = format_number(minutes) + ':' + format_number(seconds)
+    } else {        
+        result = "00:" + format_number(duration)
+    }
+    return result
+}
 
 function refresh() {
     
