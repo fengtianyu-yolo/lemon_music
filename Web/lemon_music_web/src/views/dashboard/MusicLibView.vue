@@ -1,11 +1,6 @@
 <template>
     <div class="music-lib-container">
         <div class="filter-container">
-            <!-- <select>
-                <option value="none">Add filter</option>
-                <option value="name">Name</option>
-                <option value="singer">Singer</option>
-            </select> -->
             <el-select v-model="filter" class="song-filter-select m-2" placeholder="Add filter" size="large">
                 <el-option v-for="option in filterOptions" :key="option.value" :label="option.label" :value="option.value" class="search-input"></el-option>
             </el-select>

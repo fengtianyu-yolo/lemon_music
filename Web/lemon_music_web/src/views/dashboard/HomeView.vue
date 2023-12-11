@@ -30,7 +30,7 @@
                     Dashboard
                 </div>
                 <div v-if="currentTab == 'musics'">
-                    <el-button class="refresh-btn" type="primary">刷新</el-button>
+                    <el-button class="refresh-btn" type="primary" @click="refresh">刷新</el-button>
                 </div>
             </HeaderView>
             <RouterView></RouterView>
@@ -62,7 +62,6 @@ const router = useRouter();
 const currentTab = ref('dashboard')
 
 watch(() => router.currentRoute.value.path, () => {
-    console.log('tabs = ' + router.currentRoute.value.name)
     currentTab.value = router.currentRoute.value.name
 }, {immediate: true, deep: true});
 
