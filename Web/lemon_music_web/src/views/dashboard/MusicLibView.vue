@@ -2,20 +2,22 @@
     <div class="music-lib-container">
         <div class="filter-container">
             <el-select v-model="filter" class="song-filter-select m-2" placeholder="Add filter" size="large">
-                <el-option v-for="option in filterOptions" :key="option.value" :label="option.label" :value="option.value" class="search-input"></el-option>
+                <el-option v-for="option in filterOptions" :key="option.value" :label="option.label" :value="option.value"
+                    class="search-input"></el-option>
             </el-select>
 
-            <el-input v-model="searchValue" placeholder="Search for a song by name or singer" @change="search" @input="search"/>
+            <el-input v-model="searchValue" placeholder="Search for a song by name or singer" @change="search"
+                @input="search" />
         </div>
         <div class="table-container">
             <el-table :data="listData" stripe :row-class-name="rowClassName">
-            <el-table-column prop="name" label="Name" />
-            <el-table-column prop="singer" label="Singer"  />
-            <el-table-column prop="format" label="格式"  />
-            <el-table-column prop="duration" label="时长"  />
-        </el-table>
+                <el-table-column prop="name" label="Name" />
+                <el-table-column prop="singer" label="Singer" />
+                <el-table-column prop="format" label="格式" />
+                <el-table-column prop="duration" label="时长" />
+            </el-table>
         </div>
-        
+
     </div>
 </template>
 
@@ -40,58 +42,61 @@ const filterOptions = ref([
 
 const listData = ref([])
 
-onMounted( () => {
+let total_songs = []
+
+onMounted(() => {
 
     // 请求曲库列表 
     let url = 'http://localhost:8000/api/songs'
     axios.get(url)
-    .then(
-        function(response) {
-            let code = response.data['code'] 
-            if (code == 0) {
-                let data_list = response.data['list']
-                console.log(data_list)
-                let songs = []
-                for (const item of data_list) {
-                    const song_name = item['song_name']
-                    const duration = item['duration'] 
-                    const media_type = item['media_type']
-                    const singer = item['singer']['singer_name']
-                    const formatted_duration = format_duration(duration)
+        .then(
+            function (response) {
+                let code = response.data['code']
+                if (code == 0) {
+                    let data_list = response.data['list']
+                    console.log(data_list)
+                    let songs = []
+                    for (const item of data_list) {
+                        const song_name = item['song_name']
+                        const duration = item['duration']
+                        const media_type = item['media_type']
+                        const singer = item['singer']['singer_name']
+                        const formatted_duration = format_duration(duration)
 
-                    const obj = {
-                        name: song_name,
-                        format: media_type,
-                        duration: formatted_duration,
-                        singer: singer
+                        const obj = {
+                            name: song_name,
+                            format: media_type,
+                            duration: formatted_duration,
+                            singer: singer
+                        }
+                        console.log(obj)
+                        songs.unshift(obj)
                     }
-                    console.log(obj)
-                    songs.unshift(obj)
+                    listData.value = songs
+                    total_songs = songs
                 }
-                listData.value = songs
             }
-        }
-    )
-    .catch(
-        function(err) {
-            console.log(err)
-        }
-    )
+        )
+        .catch(
+            function (err) {
+                console.log(err)
+            }
+        )
 
 })
 
 function format_duration(duration) {
 
     function format_number(t) {
-        return t < 10 ? '0'+t : t
+        return t < 10 ? '0' + t : t
     }
 
     let result = "00:00"
     if (duration > 60) {
         const minutes = Math.floor(duration / 60)
-        const seconds = duration - (minutes * 60) 
+        const seconds = duration - (minutes * 60)
         result = format_number(minutes) + ':' + format_number(seconds)
-    } else {        
+    } else {
         result = "00:" + format_number(duration)
     }
     return result
@@ -114,10 +119,49 @@ function refresh() {
         }
     )
 }
-*/ 
+*/
 
 function search() {
-    console.log(searchValue.value)
+    if (searchValue.value == '') {
+        listData.value = total_songs
+    } else {
+        // 请求曲库列表 
+        let url = 'http://localhost:8000/api/search?name=' + searchValue.value
+        axios.get(url)
+            .then(
+                function (response) {
+                    let code = response.data['code']
+                    if (code == 0) {
+                        let data_list = response.data['list']
+                        console.log(data_list)
+                        let songs = []
+                        for (const item of data_list) {
+                            const song_name = item['song_name']
+                            const duration = item['duration']
+                            const media_type = item['media_type']
+                            const singer = item['singer']['singer_name']
+                            const formatted_duration = format_duration(duration)
+
+                            const obj = {
+                                name: song_name,
+                                format: media_type,
+                                duration: formatted_duration,
+                                singer: singer
+                            }
+                            console.log(obj)
+                            songs.unshift(obj)
+                        }
+                        listData.value = songs
+                    }
+                }
+            )
+            .catch(
+                function (err) {
+                    console.log(err)
+                }
+            )
+    }
+
 }
 
 
@@ -128,7 +172,6 @@ function rowClassName() {
 </script>
 
 <style scoped>
-
 .music-lib-container {
     background-color: #FFFFFF;
 }
@@ -170,5 +213,4 @@ function rowClassName() {
     margin-top: 10px;
     background-color: aqua;
 }
-
 </style>
