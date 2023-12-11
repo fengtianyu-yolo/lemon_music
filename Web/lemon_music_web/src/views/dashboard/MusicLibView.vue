@@ -41,6 +41,7 @@ const filterOptions = ref([
 const listData = ref([])
 
 onMounted( () => {
+
     // 请求曲库列表 
     let url = 'http://localhost:8000/api/songs'
     axios.get(url)
@@ -96,6 +97,7 @@ function format_duration(duration) {
     return result
 }
 
+/*
 function refresh() {
     
     let url = 'http://localhost:8000/refresh_music_list'
@@ -112,6 +114,7 @@ function refresh() {
         }
     )
 }
+*/ 
 
 function search() {
     console.log(searchValue.value)

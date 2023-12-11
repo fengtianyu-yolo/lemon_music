@@ -49,7 +49,6 @@ class SongList(View):
         songs = SongModel.objects.all()
         items = []
         for item in songs:
-            print(item.singer.singer_name)
             singer_dic = model_to_dict(item.singer)
             model_dic = model_to_dict(item)
             model_dic['singer'] = singer_dic
@@ -61,6 +60,23 @@ class SongList(View):
         }
         return HttpResponse(json.dumps(result))
 
+class Search(View):
+    def get(self, request): 
+        search_name = request.GET.get('name') 
+        
+        datas = SongModel.objects.filter(song_name=search_name)
+        items = []
+        for item in datas:
+            singer_dic = model_to_dict(item.singer)
+            model_dic = model_to_dict(item)
+            model_dic['singer'] = singer_dic
+            items.append(model_dic)
+        
+        result = {
+            'code': 0,
+            'list': items
+        }
+        return HttpResponse(json.dumps(result))
 
 class RefreshList(View):
 
