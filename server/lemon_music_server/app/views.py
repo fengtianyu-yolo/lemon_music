@@ -64,7 +64,7 @@ class Search(View):
     def get(self, request): 
         search_name = request.GET.get('name') 
         
-        datas = SongModel.objects.filter(song_name=search_name)
+        datas = SongModel.objects.filter(song_name__contains=search_name)
         items = []
         for item in datas:
             singer_dic = model_to_dict(item.singer)
