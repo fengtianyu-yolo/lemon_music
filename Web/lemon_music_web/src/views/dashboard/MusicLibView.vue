@@ -7,13 +7,15 @@
 
             <el-input v-model="searchValue" placeholder="Search for a song by name or singer" @change="search" @input="search"/>
         </div>
-
-        <el-table :data="listData" stripe :row-class-name="rowClassName">
-            <el-table-column prop="name" label="Name" width="180" />
+        <div class="table-container">
+            <el-table :data="listData" stripe :row-class-name="rowClassName">
+            <el-table-column prop="name" label="Name" />
             <el-table-column prop="singer" label="Singer" width="180" />
             <el-table-column prop="format" label="格式" width="180" />
             <el-table-column prop="duration" label="时长" width="180" />
         </el-table>
+        </div>
+        
     </div>
 </template>
 
@@ -40,14 +42,31 @@ const listData = ref([])
 
 onMounted( () => {
     // 请求曲库列表 
-    let url = 'http://localhost:8000/api/music_list'
+    let url = 'http://localhost:8000/api/songs'
     axios.get(url)
     .then(
         function(response) {
-            let code = response['code'] 
+            let code = response.data['code'] 
             if (code == 0) {
-                console.log()
-                listData.value = [{}]
+                let data_list = response.data['list']
+                console.log(data_list)
+                let songs = []
+                for (const item of data_list) {
+                    const song_name = item['song_name']
+                    const duration = item['duration'] 
+                    const media_type = item['media_type']
+                    const singer = item['singer']['name']
+
+                    const obj = {
+                        name: song_name,
+                        format: media_type,
+                        duration: duration,
+                        singer: singer
+                    }
+                    console.log(obj)
+                    songs.unshift(obj)
+                }
+                listData.value = songs
             }
         }
     )
@@ -124,12 +143,11 @@ function rowClassName() {
     height: 48px;
 }
 
-.el-table {
+.table-container {
     margin-left: 40px;
     margin-right: 100px;
     margin-top: 10px;
-
-    width: 91%;
+    background-color: aqua;
 }
 
 </style>
