@@ -55,7 +55,7 @@ onMounted( () => {
                     const song_name = item['song_name']
                     const duration = item['duration'] 
                     const media_type = item['media_type']
-                    const singer = item['singer']['name']
+                    const singer = item['singer']['singer_name']
                     const formatted_duration = format_duration(duration)
 
                     const obj = {

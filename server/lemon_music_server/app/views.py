@@ -49,7 +49,10 @@ class SongList(View):
         songs = SongModel.objects.all()
         items = []
         for item in songs:
+            print(item.singer.singer_name)
+            singer_dic = model_to_dict(item.singer)
             model_dic = model_to_dict(item)
+            model_dic['singer'] = singer_dic
             items.append(model_dic)
         
         result = {
