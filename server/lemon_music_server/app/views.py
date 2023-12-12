@@ -16,6 +16,14 @@ from .MediaType import MediaType
 
 # Create your views here.
 
+class Test(View):
+    def get(self, request):
+        result = {
+            'code': 0,
+            'message': '测试成功'
+        }
+        return HttpResponse(json.dumps(result))
+
 class Login(View):
     
     TEMPLATE = 'login.html'
