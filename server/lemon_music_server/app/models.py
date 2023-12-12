@@ -28,9 +28,9 @@ class SongModel(models.Model):
 	# 文件的MD5值
 	file_md5 = models.CharField(max_length=255, null=True)
 	# 添加时间
-	created_time = models.TimeField(auto_now_add=True)
+	created_time = models.DateTimeField(auto_now_add=True)
 	# 更新时间
-	updated_time = models.TimeField(auto_now=True)
+	updated_time = models.DateTimeField(auto_now_add=True)
 	# 外键，歌手。每首歌曲只有唯一的歌手 
 	singer = models.ForeignKey(SingerModel, on_delete=models.CASCADE)
 
