@@ -74,10 +74,12 @@ watch(() => router.currentRoute.value.path, () => {
 
 
 const listData = ref([])
-
 provide('song_list', listData)
 
-function request_total_songs() {
+const cards = ref([])
+provide('cards', cards)
+
+function requestSongs() {
 
     // 请求曲库列表 
     let url = 'http://localhost:8000/api/songs'
@@ -117,8 +119,45 @@ function request_total_songs() {
 
 }
 
+function requestDashboard() {
+    // 请求曲库列表 
+    let url = 'http://localhost:8000/api/index'
+
+    axios.get(url)
+        .then(
+            function (response) {
+                let code = response.data['code']
+                if (code == 0) {
+                    let dataList = response.data['data']
+
+                    let rawCards = []
+                    for (const item of dataList) {
+
+                        const card = {
+                            title: item['title'],
+                            lastUpdate: item['last_update'],
+                            count: item['count'],
+                            newAdd: item['new_add'],
+                            iconSrc: item['icon_src'], // 'src/assets/dashboard_music_icon.svg',
+                            type: item['icon_src'] // CARD_TYPE.MUSIC
+                        }
+
+                        rawCards.unshift(card)
+                    }
+                    cards.value = rawCards
+                }
+            }
+        )
+        .catch(
+            function (err) {
+                console.log(err)
+            }
+        )
+}
+
 onMounted(() => {
-    request_total_songs()
+    requestDashboard()
+    requestSongs()
 })
 
 
