@@ -22,8 +22,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { inject, ref } from 'vue';
 import axios from 'axios'
+import { format_duration } from '../../tool';
 
 const filter = ref('');
 
@@ -40,90 +41,16 @@ const filterOptions = ref([
     }
 ])
 
-const listData = ref([])
+const songList = inject('song_list')
 
-let total_songs = []
+console.log('get songs ')
+console.log(songList)
 
-onMounted(() => {
-
-    // 请求曲库列表 
-    let url = 'http://localhost:8000/api/songs'
-    axios.get(url)
-        .then(
-            function (response) {
-                let code = response.data['code']
-                if (code == 0) {
-                    let data_list = response.data['list']
-                    console.log(data_list)
-                    let songs = []
-                    for (const item of data_list) {
-                        const song_name = item['song_name']
-                        const duration = item['duration']
-                        const media_type = item['media_type']
-                        const singer = item['singer']['singer_name']
-                        const formatted_duration = format_duration(duration)
-
-                        const obj = {
-                            name: song_name,
-                            format: media_type,
-                            duration: formatted_duration,
-                            singer: singer
-                        }
-                        console.log(obj)
-                        songs.unshift(obj)
-                    }
-                    listData.value = songs
-                    total_songs = songs
-                }
-            }
-        )
-        .catch(
-            function (err) {
-                console.log(err)
-            }
-        )
-
-})
-
-function format_duration(duration) {
-
-    function format_number(t) {
-        return t < 10 ? '0' + t : t
-    }
-
-    let result = "00:00"
-    if (duration > 60) {
-        const minutes = Math.floor(duration / 60)
-        const seconds = duration - (minutes * 60)
-        result = format_number(minutes) + ':' + format_number(seconds)
-    } else {
-        result = "00:" + format_number(duration)
-    }
-    return result
-}
-
-/*
-function refresh() {
-    
-    let url = 'http://localhost:8000/refresh_music_list'
-    axios.get(url)
-    .then(
-        function(response) {
-            let code = response['code']
-            console.log(code)
-        }
-    )
-    .catch(
-        function(err) {
-            console.log(err)
-        }
-    )
-}
-*/
+const listData = songList
 
 function search() {
     if (searchValue.value == '') {
-        listData.value = total_songs
+        listData.value = songList
     } else {
         // 请求曲库列表 
         let url = 'http://localhost:8000/api/search?name=' + searchValue.value
@@ -214,3 +141,4 @@ function rowClassName() {
     background-color: aqua;
 }
 </style>
+

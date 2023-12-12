@@ -41,8 +41,15 @@
 <script setup>
 import { ref } from 'vue';
 import { watch } from 'vue';
+import { onMounted } from 'vue';
+import { provide } from 'vue';
+
+import axios from 'axios';
+
 import { useRouter } from 'vue-router'
 import HeaderView from './HeaderView.vue';
+
+import { format_duration } from '../../tool';
 
 const menuList = ref([
     {
@@ -58,12 +65,62 @@ const menuList = ref([
 ])
 
 const username = ref('一双鱼')
-const router = useRouter(); 
+const router = useRouter();
 const currentTab = ref('dashboard')
 
 watch(() => router.currentRoute.value.path, () => {
     currentTab.value = router.currentRoute.value.name
-}, {immediate: true, deep: true});
+}, { immediate: true, deep: true });
+
+
+const listData = ref([])
+
+provide('song_list', listData)
+
+function request_total_songs() {
+
+    // 请求曲库列表 
+    let url = 'http://localhost:8000/api/songs'
+    axios.get(url)
+        .then(
+            function (response) {
+                let code = response.data['code']
+                if (code == 0) {
+                    let data_list = response.data['list']
+                    // console.log(data_list)
+                    let songs = []
+                    for (const item of data_list) {
+                        const song_name = item['song_name']
+                        const duration = item['duration']
+                        const media_type = item['media_type']
+                        const singer = item['singer']['singer_name']
+                        const formatted_duration = format_duration(duration)
+
+                        const obj = {
+                            name: song_name,
+                            format: media_type,
+                            duration: formatted_duration,
+                            singer: singer
+                        }
+                        console.log(obj)
+                        songs.unshift(obj)
+                    }
+                    listData.value = songs
+                }
+            }
+        )
+        .catch(
+            function (err) {
+                console.log(err)
+            }
+        )
+
+}
+
+onMounted(() => {
+    request_total_songs()
+})
+
 
 </script>
     
