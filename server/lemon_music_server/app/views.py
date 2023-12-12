@@ -51,6 +51,37 @@ class LoginAPI(View):
         }
         return HttpResponse(json.dumps(result))
 
+class Dashboard(View):
+
+    def get(self, request):
+        song_count = SongModel.objects.all().count()
+
+        song_card = {
+            'title': '歌曲',
+            'last_update': 12,
+            'new_add': 12,
+            'count': song_count,
+            'card_type': 0
+        }
+
+        singer_card = {
+            'title': '歌曲',
+            'last_update': 12,
+            'new_add': 12,
+            'count': 23,
+            'card_type': 1
+        }
+
+        result = {
+            'code': 0,
+            'data': [
+                song_card,
+                singer_card
+            ]
+        }
+        return HttpResponse(json.dumps(result))
+
+
 class SongList(View):
 
     def get(self, request):
