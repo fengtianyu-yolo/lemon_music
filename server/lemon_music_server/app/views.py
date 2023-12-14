@@ -131,9 +131,16 @@ class Search(View):
         }
         return HttpResponse(json.dumps(result))
 
+
 class RefreshList(View):
 
     unsupport_files = []
+
+    # 支持处理的音乐格式
+    support_files = ['wav', 'ape', 'mp3', 'flac']
+
+    # 曲库目录
+    path = '/Volumes/Elements SE/音乐库'
 
     def get(self, request):
         self.refresh()
@@ -147,80 +154,245 @@ class RefreshList(View):
     
 
     def refresh(self): 
+        # 拿到曲库下的所有文件
+        song_list = os.listdir(self.path)                
 
-        # 拿到目录下的所有文件 
-        path = '/Volumes/Elements SE/音乐库'
-        song_list = os.listdir(path)
-
-        # 拿到数据库所有文件的id；从对象数组提取对象的属性并转成数组 list(map(lambda obj: obj.xx, obj_list))
+        # 拿到所有已入库的歌曲的id；从对象数组提取对象的属性并转成数组 list(map(lambda obj: obj.xx, obj_list))
         songs = SongModel.objects.all()
-        song_ids = list(map(lambda song: song.song_id, songs))
-        print(f"song_id_list = {song_ids}")
+        self.song_ids = list(map(lambda song: song.song_id, songs))
+        print(f"song_id_list = {self.song_ids}")
         
         # 2 遍历所有的文件  
         for song_name in song_list:    
-            file_path = path + '/' + song_name
+            # 拿到文件路径
+            file_path = self.path + '/' + song_name
+            self.write_to_normallog(f'获取到文件路径 {file_path}')
 
-            # 暂时不处理歌词文件
-            if file_path.endswith('.lrc'):
+            # 拿到文件的后缀名，检查是否为支持的文件  
+            suffix = file_path.split('.')[-1]
+            self.write_to_normallog(f'文件后缀 {suffix}')
+
+            if suffix in self.support_files and self.exist(file_path) == False:
+                self.parse_file(file_path)
+            else:
+                if self.exist(file_path) == False:
+                    self.write_to_normallog(f'文件已录入 {file_path}')
+                else:
+                    self.write_to_log(f'不支持的文件 {file_path}')
+                self.write_to_normallog("\n\n")
                 continue
-            
-            try:
-                tag = TinyTag.get(file_path)
-                # 获取文件的MD5 
-                file_hash_value = self.checksum(file_path)
-                                
-                # 文件在数据库中是否已经存在；已存在则跳过，不存在则插入到数据库 
-                exist = file_hash_value in song_ids
-                
-                if not exist:
-                    # 歌手是否已经存在
-                    self.update_singer(tag)     
-                    # 更新歌曲信息
-                    self.update_song(tag, file_hash_value, file_path, song_name)
-                
-            except Exception as e:
-                print(f"Error reading audio info: {e} {song_name}")
-                self.unsupport_files.append(song_name)
-                # 记录未解析文件 
-        
 
-    def update_song(self, song_info: TinyTag, id: int, file_path: str, file_name: str):
+            self.write_to_normallog("\n\n")
+
+
+    def exist(self, file_path) -> bool:
         """
-        更新歌曲到数据库
+        文件是否已经在数据库中存在
         """
-        if song_info.title == None:
-            print(f"文件解析失败 = {file_name}")
-            self.unsupport_files.append(file_name)
+        # 获取文件的MD5 
+        file_hash_value = self.checksum(file_path)
+        # 文件在数据库中是否已经存在；已存在则跳过，不存在则插入到数据库 
+        _exist = file_hash_value in self.song_ids
+        return _exist
+
+
+    def parse_file(self, file):
+        """
+        处理音乐文件
+        """
+        if file.endswith('mp3'):
+            self.parse_mp3(file)
+        elif file.endswith('flac'):
+            self.parse_flac(file)
+        elif file.endswith('ape'):
+            self.parse_wav_and_ape(file)
+        elif file.endswith('wav'):
+            self.parse_wav_and_ape(file)
         else:
-            song_name = song_info.title
-            singer = song_info.artist 
-            duration = song_info.duration
-            
-            song = SongModel()
-            song.song_id = id
-            song.song_name = song_name
-            song.media_type = self.file_format(file_name)
-            song.duration = duration
-            song.file_path = file_path
-            song.file_md5 = id
-            song.singer = SingerModel.objects.get(singer_name=singer)
-            song.save()
-            
+            print(f"未知的文件类型 {file}")
 
-    def update_singer(self, song_info: TinyTag):
-        singer = song_info.artist
-        if song_info.artist == None:
-            print(f'无法解析到歌手信息 {song_info}')
+
+    def create_song(self, file_path, song_name, format, duration, singers):
+        song = SongModel()
+        song_id = self.checksum(file_path)
+        song.song_id = song_id
+        song.song_name = song_name 
+        song.media_type = format 
+        song.duration = duration         
+        song.file_path= file_path 
+        song.file_md5 = song_id
+        song.save()
+        song.singers.set(singers)
+        song.save()
+        self.write_to_normallog(f'歌曲创建成功 = {song_name}、{format}、{duration}、{singers}')
+    
+
+    def parse_mp3(self, file):
+        """
+        解析MP3文件
+        """
+        self.write_to_normallog(f'处理MP3文件')
+        info = TinyTag.get(file)
+        song_name = info.title 
+        duration = info.duration 
+        format = 'mp3'
+        artist = info.artist
+        if artist == None or song_name == None:
+            self.parse_exception_flac(file)
+            return
+                
+        singers = self.get_singers(artist)
+
+        self.create_song(file, song_name, format, duration, singers)        
+
+
+    def parse_wav_and_ape(self, file):
+        self.write_to_normallog(f"解析wav文件")
+        # 拿到文件名
+        file_name = file.split('/')[-1]
+        file_name = file_name.split('.')[0]
+        self.write_to_normallog(f"歌曲名 = {file_name}")
+
+        # 切割文件名
+        names = file_name.split('-')
+        
+        if len(names) != 2: 
+            print("文件名解析失败")
+            self.write_to_normallog(f"wav文件名字解析失败")
+            self.write_to_log(f"{file} > 未能解析")
             return
         
-        if not SingerModel.objects.filter(singer_name=singer).exists():
-            singer_model = SingerModel() 
-            singer_model.singer_name = singer
-            singer_model.save()
+        song_name = names[-1].strip()
+        singer_name = names[0].strip()
+
+        format = 'wav'
+        if file.endswith('wav'):
+            format = 'wav'
+        elif file.endswith('ape'):
+            format = 'ape'
+            
+        duration = 0
+        try:
+            tag = TinyTag.get(file)
+            duration = tag.duration
+        except:
+            duration = 0
+        
+        singers = self.get_singers(singer_name)
+
+        self.create_song(file, song_name, format, duration, singers)
+
+
+    def parse_flac(self, file):
+        self.write_to_normallog(f'处理FLAC文件')
+        try:
+            tag = TinyTag.get(file)
+            # 获取文件的MD5 
+            file_hash_value = self.checksum(file)
+            song_name = tag.title
+            singer_names = tag.artist 
+            
+            if song_name == None or singer_names == None:
+                self.write_to_normallog(f'没有拿到FLAC的 title 或 singer')
+                self.parse_exception_flac(file=file)
+                return
+            
+            format = 'flac'
+            duration = tag.duration
+            singer_models = self.get_singers(singer_names)
+            self.create_song(file, song_name, format, duration, singer_models)
+                        
+        except Exception as e:
+            self.parse_exception_flac(file=file)
+        
+    
+    def parse_exception_flac(self, file):
+        """
+        处理异常的flac文件
+        """
+        self.write_to_normallog(f'处理异常的FLAC文件')
+        # 拿到文件名
+        file_name = file.split('/')[-1]
+        file_name = file_name.split('.')[0] # 去掉后缀 
+        self.write_to_normallog(f"歌曲名 = {file_name}")
+
+        # 切割文件名
+        names = file_name.split('-')
+        if self.is_singer_name(names[0].strip()):
+            singer_names = names[0].strip()
+            song_name = names[-1].strip()
+        elif self.is_singer_name(names[-1].strip()):
+            singer_names = names[-1].strip()
+            song_name = names[0].strip()
         else:
-            pass
-            # print(f"歌手已存在 {singer}")
+            self.write_to_log(f"{file} > 未能解析")
+            return
+        
+        singer_models = self.get_singers(singer_names)
+        duraion = 0
+        try: 
+            info = TinyTag.get(file)
+            duraion = info.duration
+        except Exception as e:
+            self.write_to_log(f"{file}: {e}")
+            return
+
+        format = file.split('.')[-1]
+        self.create_song(file, song_name, format, duraion, singer_models)
+    
+
+    def get_singers(self, artists) -> [SingerModel]:
+        """
+        获取这首歌的所有歌手
+        """
+        
+        self.write_to_normallog(f'解析歌手 = {artists}')
+        
+        singer_names = []
+        if '、' in artists:
+            singer_names = artists.split('、')
+            self.write_to_normallog(f'有多个歌手，已经分离出来= {singer_names}')
+        elif '&' in artists:
+            singer_names = artists.split('&')
+            self.write_to_normallog(f'有多个歌手，已经分离出来= {singer_names}')
+        elif ',' in artists:
+            singer_names = artists.split(',')
+            self.write_to_normallog(f'有多个歌手，已经分离出来= {singer_names}')
+        else:
+            # 只有一个歌手
+            singer_names = [artists]
+            self.write_to_normallog(f'只有一个歌手 {singer_names}')
+        
+        singer_models = []
+        for singer in singer_names:
+            singer_model = SingerModel.objects.filter(singer_name=singer)
+            if singer_model != None and len(singer_model.all()) > 0:
+                # 歌手已经存在
+                singer_models.append(singer_model.all()[0])
+                self.write_to_normallog(f'该歌手已经存在 = {singer_model}')
+            else:
+                # 歌手不存在，创建歌手对象
+                singer_model = SingerModel() 
+                singer_model.singer_name = singer
+                singer_model.save()
+                singer_models.append(singer_model)
+                self.write_to_normallog(f'创建新歌手 = {singer_model}')
+        
+        return singer_models
+
+
+    def is_singer_name(self, name) -> bool:
+        """
+        检查是否有该名字的歌手
+        """
+        if ',' in name:
+            return True
+        elif '、' in name:
+            return True
+        elif '&' in name:
+            return True
+        else:
+            return SingerModel.objects.filter(singer_name=name).exists()
         
 
     def file_format(self, file_name: str) -> str:
@@ -239,3 +411,13 @@ class RefreshList(View):
         
         return file_hash.hexdigest()
     
+    def write_to_log(self, content):
+        with open('./log.txt', 'a+') as f:
+            f.write(content)
+            f.write('\n')
+
+    def write_to_normallog(self, content):
+        with open('./normal_log.txt', 'a+') as f:
+            f.write(content)
+            f.write('\n')
+            print(content)

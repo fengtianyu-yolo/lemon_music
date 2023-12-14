@@ -30,9 +30,9 @@ class SongModel(models.Model):
 	# 添加时间
 	created_time = models.DateTimeField(auto_now_add=True)
 	# 更新时间
-	updated_time = models.DateTimeField(auto_now_add=True)
-	# 外键，歌手。每首歌曲只有唯一的歌手 
-	singer = models.ForeignKey(SingerModel, on_delete=models.CASCADE)
+	updated_time = models.DateTimeField(auto_now=True)
+	# 外键，歌手们。每首歌曲的歌曲。一对多
+	singers = models.ManyToManyField(SingerModel)
 
 
 class UserModel(models.Model):
