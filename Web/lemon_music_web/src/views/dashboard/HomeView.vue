@@ -95,8 +95,9 @@ function requestSongs() {
                         const song_name = item['song_name']
                         const duration = item['duration']
                         const media_type = item['media_type']
-                        const singer = item['singer']['singer_name']
-                        const formatted_duration = format_duration(duration)
+                        // const singer = item['singer']['singer_name']
+                        const formatted_duration = format_duration(duration)                        
+                        const singer = item['singers'].map( singer => singer['singer_name']).toString()                        
 
                         const obj = {
                             name: song_name,
