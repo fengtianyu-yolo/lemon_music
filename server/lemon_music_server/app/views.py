@@ -9,6 +9,8 @@ import json
 import os
 from tinytag import TinyTag
 import hashlib
+import datetime
+import time
 
 from .models import SongModel
 from .models import SingerModel
@@ -54,21 +56,33 @@ class LoginAPI(View):
 class Dashboard(View):
 
     def get(self, request):
-        song_count = SongModel.objects.all().count()
+        songs = SongModel.objects.all().order_by('created_time')
+        song_count = songs.count()
+        lastUpdate = songs[0].created_time
+        print(f"last update = {lastUpdate}")            
+        
+        # 拿到最近的周一0点的时间戳 
+        today = datetime.date.today() # 今天 
+        now = datetime.datetime.now().weekday()
+        monday = today - datetime.timedelta(days=now) # 获取周一的日期
+        monday_time = datetime.datetime(monday.year, monday.month, monday.day, 0, 0, 0) # 拿到周一0点的时间戳 
+        new_add_in_week = SongModel.objects.filter(created_time__gt=monday_time).count()
+
+        singer_count = SingerModel.objects.all().count()
 
         song_card = {
             'title': '歌曲',
-            'last_update': 12,
-            'new_add': 12,
+            'last_update': lastUpdate,
+            'new_add': new_add_in_week,
             'count': song_count,
             'card_type': 0
         }
 
         singer_card = {
-            'title': '歌曲',
+            'title': '歌手',
             'last_update': 12,
             'new_add': 12,
-            'count': 23,
+            'count': singer_count,
             'card_type': 1
         }
 
@@ -146,7 +160,11 @@ class RefreshList(View):
         # 2 遍历所有的文件  
         for song_name in song_list:    
             file_path = path + '/' + song_name
-    
+
+            # 暂时不处理歌词文件
+            if file_path.endswith('.lrc'):
+                continue
+            
             try:
                 tag = TinyTag.get(file_path)
                 # 获取文件的MD5 
@@ -201,7 +219,8 @@ class RefreshList(View):
             singer_model.singer_name = singer
             singer_model.save()
         else:
-            print(f"歌手已存在 {singer}")
+            pass
+            # print(f"歌手已存在 {singer}")
         
 
     def file_format(self, file_name: str) -> str:
