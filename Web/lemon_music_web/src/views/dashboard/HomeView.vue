@@ -95,7 +95,6 @@ function requestSongs() {
                         const song_name = item['song_name']
                         const duration = item['duration']
                         const media_type = item['media_type']
-                        // const singer = item['singer']['singer_name']
                         const formatted_duration = format_duration(duration)                        
                         const singer = item['singers'].map( singer => singer['singer_name']).toString()                        
 
@@ -105,7 +104,7 @@ function requestSongs() {
                             duration: formatted_duration,
                             singer: singer
                         }
-                        console.log(obj)
+                        // console.log(obj)
                         songs.unshift(obj)
                     }
                     listData.value = songs
@@ -122,7 +121,7 @@ function requestSongs() {
 
 function requestDashboard() {
     // 请求曲库列表 
-    let url = 'http://localhost:8000/api/index'
+    let url = 'http://localhost:8000/api/dashboard'
 
     axios.get(url)
         .then(
@@ -133,14 +132,22 @@ function requestDashboard() {
 
                     let rawCards = []
                     for (const item of dataList) {
-
+                        
+                        let formatUpdated = item['last_update']
+                        let cardType = item['card_type']
+                        var icon = ''
+                        if (cardType == 0) {
+                            icon = 'src/assets/dashboard_music_icon.svg'
+                        } else if (cardType == 1) {
+                            icon = 'src/assets/dashboard_singer_icon.svg'
+                        }
                         const card = {
                             title: item['title'],
-                            lastUpdate: item['last_update'],
+                            lastUpdate: formatUpdated,
                             count: item['count'],
                             newAdd: item['new_add'],
-                            iconSrc: item['icon_src'], // 'src/assets/dashboard_music_icon.svg',
-                            type: item['icon_src'] // CARD_TYPE.MUSIC
+                            iconSrc: icon,
+                            type: cardType // CARD_TYPE.MUSIC
                         }
 
                         rawCards.unshift(card)

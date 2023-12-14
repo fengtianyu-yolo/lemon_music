@@ -1,4 +1,5 @@
 from django.db import models
+import datetime
 
 # Create your models here.
 class SingerModel(models.Model):
@@ -9,6 +10,10 @@ class SingerModel(models.Model):
 	singer_id = models.AutoField(primary_key=True)
 	# 歌手名字 
 	singer_name = models.CharField(max_length=255, null=False, default='')
+	# 添加时间
+	created_time = models.DateTimeField(auto_now_add=True)
+	# 更新时间
+	updated_time = models.DateTimeField(auto_now=True)
 
 
 class SongModel(models.Model):

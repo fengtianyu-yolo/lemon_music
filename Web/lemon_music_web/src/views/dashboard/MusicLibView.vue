@@ -60,7 +60,7 @@ function search() {
                     let code = response.data['code']
                     if (code == 0) {
                         let data_list = response.data['list']
-                        console.log(data_list)
+                        // console.log(data_list)
                         let songs = []
                         for (const item of data_list) {
                             const song_name = item['song_name']
@@ -75,7 +75,7 @@ function search() {
                                 duration: formatted_duration,
                                 singer: singer
                             }
-                            console.log(obj)
+                            // console.log(obj)
                             songs.unshift(obj)
                         }
                         listData.value = songs

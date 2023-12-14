@@ -58,8 +58,7 @@ class Dashboard(View):
     def get(self, request):
         songs = SongModel.objects.all().order_by('created_time')
         song_count = songs.count()
-        lastUpdate = songs[0].created_time
-        print(f"last update = {lastUpdate}")            
+        lastUpdate = songs[0].created_time.timestamp() * 1000
         
         # 拿到最近的周一0点的时间戳 
         today = datetime.date.today() # 今天 
@@ -67,8 +66,12 @@ class Dashboard(View):
         monday = today - datetime.timedelta(days=now) # 获取周一的日期
         monday_time = datetime.datetime(monday.year, monday.month, monday.day, 0, 0, 0) # 拿到周一0点的时间戳 
         new_add_in_week = SongModel.objects.filter(created_time__gt=monday_time).count()
+        
+        singers = SingerModel.objects.all().order_by('created_time')
+        singerLastUpdate = singers[0].created_time.timestamp() * 1000
+        singers_count = singers.count()
+        new_singers_in_week = SingerModel.objects.filter(created_time__gt=monday_time).count()
 
-        singer_count = SingerModel.objects.all().count()
 
         song_card = {
             'title': '歌曲',
@@ -80,9 +83,9 @@ class Dashboard(View):
 
         singer_card = {
             'title': '歌手',
-            'last_update': 12,
-            'new_add': 12,
-            'count': singer_count,
+            'last_update': singerLastUpdate,
+            'new_add': new_singers_in_week,
+            'count': singers_count,
             'card_type': 1
         }
 
@@ -93,6 +96,7 @@ class Dashboard(View):
                 singer_card
             ]
         }
+        print(result)
         return HttpResponse(json.dumps(result))
 
 
@@ -114,7 +118,7 @@ class SongList(View):
             'code': 0,
             'list': items
         }
-        print(result)
+        # print(result)
         return HttpResponse(json.dumps(result))
 
 class Search(View):

@@ -60,28 +60,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { inject, ref } from 'vue';
 import CardView from './CardView.vue';
-import { CARD_TYPE } from './constant';
 
-const cardList = ref([
-  {
-      title: '歌曲',
-      lastUpdate: 1701148342000, 
-      count: 304,
-      newAdd: 38,
-      iconSrc: 'src/assets/dashboard_music_icon.svg',
-      type: CARD_TYPE.MUSIC
-  },
-  {
-      title: '歌手',
-      lastUpdate: 1701061942000, 
-      count: 12,
-      newAdd: 3,
-      iconSrc: '/src/assets/dashboard_singer_icon.svg',
-      type: CARD_TYPE.SINGER
-  }
-])
+
+
+const cardList = inject('cards')
 
 const songList = ref([
 {

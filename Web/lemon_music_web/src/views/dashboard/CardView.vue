@@ -56,9 +56,9 @@ const subtitle = computed( () => {
 
     var currentDate = new Date().getTime(); // 定义变量: var 
     console.log('currentDate = ' + currentDate.toString()) // long转字符串的方法：date.toString()；字符串拼接：+
-
+    console.log(props.lastUpdate)
     var diff = currentDate - props.lastUpdate; // 计算当前时间和上次更新时间的时间差，单位毫秒
-
+    
     var minuteDuration = 1000 * 60; // 1分钟的时长
     var hourDuration = minuteDuration * 60; // 1年时长
     var dayDuration = hourDuration * 24; // 1天时长 
@@ -70,6 +70,8 @@ const subtitle = computed( () => {
     if (diff > yearDuration) {
         ago = diff / yearDuration;
         ago = parseInt(ago)
+        console.log(yearDuration)
+        console.log(ago)
         return ago.toString + '年' + suffix;
 
     } else if (diff > mouthDuration) {
