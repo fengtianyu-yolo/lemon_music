@@ -26,11 +26,13 @@
 
         <div class="main">
             <HeaderView>
-                <div v-if="currentTab == 'dashboard'">
-                    Dashboard
+                <div class="dashboard-title" v-if="currentTab == 'dashboard'">
+                    <p>{{ titleItem.title }}</p>
+                    <p>{{ titleItem.subtitle }}</p>
                 </div>
                 <div v-if="currentTab == 'musics'">
-                    <el-button class="refresh-btn" type="primary" @click="refresh">刷新</el-button>
+                    <el-button class="header-btn" type="primary" @click="refresh" text>编辑</el-button>
+                    <el-button class="refresh-btn" type="primary" @click="refresh">刷新</el-button>                    
                 </div>
             </HeaderView>
             <RouterView></RouterView>
@@ -72,6 +74,31 @@ watch(() => router.currentRoute.value.path, () => {
     currentTab.value = router.currentRoute.value.name
 }, { immediate: true, deep: true });
 
+const titleList = [
+    {
+        'title': '多亏还有音乐和酒精',
+        'subtitle': '不然人类澎湃的爱意该往哪里放。'
+    },
+    {
+        'title': '那些听不见音乐的人认为那些跳舞的人疯了。',
+        'subtitle': ''
+    },
+    {
+        'title': '耳机线像是输液管，',
+        'subtitle': '听音乐的时候很像生病打点滴，是一个治愈的过程。'
+    },
+    {
+        'title': '音乐将一切平凡的画面赋予深厚的意义',
+        'subtitle': ''
+    },
+    {
+        'title': '音乐只是提供氛围，你听的都是自己的故事。',
+        'subtitle': ''
+    }
+]
+const num = parseInt(Math.random() * titleList.length)
+const item = titleList[num]
+const titleItem = ref(item)
 
 const listData = ref([])
 provide('song_list', listData)
@@ -82,14 +109,15 @@ provide('cards', cards)
 function requestSongs() {
 
     // 请求曲库列表 
-    let url = 'http://localhost:8000/api/songs'
+    const domain = import.meta.env.VITE_API_URL
+    const path = '/api/songs' 
+    const url = domain + path
     axios.get(url)
         .then(
             function (response) {
                 let code = response.data['code']
                 if (code == 0) {
                     let data_list = response.data['list']
-                    // console.log(data_list)
                     let songs = []
                     for (const item of data_list) {
                         const song_name = item['song_name']
@@ -104,7 +132,6 @@ function requestSongs() {
                             duration: formatted_duration,
                             singer: singer
                         }
-                        // console.log(obj)
                         songs.unshift(obj)
                     }
                     listData.value = songs
@@ -113,7 +140,7 @@ function requestSongs() {
         )
         .catch(
             function (err) {
-                console.log(err)
+                console.log(err.toString())
             }
         )
 
@@ -121,7 +148,8 @@ function requestSongs() {
 
 function requestDashboard() {
     // 请求曲库列表 
-    let url = 'http://localhost:8000/api/dashboard'
+    const path = '/api/dashboard'
+    const url = import.meta.env.VITE_API_URL + path
 
     axios.get(url)
         .then(
@@ -158,7 +186,7 @@ function requestDashboard() {
         )
         .catch(
             function (err) {
-                console.log(err)
+                console.log(err.toString())
             }
         )
 }
@@ -214,7 +242,7 @@ onMounted(() => {
 
     margin-top: 26px;
 
-    background-color: #BDBDBD;
+    background-color: #bcbcbc;
 }
 
 .menu-container {
@@ -262,16 +290,24 @@ onMounted(() => {
     padding-left: 16px;
 }
 
-.refresh-btn {
-    width: 120px;
+.dashboard-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--global-highlight-color);
+    font-family: 'AlimamaDaoLiTi', 'STBaoliSC-Regular';
+}
+
+.header-btn, .refresh-btn {
+    width: 88px;
     height: 40px;
+}
+
+.refresh-btn {
     background-color: var(--global-highlight-color);
 }
 
-/* div的选中态怎么设置 */
-
 .main {
-    background-color: #E7E7E7;
+    background-color: #efeeec;
 }
 </style>
     
