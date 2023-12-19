@@ -10,9 +10,9 @@
                 @input="search" />
         </div>
         <div class="table-container">
-            <el-table :data="listData" stripe :row-class-name="rowClassName">
-                <el-table-column prop="name" label="Name" />
-                <el-table-column prop="singer" label="Singer" />
+            <el-table :data="listData" stripe header-row-class-name="table-header-row" :row-class-name="tableRowClassName">
+                <el-table-column prop="name" label="歌曲名" />
+                <el-table-column prop="singer" label="歌手" />
                 <el-table-column prop="format" label="格式" />
                 <el-table-column prop="duration" label="时长" />
             </el-table>
@@ -26,18 +26,25 @@ import { inject, ref } from 'vue';
 import axios from 'axios'
 import { format_duration } from '../../tool';
 
-const filter = ref('');
+const filter = ref({
+    value: 'file',
+    label: '全部文件'
+});
 
 const searchValue = ref('')
 
 const filterOptions = ref([
     {
-        value: 'name',
-        label: 'Name'
+        value: 'file',
+        label: '全部文件'
+    },
+    {
+        value: 'song',
+        label: '歌曲'
     },
     {
         value: 'singer',
-        label: 'Singer'
+        label: '歌手'
     }
 ])
 
@@ -91,9 +98,13 @@ function search() {
 
 }
 
-
-function rowClassName() {
-    return 'row'
+const tableRowClassName = ( {row, rowIndex} ) => {
+    console.log(row);
+    if (rowIndex % 2 == 0) {        
+        return 'highlight-table-row'
+    } else {
+        return 'normal-table-row'
+    }    
 }
 
 </script>
@@ -101,6 +112,7 @@ function rowClassName() {
 <style scoped>
 .music-lib-container {
     background-color: #FFFFFF;
+    padding-bottom: 44px;
 }
 
 .filter-container {
@@ -122,7 +134,7 @@ function rowClassName() {
 
 
 :deep(.el-input__wrapper) {
-    background-color: #F0FAFA;
+    background-color: #FCFAFA;
 }
 
 :deep(.el-select .el-input__wrapper) {
@@ -139,6 +151,32 @@ function rowClassName() {
     margin-right: 100px;
     margin-top: 10px;
     background-color: aqua;
+}
+
+.el-table {
+    height: 600px;
+}
+
+.el-table >>> .table-header-row th{
+    height: 48px;    
+    font-size: 18px;
+    font-weight: 400;
+    font-family: 'AlimamaDaoLiTi';
+    color: black;
+}
+
+.el-table >>> .normal-table-row {
+    height: 48px;
+    font-family: 'Chalkboard SE', 'HuXiaoBo-NanShen';
+    font-size: 14px;
+    background-color: #FFFFFF;
+}
+
+.el-table >>> .highlight-table-row {
+    height: 48px;
+    font-family: 'Chalkboard SE', 'HuXiaoBo-NanShen';
+    font-size: 14px;
+    background-color: #EBF6FF;
 }
 </style>
 
