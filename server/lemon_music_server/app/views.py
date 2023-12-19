@@ -56,28 +56,51 @@ class LoginAPI(View):
 class Dashboard(View):
 
     def get(self, request):
-        songs = SongModel.objects.all().order_by('created_time')
-        song_count = songs.count()
-        lastUpdate = songs[0].created_time.timestamp() * 1000
         
         # 拿到最近的周一0点的时间戳 
         today = datetime.date.today() # 今天 
         now = datetime.datetime.now().weekday()
         monday = today - datetime.timedelta(days=now) # 获取周一的日期
         monday_time = datetime.datetime(monday.year, monday.month, monday.day, 0, 0, 0) # 拿到周一0点的时间戳 
+
+        # 拿到歌曲文件的信息
+        files = SongModel.objects.all().order_by('created_time')
+        file_count = files.count()
+        lastUpdate = files[0].created_time.timestamp() * 1000
         new_add_in_week = SongModel.objects.filter(created_time__gt=monday_time).count()
         
+        # 拿到歌手的信息
         singers = SingerModel.objects.all().order_by('created_time')
         singerLastUpdate = singers[0].created_time.timestamp() * 1000
         singers_count = singers.count()
         new_singers_in_week = SingerModel.objects.filter(created_time__gt=monday_time).count()
 
+        # 拿到歌曲的信息 
+        songs = SongModel.objects.raw('select ANY_VALUE(song_id) as song_id, song_name, max(created_time) as created_time from app_songmodel group by song_name order by created_time')
+        song_list = []
+        for song in songs:
+            song_list.append(song)
+        # print(songs)
+        songs_count = len(song_list)
+        songs_last_update = song_list[-1].created_time.timestamp() * 1000
+        new_songs = SongModel.objects.raw('select ANY_VALUE(song_id) as song_id, song_name, max(created_time) as created_time from app_songmodel where created_time > %s group by song_name order by created_time', [monday_time])
+        new_song_list = []
+        for song in new_songs:
+            new_song_list.append(song)
+
+        file_card = {
+            'title': '文件',
+            'last_update': lastUpdate,
+            'new_add': new_add_in_week,
+            'count': file_count,
+            'card_type': 0
+        }
 
         song_card = {
             'title': '歌曲',
-            'last_update': lastUpdate,
-            'new_add': new_add_in_week,
-            'count': song_count,
+            'last_update': songs_last_update,
+            'new_add': len(new_song_list),
+            'count': songs_count,
             'card_type': 0
         }
 
@@ -91,12 +114,12 @@ class Dashboard(View):
 
         result = {
             'code': 0,
-            'data': [
+            'data': [                
+                singer_card,
                 song_card,
-                singer_card
+                file_card
             ]
         }
-        print(result)
         return HttpResponse(json.dumps(result))
 
 
