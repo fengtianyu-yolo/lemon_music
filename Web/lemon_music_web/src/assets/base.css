@@ -40,6 +40,22 @@
 
   --global-highlight-color: #509CDB;
 
+  /* --color-card-background: #1E1E1E;
+  --color-card-count: #FFFFFF;
+  --color-card-title: #FFFFFF; */
+
+}
+
+.light-theme {
+  --color-card-background: #FFFFFF;
+  --color-card-count: #152259;
+  --color-card-title: #152259;
+}
+
+.dark-theme {
+  --color-card-background: #1E1E1E;
+  --color-card-count: #FFFFFF;
+  --color-card-title: #FFFFFF;
 }
 
 @media (prefers-color-scheme: dark) {
