@@ -1,5 +1,5 @@
 <template>
-    <div class="card-container">
+    <div class="card-container light-theme">
         <div class="effect" :style="{ backgroundColor: effectBgColor}"></div>
         <div class="title-area">
             <div class="icon">
@@ -106,12 +106,9 @@ const subtitle = computed( () => {
 })
 
 const effectBgColor = computed( () => {    
-    console.log(isSinger.value)
     if (isSinger.value) {
-        console.log('CF1A2C26')
         return '#CF1A2C26'
     } else if (isMusic.value) {
-        console.log('29C5EE26')
         return '#29C5EE26'
     } else {
         return 'clear'
@@ -131,11 +128,12 @@ const focusColor = computed( () => {
 </script>
 
 <style scoped>
+
 .card-container {
     padding-left: 16px;
     padding-right: 16px;
     padding-top: 16px;
-    background-color: #1E1E1E;
+    background-color: var(--color-card-background);
 
     display: flex;
     flex-direction: column;
@@ -165,7 +163,7 @@ const focusColor = computed( () => {
 }
 
 .title-info .title {
-    color: #FFFFFF;
+    color: var(--color-card-title);
 
     font-size: 18px;    
     font-weight: bold;
@@ -207,7 +205,7 @@ const focusColor = computed( () => {
 .total-count {
     font-size: 38px;
     font-weight: bold;
-    color: #FFFFFF;
+    color: var(--color-card-count);
 }
 
 .count-suffix {
