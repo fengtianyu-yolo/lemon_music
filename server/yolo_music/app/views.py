@@ -28,7 +28,6 @@ class Test4View(View):
 class MediaType(Enum):
     FLAC = 1
     MP3 = 2 
-    WAV = 3 
 
 class RefreshList(View):
     def get(self, request):
@@ -82,7 +81,7 @@ class RefreshList(View):
             print('file is mp3')
             print('名字 = ' + str(song_name))
             print('歌手 = ' + str(artist_name))
-        
+
         else:
             print('解析失败: ' + file_name)
             return
