@@ -30,28 +30,32 @@ class MediaType(Enum):
     MP3 = 2 
 
 class RefreshList(View):
-    def get(self, request):
-        root_path = '' 
+    root_path = '/Volumes/MdieaLib/音乐库'
+
+    def get(self, request):        
         # 遍历根目录 
-        self.travel(root_path)
+        file_list = self.travel(self.root_path)
         # 解析文件 
         # 生成Model 
         # 生成Artist 
-        return JsonResponse({'code': 200})
+        return JsonResponse({'code': 200, 'files': file_list})
         
-    def travel(self, path):
+    def travel(self, path) -> list[str]:
+        result = []
         sub_itmes = os.listdir(path)
         for item in sub_itmes:
             full_path = path + '/' + item
-            self.retrive_song_info(full_path, item)
+            name = self.retrive_song_info(full_path, item)
+            result.append(name)
         
-    def retrive_song_info(self, file_path, file_name):
+    def retrive_song_info(self, file_path, file_name) -> str:
         
         song = mutagen.File(file_path)
 
         # 去重检查 
-        if self.exist():
-            return
+        if self.exist(file_name):
+            print('数据库中已经存在,' + file_name)
+            return ''
 
         songModel = SongModel() 
         artist = ArtistModel()
@@ -67,8 +71,8 @@ class RefreshList(View):
             songModel.sq_file_path = file_path 
             songModel.sq_file_name = file_name
             artist.artist_name = artist_name            
-            print('名字 = ' + str(song_name))
-            print('歌手 = ' + str(artist_name))
+            # print('名字 = ' + str(song_name))
+            # print('歌手 = ' + str(artist_name))
             
         elif file_type == 'audio/mp3':            
             song_name = song.tags['TIT2']
@@ -78,13 +82,13 @@ class RefreshList(View):
             songModel.hq_file_path = file_path 
             songModel.hq_file_name = file_name
             artist.artist_name = artist_name
-            print('file is mp3')
-            print('名字 = ' + str(song_name))
-            print('歌手 = ' + str(artist_name))
+            # print('file is mp3')
+            # print('名字 = ' + str(song_name))
+            # print('歌手 = ' + str(artist_name))
 
         else:
-            print('解析失败: ' + file_name)
-            return
+            print('处理失败: ' + file_name)
+            return ''
 
         duration = song.info.length
         songModel.duration = duration
@@ -95,7 +99,9 @@ class RefreshList(View):
         songModel.save() 
         artist.save() 
         song_artist.save() 
-        print('时长 = ' + str(duration))
+        return file_name
+        # print('时长 = ' + str(duration))
 
-    def exist(self) -> bool: 
+    def exist(self, file_name) -> bool: 
+        SongModel.objects.filter(sq_file_name=file_name)
         return False
