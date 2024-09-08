@@ -16,10 +16,14 @@ class Utils(object):
     colors = ['none', 'gray', 'green', 'purple', 'blue', 'yellow', 'red', 'orange']
 
     @staticmethod
-    def get_file_label(filename) -> ColorLabel:
-        attrs = xattr(filename)
-        info = attrs['com.apple.FinderInfo']
-        color = info[9] >> 1 & 7
+    def get_file_label(filepath) -> ColorLabel:
+        # attrs = xattr(filepath)
+        # info = attrs['com.apple.FinderInfo']
+        
+        key = u'com.apple.FinderInfo'
+        attrs = xattr(filepath)
+        color = attrs[9] >> 1 & 7
+        # color = info[9] >> 1 & 7
         rawvalue = Utils.colors[color] 
         return ColorLabel(rawvalue)
 
