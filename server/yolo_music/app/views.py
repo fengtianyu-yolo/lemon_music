@@ -35,7 +35,7 @@ class RefreshList(View):
     root_path = '/Volumes/MdieaLib/音乐库'
 
     def get(self, request):        
-        # 遍历根目录 
+        # 遍历根目录 - 筛选目标文件 - 去重 - 存入数据库 
         file_list = self.travel(self.root_path)
         # 解析文件 
         # 生成Model 
@@ -78,16 +78,16 @@ class RefreshList(View):
             return
 
         songModel = SongModel() 
-        artistModel = ArtistModel()
-        songArtistModel = Song2ArtistModel() 
+        # artistModel = ArtistModel()
+        artistList: list[ArtistModel] = []
         file_type = song.mime[0] 
         
         success = False
         if file_type == 'audio/flac':
-            success = self.retrive_flac(song=song, artist=artistModel, songModel=songModel, file_name=file_name, file_path=file_path)
+            success = self.retrive_flac(song=song, artists=artistList, songModel=songModel, file_name=file_name, file_path=file_path)
             
         elif file_type == 'audio/mp3':            
-            success = self.retrive_mp3(song=song, songModel=songModel, artist=artistModel, filename=file_name, filepath=file_path)
+            success = self.retrive_mp3(song=song, songModel=songModel, artists=artistList, filename=file_name, filepath=file_path)
 
         else:
             print('处理失败: ' + file_name)
@@ -99,14 +99,14 @@ class RefreshList(View):
 
         duration = song.info.length
         songModel.duration = duration
-        
-        songArtistModel.song = songModel 
-        songArtistModel.artist = artistModel
-
-        print(songModel.song_name)
         songModel.save() 
-        artistModel.save() 
-        songArtistModel.save() 
+
+        for artist in artistList:
+            songArtistModel = Song2ArtistModel() 
+            songArtistModel.song = songModel 
+            songArtistModel.artist = artist            
+            artist.save() 
+            songArtistModel.save() 
         Utils.set_label(file_path, ColorLabel.green.value)
         return file_name
 
@@ -121,7 +121,7 @@ class RefreshList(View):
             return (True, song)
 
 
-    def retrive_flac(self, song, artist: ArtistModel, songModel: SongModel, file_name: str, file_path: str) -> bool:
+    def retrive_flac(self, song, artists: list[ArtistModel], songModel: SongModel, file_name: str, file_path: str) -> bool:
         try:
             song_name = song.tags['TITLE']
             artist_name = song.tags['ARTIST']            
@@ -135,12 +135,10 @@ class RefreshList(View):
             songModel.media_type = MediaType.FLAC.value
             songModel.sq_file_path = file_path 
             songModel.sq_file_name = file_name
-            artist.artist_name = artist_name          
+            self.retrive_artist(artists, artist_name)
             return True
-        
-    
-
-    def retrive_mp3(self, song, songModel: SongModel, artist: ArtistModel, filename: str, filepath: str) -> bool:
+  
+    def retrive_mp3(self, song, songModel: SongModel, artists: list[ArtistModel], filename: str, filepath: str) -> bool:
         try:
             song_name = song.tags['TIT2']
             artist_name = song.tags['TPE1']
@@ -153,9 +151,37 @@ class RefreshList(View):
             songModel.media_type = MediaType.MP3.value 
             songModel.hq_file_path = filepath 
             songModel.hq_file_name = filename
-            artist.artist_name = artist_name
+            self.retrive_artist(artists, artist_name)
             return True
 
+      
+    def retrive_artist(self, artistList: list[ArtistModel], name):
+            if '、' in name:
+                nameList = name.split('、')
+                for artistName in nameList:
+                    existArtist = self.findArtist(artist_name=artistName)
+                    if existArtist:
+                        artistList.append(artist)
+                    else:
+                        artist = ArtistModel()
+                        artist.artist_name = artistName          
+                        artistList.append(artist)
+            else:
+                existArtist = self.findArtist(artist_name=artistName)
+                if existArtist:
+                    artistList.append(artist)
+                else:
+                    artist = ArtistModel()
+                    artist.artist_name = artistName          
+                    artistList.append(artist)
+                
+
+    def findArtist(self, artist_name):
+        artist = ArtistModel.objects.filter(artist_name=artist_name)
+        if artist.count > 0:
+            return artist[0]
+        else:
+            return None
 
     def exist(self, filepath, filename) -> bool: 
         if len(SongModel.objects.filter(sq_file_name=filename)) > 0:
@@ -170,3 +196,12 @@ class RefreshList(View):
             return True
         else:
             return False
+        
+
+"""
+TODO:  
+- 完成列表接口
+- 处理wav文件 
+- 处理ape文件 
+- 将全量扫描改为增量扫描
+"""
