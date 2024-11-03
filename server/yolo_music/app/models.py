@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class SongModel(models.Model):
-    song_id = models.IntegerField(primary_key=True) 
+    song_id = models.AutoField(primary_key=True) 
     song_name = models.CharField(max_length=255)
     duration = models.IntegerField() 
     media_type = models.IntegerField() 

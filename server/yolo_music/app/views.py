@@ -6,6 +6,8 @@ from enum import Enum
 from .models import SongModel, ArtistModel, Song2ArtistModel
 import os
 import mutagen
+from .Utils import Utils, ColorLabel
+
 # Create your views here.
 
 def test(request):
@@ -30,72 +32,176 @@ class MediaType(Enum):
     MP3 = 2 
 
 class RefreshList(View):
-    def get(self, request):
-        root_path = '' 
-        # 遍历根目录 
-        self.travel(root_path)
+    root_path = '/Volumes/MdieaLib/音乐库'
+
+    def get(self, request):        
+        # 遍历根目录 - 筛选目标文件 - 去重 - 存入数据库 
+        file_list = self.travel(self.root_path)
         # 解析文件 
         # 生成Model 
         # 生成Artist 
-        return JsonResponse({'code': 200})
+        return JsonResponse({'code': 200, 'files': file_list})
         
-    def travel(self, path):
+    def travel(self, path) -> list[str]:
+        result = []
         sub_itmes = os.listdir(path)
-        for item in sub_itmes:
+        files = list(filter(lambda x: not x.startswith('.') and not x.endswith('lrc') , sub_itmes))
+        
+        for item in files:                        
             full_path = path + '/' + item
-            self.retrive_song_info(full_path, item)
+            name = self.retrive_song_info(full_path, item)
+            
+            if not name is None and len(name) > 0:
+                result.append(name)
         
-    def retrive_song_info(self, file_path, file_name):
+        print('处理文件数量: ' + str(len(result)))
+        return result 
         
-        song = mutagen.File(file_path)
+
+    def retrive_song_info(self, file_path, file_name) -> str:
 
         # 去重检查 
-        if self.exist():
+        if self.exist(filename=file_name, filepath=file_path):
+            print('数据库中已经存在,' + file_name)
+            return 
+
+        checkResult = self.valid(file_path)
+        status = checkResult[0]
+        song = checkResult[1]
+        
+        if status == False:
+            return 
+
+        if song == None:
+            Utils.set_label(file_path, ColorLabel.gray.value)
+            print('处理失败: ' + file_name)
             return
 
         songModel = SongModel() 
-        artist = ArtistModel()
-        song_artist = Song2ArtistModel() 
+        # artistModel = ArtistModel()
+        artistList: list[ArtistModel] = []
         file_type = song.mime[0] 
         
+        success = False
         if file_type == 'audio/flac':
+            success = self.retrive_flac(song=song, artists=artistList, songModel=songModel, file_name=file_name, file_path=file_path)
+            
+        elif file_type == 'audio/mp3':            
+            success = self.retrive_mp3(song=song, songModel=songModel, artists=artistList, filename=file_name, filepath=file_path)
+
+        else:
+            print('处理失败: ' + file_name)
+            Utils.set_label(file_path, ColorLabel.gray.value)
+            return ''
+
+        if success == False:
+            return ''
+
+        duration = song.info.length
+        songModel.duration = duration
+        songModel.save() 
+
+        for artist in artistList:
+            songArtistModel = Song2ArtistModel() 
+            songArtistModel.song = songModel 
+            songArtistModel.artist = artist            
+            artist.save() 
+            songArtistModel.save() 
+        Utils.set_label(file_path, ColorLabel.green.value)
+        return file_name
+
+
+    def valid(self, file_path) -> tuple:
+        try:
+            song = mutagen.File(file_path)
+        except:
+            print('文件无法解析: ' + file_path)
+            return (False, None)
+        else:
+            return (True, song)
+
+
+    def retrive_flac(self, song, artists: list[ArtistModel], songModel: SongModel, file_name: str, file_path: str) -> bool:
+        try:
             song_name = song.tags['TITLE']
             artist_name = song.tags['ARTIST']            
+        except:
+            print('FLAC处理失败: ' + file_name)
+            Utils.set_label(file_path, ColorLabel.gray.value)
+            return False
+        else:
             songModel.media_type = 1
             songModel.song_name = song_name
             songModel.media_type = MediaType.FLAC.value
             songModel.sq_file_path = file_path 
             songModel.sq_file_name = file_name
-            artist.artist_name = artist_name            
-            print('名字 = ' + str(song_name))
-            print('歌手 = ' + str(artist_name))
-            
-        elif file_type == 'audio/mp3':            
+            self.retrive_artist(artists, artist_name)
+            return True
+  
+    def retrive_mp3(self, song, songModel: SongModel, artists: list[ArtistModel], filename: str, filepath: str) -> bool:
+        try:
             song_name = song.tags['TIT2']
             artist_name = song.tags['TPE1']
+        except:
+            print('MP3处理失败: ' + filename)
+            Utils.set_label(filepath, ColorLabel.gray.value)
+            return False
+        else:
             songModel.song_name = song_name
             songModel.media_type = MediaType.MP3.value 
-            songModel.hq_file_path = file_path 
-            songModel.hq_file_name = file_name
-            artist.artist_name = artist_name
-            print('file is mp3')
-            print('名字 = ' + str(song_name))
-            print('歌手 = ' + str(artist_name))
+            songModel.hq_file_path = filepath 
+            songModel.hq_file_name = filename
+            self.retrive_artist(artists, artist_name)
+            return True
 
+      
+    def retrive_artist(self, artistList: list[ArtistModel], name):
+            if '、' in name:
+                nameList = name.split('、')
+                for artistName in nameList:
+                    existArtist = self.findArtist(artist_name=artistName)
+                    if existArtist:
+                        artistList.append(artist)
+                    else:
+                        artist = ArtistModel()
+                        artist.artist_name = artistName          
+                        artistList.append(artist)
+            else:
+                existArtist = self.findArtist(artist_name=artistName)
+                if existArtist:
+                    artistList.append(artist)
+                else:
+                    artist = ArtistModel()
+                    artist.artist_name = artistName          
+                    artistList.append(artist)
+                
+
+    def findArtist(self, artist_name):
+        artist = ArtistModel.objects.filter(artist_name=artist_name)
+        if artist.count > 0:
+            return artist[0]
         else:
-            print('解析失败: ' + file_name)
-            return
+            return None
 
-        duration = song.info.length
-        songModel.duration = duration
+    def exist(self, filepath, filename) -> bool: 
+        if len(SongModel.objects.filter(sq_file_name=filename)) > 0:
+            return True
+        elif len(SongModel.objects.filter(hq_file_name=filename)) > 0:
+            return True
+        else:
+            return False
         
-        song_artist.song = songModel 
-        song_artist.artist = artist
+        # color = Utils.get_file_label(filepath=filepath)
+        if color == ColorLabel.green:
+            return True
+        else:
+            return False
+        
 
-        songModel.save() 
-        artist.save() 
-        song_artist.save() 
-        print('时长 = ' + str(duration))
-
-    def exist(self) -> bool: 
-        return False
+"""
+TODO:  
+- 完成列表接口
+- 处理wav文件 
+- 处理ape文件 
+- 将全量扫描改为增量扫描
+"""
