@@ -1,3 +1,9 @@
+# 环境
+
+```
+sudo pip3 install django
+```
+
 # 启动项目 
 
 ```
