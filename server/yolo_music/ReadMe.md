@@ -1,7 +1,28 @@
-# 环境
+# 环境准备
 
 ```
 sudo pip3 install django
+
+pip3 install pymysql
+
+pip3 install mutagen
+
+pip3 install xattr
+
+```
+
+## 安装数据库 
+
+```
+brew install mysql 
+```
+
+## 同步数据库数据 
+
+## 启动数据库 
+
+```
+brew service start mysql
 ```
 
 # 启动项目 
