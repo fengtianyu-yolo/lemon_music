@@ -156,20 +156,34 @@ class RefreshList(View):
 
       
     def retrive_artist(self, artistList: list[ArtistModel], name):
-            if '、' in name:
-                nameList = name.split('、')
-                for artistName in nameList:
-                    existArtist = self.findArtist(artist_name=artistName)
-                    if existArtist:
-                        artistList.append(artist)
+                        
+            artistName = ''
+            if isinstance(name, list):
+                if len(name) == 1:
+                    artistName = name[0]
+                    print('歌手名字:')
+                    print(artistName) 
+                else:
+                    print("多个歌手")
+                    print(name) 
+            else:
+                print('歌手名字 字符串:' + name) 
+                artistName = name
+
+            if '、' in artistName:
+                nameList = artistName.split('、')
+                for nameItem in nameList:
+                    existArtist = self.findArtist(artist_name=nameItem)
+                    if existArtist != None:
+                        artistList.append(existArtist)
                     else:
                         artist = ArtistModel()
-                        artist.artist_name = artistName          
+                        artist.artist_name = nameItem          
                         artistList.append(artist)
             else:
                 existArtist = self.findArtist(artist_name=artistName)
-                if existArtist:
-                    artistList.append(artist)
+                if existArtist != None:
+                    artistList.append(existArtist)
                 else:
                     artist = ArtistModel()
                     artist.artist_name = artistName          
@@ -178,12 +192,15 @@ class RefreshList(View):
 
     def findArtist(self, artist_name):
         artist = ArtistModel.objects.filter(artist_name=artist_name)
-        if artist.count > 0:
+        if artist.count() > 0:
             return artist[0]
         else:
             return None
 
+
     def exist(self, filepath, filename) -> bool: 
+        return False 
+    
         if len(SongModel.objects.filter(sq_file_name=filename)) > 0:
             return True
         elif len(SongModel.objects.filter(hq_file_name=filename)) > 0:
@@ -200,6 +217,7 @@ class RefreshList(View):
 
 """
 TODO:  
+- 歌手表处理：['周杰伦'] 、['张信哲、张艺兴']
 - 完成列表接口
 - 处理wav文件 
 - 处理ape文件 
