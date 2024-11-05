@@ -17,12 +17,17 @@ pip3 install xattr
 brew install mysql 
 ```
 
-## 同步数据库数据 
-
 ## 启动数据库 
 
 ```
-brew service start mysql
+brew services start mysql
+```
+
+## 同步数据库数据 
+```
+mysql -uroot
+
+source /Users/user/Project/lemon_music/server/yolo_music/db.sql
 ```
 
 # 启动项目 
