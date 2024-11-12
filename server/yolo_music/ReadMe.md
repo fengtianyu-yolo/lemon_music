@@ -33,6 +33,8 @@ source /Users/user/Project/lemon_music/server/yolo_music/db.sql
 # 启动项目 
 
 ```
+brew services start mysql
+
 python3 manager.py runserver 127.0.0.1:5566
 ```
 
