@@ -24,10 +24,15 @@ class Search(View):
         artist = request.GET.get('artist')
         if artist != None:
             artists = ArtistModel.objects.filter(artist_name__contains=artist)
-            result = []
-            for item in artists:
-                result.append(item.artist_name)
-            return JsonResponse({'code': 200, 'list': result})
+            if artists != None and len(artists) > 0:
+                models = Song2ArtistModel.objects.filter(artist=artists[0])
+                result = []
+                for model in models:
+                    result.append(model.song.song_name)
+                return JsonResponse({'code': 200, 'list': result})
+            return JsonResponse({'code': 200, 'list': ''})
+        return JsonResponse({'code': 200, 'list': ''})
+
 
 
 class SearchArtist(View):
