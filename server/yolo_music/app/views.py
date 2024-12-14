@@ -307,15 +307,6 @@ class RefreshList(View):
     
 """
 
-"""
-TODO:  
-- 歌手表处理：['周杰伦'] 、['张信哲、张艺兴']
-- 完成列表接口
-- 处理wav文件 
-- 处理ape文件 
-- 将全量扫描改为增量扫描
-"""
-
 class Songs(View):
 
     def get(self, request):
