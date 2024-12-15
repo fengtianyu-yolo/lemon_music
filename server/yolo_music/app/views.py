@@ -37,6 +37,10 @@ class MediaType(Enum):
 class RefreshList(View):
     root_path = '/Volumes/MdieaLib/音乐库'
 
+    failList = []
+    successList = []
+    fullList = []
+
     def get(self, request):        
         # 遍历根目录 - 筛选目标文件 - 去重 - 存入数据库 
         file_list = self.travel(self.root_path)
@@ -111,27 +115,33 @@ class RefreshList(View):
                 dbSongModel.sq_file_name =songModel.sq_file_name
                 dbSongModel.sq_file_path = songModel.sq_file_path
                 print(f"🎵 更新 {dbSongModel.song_name}, 增加无损音乐: {songModel.sq_file_name}")            
-                dbSongModel.save()
+                dbSongModel.save()                
                 print(f"🛢️ '{songModel.song_name}' 数据库更新 🔄")
+                self.fullList.append(dbSongModel.song_name)
             elif dbSongModel.hq_file_path == '' and songModel.hq_file_path != '':
                 dbSongModel.hq_file_name = songModel.hq_file_name
                 dbSongModel.hq_file_path = songModel.hq_file_path
                 print(f"🎵 更新 {dbSongModel.song_name}, 增加高品质音乐: {songModel.hq_file_name}")
                 dbSongModel.save()
                 print(f"🛢️ '{songModel.song_name}' 数据库更新 🔄")
+                self.fullList.append(dbSongModel.song_name)
             else:
                 if dbSongModel.sq_file_path != '' and songModel.sq_file_path != '':
                     print(f"🛢️ 更新失败: 重复歌曲 db.hq_path={dbSongModel.sq_file_path}, song.hq={songModel.sq_file_path} ❌")
+                    self.failList.append(songModel.song_name)
                 elif dbSongModel.hq_file_path != '' and songModel.hq_file_path != '':
                     print(f"🛢️ 更新失败: 重复歌曲 db.hq_path={dbSongModel.hq_file_path}, song.hq={songModel.hq_file_path} ❌")
+                    self.failList.append(songModel.song_name)
                 else:
                     print(f"🛢️ 更新失败: db.sq={dbSongModel.sq_file_path} db.hq={dbSongModel.hq_file_path} song.sq={songModel.sq_file_path} song.hq={songModel.hq_file_path} ❌")
+                    self.failList.append(songModel.song_name)
         else:
             # 数据库里不存在，新建数据
             print(f"🛢️ '{songModel.song_name}' 数据库新增! 🚩 \n")
             duration = song.info.length
             songModel.duration = duration
             songModel.save() 
+            self.successList.append(songModel.song_name)
             for artist in artistList:
                 songArtistModel = Song2ArtistModel() 
                 songArtistModel.song = songModel 
