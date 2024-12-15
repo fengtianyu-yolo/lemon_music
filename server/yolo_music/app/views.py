@@ -105,20 +105,30 @@ class RefreshList(View):
 
         dbSongModel = self.songExist(songModel, artistList)
         if dbSongModel:
-            print(f' {songModel.song_name} 数据库更新')
             # 数据库里已经存在了，为该首歌曲增加无损音乐数据
-            if dbSongModel.sq_file_name == None and songModel.sq_file_name != None:
+            print(f"🎵 无损音乐='{dbSongModel.sq_file_path}', HQ='{dbSongModel.hq_file_path}'")            
+            if dbSongModel.sq_file_path == '' and songModel.sq_file_path != '':
                 dbSongModel.sq_file_name =songModel.sq_file_name
                 dbSongModel.sq_file_path = songModel.sq_file_path
-                print(f"更新 {dbSongModel.song_name}, 增加无损音乐: {songModel.sq_file_name}")            
-            if dbSongModel.hq_file_name == None and songModel.hq_file_name != None:
+                print(f"🎵 更新 {dbSongModel.song_name}, 增加无损音乐: {songModel.sq_file_name}")            
+                dbSongModel.save()
+                print(f"🛢️ '{songModel.song_name}' 数据库更新 🔄")
+            elif dbSongModel.hq_file_path == '' and songModel.hq_file_path != '':
                 dbSongModel.hq_file_name = songModel.hq_file_name
                 dbSongModel.hq_file_path = songModel.hq_file_path
-                print(f"更新 {dbSongModel.song_name}, 增加高品质音乐: {songModel.hq_file_name}")
-            dbSongModel.save()
+                print(f"🎵 更新 {dbSongModel.song_name}, 增加高品质音乐: {songModel.hq_file_name}")
+                dbSongModel.save()
+                print(f"🛢️ '{songModel.song_name}' 数据库更新 🔄")
+            else:
+                if dbSongModel.sq_file_path != '' and songModel.sq_file_path != '':
+                    print(f"🛢️ 更新失败: 重复歌曲 db.hq_path={dbSongModel.sq_file_path}, song.hq={songModel.sq_file_path} ❌")
+                elif dbSongModel.hq_file_path != '' and songModel.hq_file_path != '':
+                    print(f"🛢️ 更新失败: 重复歌曲 db.hq_path={dbSongModel.hq_file_path}, song.hq={songModel.hq_file_path} ❌")
+                else:
+                    print(f"🛢️ 更新失败: db.sq={dbSongModel.sq_file_path} db.hq={dbSongModel.hq_file_path} song.sq={songModel.sq_file_path} song.hq={songModel.hq_file_path} ❌")
         else:
             # 数据库里不存在，新建数据
-            print(f' {songModel.song_name} 数据库新增!')
+            print(f"🛢️ '{songModel.song_name}' 数据库新增! 🚩 \n")
             duration = song.info.length
             songModel.duration = duration
             songModel.save() 
@@ -153,6 +163,7 @@ class RefreshList(View):
         # 先去数据库检查是否有这个名字的歌
         songModel = SongModel.objects.filter(song_name=song.song_name).first() 
         if songModel == None:
+            print('🛢️ 数据库未找到同名歌曲 🚫')
             return None
 
         # 再去找所有这个名字的歌手
@@ -161,13 +172,15 @@ class RefreshList(View):
         artistsIds = list(map(lambda artist: artist.artist_id, artists))
 
         # 去关联表里面查一下，是不是这个歌的id 和 歌手的id是一样的 
-        existArtistIds = Song2ArtistModel.objects.filter(song_id=songModel.song_id) 
+        existModels = Song2ArtistModel.objects.filter(song_id=songModel.song_id) 
+        existArtistIds = list(map(lambda model: model.artist.artist_id, existModels))
 
         if set(artistsIds) == set(existArtistIds):
-            print(f"数据库里已经有这首歌了 ")
+            print(f"🛢️ 数据库里已经有这首歌了 ids={artistsIds}; exist={existArtistIds} 👀")
             # 去检查歌手是不是也一样
             return songModel
         else:
+            print(f'🛢️ 数据库有同名歌曲，🧑‍🎤歌手不同 当前歌手={artistsIds} 已存储歌曲的歌手={existArtistIds} 🚫')
             return None      
         
     def parseFlac(self, song, artists: list[ArtistModel], songModel: SongModel, file_name: str, file_path: str) -> bool:
@@ -183,7 +196,9 @@ class RefreshList(View):
             return False
         else:
             songModel.media_type = 1
-            songModel.song_name = song_name
+            if isinstance(song_name, list) and len(song_name) > 0:
+                song_name = str(song_name[0])            
+            songModel.song_name = song_name.strip()
             songModel.media_type = MediaType.FLAC.value
             songModel.sq_file_path = file_path 
             songModel.sq_file_name = file_name
@@ -203,7 +218,9 @@ class RefreshList(View):
             Utils.set_label(filepath, ColorLabel.gray.value)
             return False
         else:
-            songModel.song_name = song_name
+            if isinstance(song_name, mutagen.id3.TIT2):
+                song_name = str(song_name.text[0])
+            songModel.song_name = song_name.strip()
             songModel.media_type = MediaType.MP3.value 
             songModel.hq_file_path = filepath 
             songModel.hq_file_name = filename
@@ -214,18 +231,17 @@ class RefreshList(View):
             artistName = ''
             if isinstance(name, list):
                 if len(name) == 1:
-                    artistName = name[0]
+                    artistName = name[0].strip()
                     print(f'歌手名字列表: {name}, 歌手名字 = {artistName}')
-                    print() 
                 else:
                     print("多个歌手")
                     print(name) 
             elif isinstance(name, mutagen.id3.TPE1):                
-                artistName = str(name.text[0]) if name.text else ""
+                artistName = str(name.text[0]).strip() if name.text else ""
                 print(f'获取到歌手名字: {artistName} ')
             else:
                 print(f'歌手名字: {name} 类型={type(name)}')
-                artistName = name
+                artistName = name.strip()
 
             if artistName == '':
                 return
@@ -237,7 +253,7 @@ class RefreshList(View):
             elif '&' in artistName:                
                 artistList = self.splitArtist( artistName, '&', artistList)
             else:
-                print(f"开始处理歌手：{artistName}")
+                print(f"🧑‍🎤 开始处理歌手：{artistName}")
                 existArtist = self.findArtist(artist_name=artistName)
                 if existArtist != None:
                     artistList.append(existArtist)
@@ -249,7 +265,7 @@ class RefreshList(View):
     def splitArtist(self, artistName, sep, artistList):
         nameList = artistName.split(sep)
         for nameItem in nameList:
-            print(f"开始处理歌手：{nameItem}")
+            print(f"🧑‍🎤 开始处理歌手：{nameItem}")
             existArtist = self.findArtist(artist_name=nameItem)
             if existArtist != None:
                 artistList.append(existArtist)
@@ -265,10 +281,10 @@ class RefreshList(View):
         """
         artist = ArtistModel.objects.filter(artist_name=artist_name)
         if artist.count() > 0:
-            print(f'歌手 {artist_name} 已经存在 ✅ ')
+            print(f'🧑‍🎤 歌手 {artist_name} 已经存在 ✅ ')
             return artist[0]
         else:
-            print(f'歌手 {artist_name} 不存在 💡')
+            print(f'🧑‍🎤 歌手 {artist_name} 不存在 🚫')
             return None
 
     def exist(self, filepath, filename) -> bool:
