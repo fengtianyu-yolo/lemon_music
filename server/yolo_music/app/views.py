@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse 
 from django.http import JsonResponse
 from django.views import View
+from django.core.serializers import serialize
 from enum import Enum
+import json
 
 import mutagen.id3
 from .models import SongModel, ArtistModel, Song2ArtistModel
@@ -347,7 +349,13 @@ class RefreshList(View):
 class Songs(View):
 
     def get(self, request):
-        pass
+        songs = SongModel.objects.all()
+        print(songs)
+        serializeData = serialize('json', songs)
+        data = json.loads(serializeData)
+        finaData = [item['fields'] for item in data]
+        print(finaData)
+        return JsonResponse({'songs': finaData})
 
 class Search(View):
     def get(self, request):
