@@ -64,11 +64,15 @@ class RefreshList(View):
             
             if not name is None and len(name) > 0:
                 result.append(name)
-                print()
             else:
                 print(f"{item} 文件处理失败 ❓ \n")
         
         print('处理文件数量: ' + str(len(result)))
+        print(self.successList)
+        print(self.failList)
+        print('处理失败歌曲数量: ' + str(len(self.failList)))
+        print('插入成功歌曲数量: ' + str(len(self.successList)))
+        print('全格式歌曲数量: ' + str(len(self.fullList)))
         return result 
         
 
@@ -331,6 +335,9 @@ class RefreshList(View):
 8. 如果已经存在了这首歌，把高品质的路径添加到这首歌的数据表里
 9. 如果不存在，把SongModel进行保存
     
+
+数据检查： 
+重复歌曲未插入数据库的数量 + 数据库中行数 + hq+sq都有的歌曲的数量 = 文件数量
 """
 
 class Songs(View):
