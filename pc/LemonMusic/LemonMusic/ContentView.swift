@@ -135,10 +135,23 @@ struct Row: View {
     }
 }
 
-struct SongModel: Equatable {
+struct Songs: Codable {
+    var songs: [SongModel]
+}
+
+struct SongModel: Equatable, Codable {
     var id: Int
-    var name: String
+    var songName: String
+    var mediaType: Int
     var duration: String
     var artist: String
     
+}
+
+struct ViewModel {
+    func get() {
+        AF.request("127.0.0.1:5566/songs").responseDecodable(of: SongModel.self) { response in
+            
+        }
+    }
 }
