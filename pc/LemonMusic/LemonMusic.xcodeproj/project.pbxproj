@@ -23,6 +23,7 @@
 		618BD54E2AE0205100E650FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		618BD5512AE0205100E650FC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		618BD5532AE0205100E650FC /* LemonMusic.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LemonMusic.entitlements; sourceTree = "<group>"; };
+		61DE0FD62D1786F700C1EA8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +57,7 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				61DE0FD62D1786F700C1EA8A /* Info.plist */,
 				618BD54A2AE0204E00E650FC /* LemonMusicApp.swift */,
 				618BD54C2AE0204E00E650FC /* ContentView.swift */,
 				618BD54E2AE0205100E650FC /* Assets.xcassets */,
@@ -281,6 +283,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"LemonMusic/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LemonMusic/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -307,6 +310,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"LemonMusic/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = LemonMusic/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

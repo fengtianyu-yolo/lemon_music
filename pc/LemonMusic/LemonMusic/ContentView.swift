@@ -15,6 +15,8 @@ struct ContentView: View {
     ]
     
     @State private  var selectedItem: String? = nil
+    private var viewModel = ViewModel()
+    
     var body: some View {
         
         NavigationSplitView {
@@ -86,23 +88,17 @@ struct HeaderView: View {
 
 struct SongListDetail: View {
     
-    var songList: [SongModel] = [
-        SongModel(id: 1, name: "我的楼兰", duration: "5:30", artist: "云朵"),
-        SongModel(id: 2, name: "我的楼兰", duration: "5:30", artist: "云朵"),
-        SongModel(id: 3, name: "我的楼兰", duration: "5:30", artist: "云朵"),
-        SongModel(id: 4, name: "我的楼兰", duration: "5:30", artist: "云朵"),
-        SongModel(id: 5, name: "我的楼兰", duration: "5:30", artist: "云朵"),
-    ]
+    var songList: [SongModel] = []
     
     @State private var selectedSong: SongModel?
     
     var body: some View {
-        List(songList, id: \.id) { song in
+        List(songList, id: \.songId) { song in
             Row(song: song)
                 .frame(height: 40)
-                .background(selectedSong?.id == song.id ? Color.blue : Color.clear)
+                .background(selectedSong?.songId == song.songId ? Color.blue : Color.clear)
                 .onTapGesture {
-                    print("\(song.name)")
+                    print("\(song.songName)")
                     selectedSong = song
                 }
                 .listRowInsets(EdgeInsets())
@@ -120,13 +116,13 @@ struct Row: View {
     
     var body: some View {
         HStack(spacing: 0) {
-            Text(song.name)
+            Text(song.songName)
                 .frame(width: 120, height: 40)
             
-            Text(song.duration)
+            Text("\(song.duration)")
                 .frame(width: 40, height: 40)
             
-            Text(song.artist)
+            Text(song.artists.first?.artistName ?? "")
                 .frame(width: 80, height: 40)
             
             Spacer()
@@ -135,23 +131,64 @@ struct Row: View {
     }
 }
 
-struct Songs: Codable {
-    var songs: [SongModel]
+struct SongListResponseModel: Codable {
+    var data: [SongModel]
 }
 
 struct SongModel: Equatable, Codable {
-    var id: Int
+    var songId: Int
     var songName: String
+    var duration: Int
     var mediaType: Int
-    var duration: String
-    var artist: String
+    var sqFileName: String
+    var sqFilePath: String
+    var hqFileName: String
+    var hqFilePath: String
+    var coverPath: String
+    var addedTime: String?
+    var updatedTime: String?
+    var artists: [ArtistModel]
     
+    enum CodingKeys: String, CodingKey {
+        case songId = "song_id"
+        case songName = "song_name"
+        case duration = "duration"
+        case mediaType = "media_type"
+        case sqFileName = "sq_file_name"
+        case hqFileName = "hq_file_name"
+        case sqFilePath = "sq_file_path"
+        case hqFilePath = "hq_file_path"
+        case coverPath = "cover_path"
+        case addedTime = "added_time"
+        case updatedTime = "updated_time"
+        case artists = "artists"
+    }
 }
 
-struct ViewModel {
+struct ArtistModel: Equatable, Codable {
+    var artistName: String
+    var artistId: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case artistName = "artist_name"
+        case artistId = "artist_id"
+    }
+}
+
+class ViewModel {
+    
+    init() {
+        get()
+    }
+    
     func get() {
-        AF.request("127.0.0.1:5566/songs").responseDecodable(of: SongModel.self) { response in
-            
+        AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
+            switch response.result {
+            case .success(let responseModel):
+                print(responseModel.data.first)
+            case .failure(let error):
+                print(error)
+            }
         }
     }
 }

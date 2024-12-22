@@ -20,5 +20,4 @@ class ArtistModel(models.Model):
 
 class Song2ArtistModel(models.Model):
     song = models.ForeignKey(SongModel, on_delete=models.CASCADE)
-    artist = models.ForeignKey(ArtistModel, on_delete=models.CASCADE)
-
+    artist = models.ForeignKey(ArtistModel, on_delete=models.CASCADE)    

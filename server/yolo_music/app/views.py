@@ -349,13 +349,41 @@ class RefreshList(View):
 class Songs(View):
 
     def get(self, request):
+        songList = []
+        response = {'data': []}
+
         songs = SongModel.objects.all()
-        print(songs)
-        serializeData = serialize('json', songs)
-        data = json.loads(serializeData)
-        finaData = [item['fields'] for item in data]
-        print(finaData)
-        return JsonResponse({'songs': finaData})
+        for song in songs:
+            
+            songDict = {
+                'song_name': song.song_name,
+                'song_id': song.song_id,
+                'duration': song.duration,
+                'media_type': song.media_type,
+                'cover_path': song.cover_path,
+                'sq_file_path': song.sq_file_path,
+                'hq_file_path': song.hq_file_path,
+                'sq_file_name': song.sq_file_name,
+                'hq_file_name': song.hq_file_name
+            }
+            artists = Song2ArtistModel.objects.filter(song=song)
+            artistDicts = []            
+            for user in artists:
+                artistDict = {
+                    'artist_name': user.artist.artist_name,
+                    'artist_id': user.artist.artist_id
+                }
+                artistDicts.append(artistDict)
+            songDict['artists'] = artistDicts
+            songList.append(songDict)
+        response['data'] = songList
+        print(response)
+        return JsonResponse(response)
+        # serializeData = serialize('json', songs)
+        # data = json.loads(serializeData)
+        # finaData = [item['fields'] for item in data]
+        # print(finaData)
+        # return JsonResponse({'songs': finaData})
 
 class Search(View):
     def get(self, request):
