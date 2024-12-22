@@ -15,7 +15,6 @@ struct ContentView: View {
     ]
     
     @State private  var selectedItem: String? = nil
-    private var viewModel = ViewModel()
     
     var body: some View {
         
@@ -65,12 +64,14 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct SongListView: View {
+    private var viewModel = ViewModel()
+
     var body: some View {
         VStack(spacing: 0) {
             HeaderView()
                 .frame(height: 40)
                 .background(Color.orange)
-            SongListDetail()
+            SongListDetail(viewModel: viewModel)
 
             Spacer()
         }
@@ -92,8 +93,10 @@ struct SongListDetail: View {
     
     @State private var selectedSong: SongModel?
     
+    @StateObject var viewModel: ViewModel
+    
     var body: some View {
-        List(songList, id: \.songId) { song in
+        List(viewModel.data, id: \.songId) { song in
             Row(song: song)
                 .frame(height: 40)
                 .background(selectedSong?.songId == song.songId ? Color.blue : Color.clear)
@@ -175,7 +178,9 @@ struct ArtistModel: Equatable, Codable {
     }
 }
 
-class ViewModel {
+class ViewModel: ObservableObject {
+    
+    @Published var data: [SongModel] = []
     
     init() {
         get()
@@ -185,7 +190,7 @@ class ViewModel {
         AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
             switch response.result {
             case .success(let responseModel):
-                print(responseModel.data.first)
+                self.data = responseModel.data
             case .failure(let error):
                 print(error)
             }
