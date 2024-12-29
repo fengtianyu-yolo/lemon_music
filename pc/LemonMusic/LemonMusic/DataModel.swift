@@ -11,7 +11,12 @@ struct SongListResponseModel: Codable {
     var data: [SongModel]
 }
 
-struct SongModel: Equatable, Codable {
+struct SongModel: Equatable, Identifiable, Codable {
+    
+    var id: Int {
+        return songId
+    }
+    
     var songId: Int
     var songName: String
     var duration: Int

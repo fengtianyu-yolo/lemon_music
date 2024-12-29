@@ -8,6 +8,7 @@
 import SwiftUI
 import Alamofire
 import AVFoundation
+import AppKit
 
 struct ContentView: View {
     let categoies = [
@@ -25,12 +26,14 @@ struct ContentView: View {
                 Spacer()
             }
             .padding()
+            .background(Color.white)
             
             List {
                 Section("音乐库") {
 
                     NavigationLink {
                         SongListView()
+                            .background(Color("background"))
                             .onAppear {
 //                                let workspace = NSWorkspace.shared
 //                                if let url = URL(string: "x - apple.systempreferences:com.apple.preference.security?Privacy_FullDiskAccess") {
@@ -61,9 +64,13 @@ struct ContentView: View {
             }
             .listStyle(SidebarListStyle())
             .toolbar(.hidden)
+            .background(Color.white)
+
         } detail: {
-            Text("detail")
+            
         }
+        .background(Color("background"))
+
     }
 }
 
@@ -75,19 +82,94 @@ struct ContentView_Previews: PreviewProvider {
 
 struct SongListView: View {
     
-    private var viewModel = ViewModel()
+    @StateObject private var viewModel = ViewModel()
     
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 20) {
+            /*
             HeaderView(viewModel: viewModel)
-                .frame(height: 60)
+                .padding(.horizontal, 20)
+                .frame(height: 80)
                 .background(Color.white)
                 .ignoresSafeArea(.all) // 忽略安全区域，从窗口顶部开始布局
-
+             */
+            
+            Text("My Playlist")
+                .font(Font.system(size: 44, weight: Font.Weight.bold))
+                .padding(.horizontal, 20)
+            
             SongListDetail(viewModel: viewModel)
-
-            Spacer()
+                .padding(.horizontal, 20)
+            
+            VStack {
+                
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        viewModel.pre()
+                      }) {
+                          Image("pre_song")  // 替换为你的图片名称
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)  // 根据需要调整图片大小
+                      }
+                      .frame(width: 32, height: 32) // 按钮大小
+                      .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                      .contentShape(Circle()) // 确保点击区域为圆形
+                      .buttonStyle(.plain)
+                    
+                    Button(action: {
+                        if viewModel.playing {
+                            viewModel.pause()
+                        } else {
+                            viewModel.resume()
+                        }
+                      }) {
+                          Image(viewModel.playing ? "pause" : "play")  // 替换为你的图片名称
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 36, height: 36)  // 根据需要调整图片大小
+                      }
+                      .frame(width: 36, height: 36) // 按钮大小
+                      .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                      .contentShape(Circle()) // 确保点击区域为圆形
+                      .buttonStyle(.plain)
+                    
+                    
+                    Button(action: {
+                        viewModel.next()
+                    }) {
+                        Image("next_song")  // 替换为你的图片名称
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 20, height: 20)  // 根据需要调整图片大小
+                    }
+                    .frame(width: 32, height: 32) // 按钮大小
+                    .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                    .contentShape(Circle()) // 确保点击区域为圆形
+                    .buttonStyle(.plain)
+                    Spacer()
+                }
+                
+                HStack(alignment: .center, spacing: 12) {
+                    Text("0:11")
+                    Rectangle()
+                        .frame(height: 2)
+                        .background(Color("background"))
+                    Text("2:33")
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 1))
+                .padding(.horizontal, 20)
+            }
+            .frame(height: 80)
+            .background(Color.white)
+            .clipShape(RoundedRectangle(cornerRadius: 15))
+            .padding(.horizontal, 80)
         }
+        .padding(.bottom, 20)
+
+        
+       
     }
 }
 
@@ -98,13 +180,24 @@ struct HeaderView: View {
     var body: some View {
         
         HStack(spacing: 22) {
-            Image("")
-                .frame(width: 40, height: 40)
-                .background(Color.red)
+            Image("music_placeholder")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 32, height: 32)
+//                .background(Color.green)
             
-            VStack(alignment: .leading) {
+//            RectangularWaveView(color: .red)
+//                .frame(width: 40, height: 40)
+            
+            VStack(alignment: .leading, spacing: 2.0) {
                 Text(viewModel.selectedSong?.songName ?? "")
+                    .font(Font.system(size: 14.0))
+                    .foregroundColor(Color("title", bundle: nil))
+
                 Text(viewModel.selectedSong?.artistName ?? "")
+                    .font(Font.system(size: 12.0))
+                    .foregroundColor(Color("subtitle", bundle: nil))
+
             }
             
             Button(action: {
@@ -158,24 +251,27 @@ struct HeaderView: View {
 }
 
 struct SongListDetail: View {
-    
-    var songList: [SongModel] = []
-        
+            
     @StateObject var viewModel: ViewModel
 
 
     var body: some View {
+        
         List(viewModel.data, id: \.songId) { song in
-            Row(song: song)
-                .frame(height: 40)
-                .background(viewModel.selectedSong?.songId == song.songId ? Color.blue : Color.clear)
+            Row(song: song, selected: viewModel.selectedSong?.songId == song.songId)
+                .frame(height: viewModel.selectedSong?.songId == song.songId ? 60: 48)
                 .onTapGesture {
                     viewModel.selectedSong = song
                 }
                 .listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden) // 隐藏分隔线
+
         }
         .listStyle(PlainListStyle())
         .scrollContentBackground(.hidden)
+        .onAppear {
+        }
+         
     }
 }
 
@@ -183,19 +279,42 @@ struct Row: View {
     
     var song: SongModel
     
+    var selected: Bool
+    
     var body: some View {
-        HStack(spacing: 12) {
-            Text(song.songName)
-                .frame(width: 300, height: 40, alignment: .leading)
+        
+        ZStack {
+            if selected {
+                // 背景和阴影
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color.white)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+            }
             
-            Text("\(song.duration)")
-                .frame(width: 60, height: 40, alignment: .leading)
-            
-            Text(song.artists.first?.artistName ?? "")
-                .frame(width: 120, height: 40, alignment: .leading)
-            
-            Spacer()
+            HStack(spacing: 12) {
+                Text(song.songName)
+                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
+                    .frame(width: 300, alignment: .leading)
+                    .padding(.leading, 24)
+                
+                Text("\(song.duration)")
+                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
+                    .frame(width: 60, alignment: .leading)
+                
+                Text(song.artists.first?.artistName ?? "")
+                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
+                    .frame(width: 120, alignment: .leading)
+                
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .contentShape(Rectangle())
         }
-        .contentShape(Rectangle())
+        .padding(4)
     }
 }
+
+
