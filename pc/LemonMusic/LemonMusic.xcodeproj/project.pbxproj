@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		61366FB82D110D9B000D7E3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 61366FB72D110D9B000D7E3A /* Alamofire */; };
 		613EFB932D11CC7E00BB021D /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613EFB922D11CC7E00BB021D /* MusicViewModel.swift */; };
+		617A50592D2161900036FA0A /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617A50582D2161900036FA0A /* DataModel.swift */; };
 		618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BD54A2AE0204E00E650FC /* LemonMusicApp.swift */; };
 		618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BD54C2AE0204E00E650FC /* ContentView.swift */; };
 		618BD54F2AE0205100E650FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 618BD54E2AE0205100E650FC /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 
 /* Begin PBXFileReference section */
 		613EFB922D11CC7E00BB021D /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
+		617A50582D2161900036FA0A /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		618BD5472AE0204E00E650FC /* LemonMusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LemonMusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		618BD54A2AE0204E00E650FC /* LemonMusicApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LemonMusicApp.swift; sourceTree = "<group>"; };
 		618BD54C2AE0204E00E650FC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				618BD5532AE0205100E650FC /* LemonMusic.entitlements */,
 				618BD5502AE0205100E650FC /* Preview Content */,
 				613EFB922D11CC7E00BB021D /* MusicViewModel.swift */,
+				617A50582D2161900036FA0A /* DataModel.swift */,
 			);
 			path = LemonMusic;
 			sourceTree = "<group>";
@@ -150,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				613EFB932D11CC7E00BB021D /* MusicViewModel.swift in Sources */,
+				617A50592D2161900036FA0A /* DataModel.swift in Sources */,
 				618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */,
 				618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */,
 			);
