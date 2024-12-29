@@ -170,12 +170,9 @@ struct SongListDetail: View {
                 .frame(height: 40)
                 .background(viewModel.selectedSong?.songId == song.songId ? Color.blue : Color.clear)
                 .onTapGesture {
-                    print("\(song.songName)")
                     viewModel.selectedSong = song
-                    
                 }
                 .listRowInsets(EdgeInsets())
-            
         }
         .listStyle(PlainListStyle())
         .scrollContentBackground(.hidden)
@@ -187,15 +184,15 @@ struct Row: View {
     var song: SongModel
     
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 12) {
             Text(song.songName)
-                .frame(width: 120, height: 40)
+                .frame(width: 300, height: 40, alignment: .leading)
             
             Text("\(song.duration)")
-                .frame(width: 40, height: 40)
+                .frame(width: 60, height: 40, alignment: .leading)
             
             Text(song.artists.first?.artistName ?? "")
-                .frame(width: 80, height: 40)
+                .frame(width: 120, height: 40, alignment: .leading)
             
             Spacer()
         }
