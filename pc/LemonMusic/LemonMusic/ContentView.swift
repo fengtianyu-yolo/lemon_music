@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Alamofire
+import AVFoundation
 
 struct ContentView: View {
     let categoies = [
@@ -15,7 +16,7 @@ struct ContentView: View {
     ]
     
     @State private  var selectedItem: String? = nil
-    
+        
     var body: some View {
         
         NavigationSplitView {
@@ -30,6 +31,15 @@ struct ContentView: View {
 
                     NavigationLink {
                         SongListView()
+                            .onAppear {
+//                                let workspace = NSWorkspace.shared
+//                                if let url = URL(string: "x - apple.systempreferences:com.apple.preference.security?Privacy_FullDiskAccess") {
+//                                    workspace.open(url)
+//                                    print("请求权限")
+//                                } else {
+//                                    print("没有请求权限")
+//                                }
+                            }
                     } label: {
                         Text("歌曲")
                             .frame(height: 20)
@@ -64,13 +74,16 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct SongListView: View {
+    
     private var viewModel = ViewModel()
-
+    
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView()
-                .frame(height: 40)
-                .background(Color.orange)
+            HeaderView(viewModel: viewModel)
+                .frame(height: 60)
+                .background(Color.white)
+                .ignoresSafeArea(.all) // 忽略安全区域，从窗口顶部开始布局
+
             SongListDetail(viewModel: viewModel)
 
             Spacer()
@@ -79,33 +92,89 @@ struct SongListView: View {
 }
 
 struct HeaderView: View {
+    
+    @StateObject var viewModel: ViewModel
+    
     var body: some View {
-        HStack {
-            Text("Header")
+        
+        HStack(spacing: 22) {
+            Image("")
+                .frame(width: 40, height: 40)
+                .background(Color.red)
+            
+            VStack(alignment: .leading) {
+                Text(viewModel.selectedSong?.songName ?? "")
+                Text(viewModel.selectedSong?.artistName ?? "")
+            }
+            
+            Button(action: {
+                viewModel.pre()
+              }) {
+                  Image("pre_song")  // 替换为你的图片名称
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)  // 根据需要调整图片大小
+              }
+              .frame(width: 32, height: 32) // 按钮大小
+              .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+              .contentShape(Circle()) // 确保点击区域为圆形
+              .buttonStyle(.plain)
+            
+            Button(action: {
+                if viewModel.playing {
+                    viewModel.pause()
+                } else {
+                    viewModel.resume()
+                }
+              }) {
+                  Image(viewModel.playing ? "pause" : "play")  // 替换为你的图片名称
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)  // 根据需要调整图片大小
+              }
+              .frame(width: 32, height: 32) // 按钮大小
+              .background(Circle().strokeBorder(Color.green, lineWidth: 2)) // 圆形边框
+              .contentShape(Circle()) // 确保点击区域为圆形
+              .buttonStyle(.plain)
+            
+            
+            Button(action: {
+                viewModel.next()
+            }) {
+                Image("next_song")  // 替换为你的图片名称
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)  // 根据需要调整图片大小
+            }
+            .frame(width: 32, height: 32) // 按钮大小
+            .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+            .contentShape(Circle()) // 确保点击区域为圆形
+            .buttonStyle(.plain)
+            
             Spacer()
         }
+        .padding(12)
     }
 }
 
 struct SongListDetail: View {
     
     var songList: [SongModel] = []
-    
-    @State private var selectedSong: SongModel?
-    
+        
     @StateObject var viewModel: ViewModel
-    
+
+
     var body: some View {
         List(viewModel.data, id: \.songId) { song in
             Row(song: song)
                 .frame(height: 40)
-                .background(selectedSong?.songId == song.songId ? Color.blue : Color.clear)
+                .background(viewModel.selectedSong?.songId == song.songId ? Color.blue : Color.clear)
                 .onTapGesture {
                     print("\(song.songName)")
-                    selectedSong = song
+                    viewModel.selectedSong = song
+                    
                 }
                 .listRowInsets(EdgeInsets())
-                
             
         }
         .listStyle(PlainListStyle())
@@ -152,6 +221,14 @@ struct SongModel: Equatable, Codable {
     var updatedTime: String?
     var artists: [ArtistModel]
     
+    var artistName: String {
+        if artists.isEmpty {
+            return ""
+        } else {
+            return artists.map { $0.artistName }.joined(separator: "&")
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case songId = "song_id"
         case songName = "song_name"
@@ -175,25 +252,5 @@ struct ArtistModel: Equatable, Codable {
     enum CodingKeys: String, CodingKey {
         case artistName = "artist_name"
         case artistId = "artist_id"
-    }
-}
-
-class ViewModel: ObservableObject {
-    
-    @Published var data: [SongModel] = []
-    
-    init() {
-        get()
-    }
-    
-    func get() {
-        AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
-            switch response.result {
-            case .success(let responseModel):
-                self.data = responseModel.data
-            case .failure(let error):
-                print(error)
-            }
-        }
     }
 }
