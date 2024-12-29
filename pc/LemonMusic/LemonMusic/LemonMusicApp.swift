@@ -13,5 +13,6 @@ struct LemonMusicApp: App {
         WindowGroup {
             ContentView()
         }
+        .windowStyle(.hiddenTitleBar)
     }
 }
