@@ -9,7 +9,7 @@ import Foundation
 import AVFoundation
 import Alamofire
 
-class ViewModel: ObservableObject {
+class ViewModel: NSObject, ObservableObject {
     
     @Published var data: [SongModel] = []
     
@@ -23,7 +23,8 @@ class ViewModel: ObservableObject {
     
     @Published var playing: Bool = false
         
-    init() {
+    override init() {
+        super.init()
         get()
     }
     
@@ -56,6 +57,7 @@ class ViewModel: ObservableObject {
             let fileURL = URL(fileURLWithPath: song.sqFilePath)
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
+                audioPlayer?.delegate = self
                 audioPlayer?.prepareToPlay()
                 audioPlayer?.play()
                 playing = true
@@ -102,5 +104,17 @@ class ViewModel: ObservableObject {
                 print(error)
             }
         }
+    }
+}
+
+extension ViewModel: AVAudioPlayerDelegate {
+
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        selectedSong = data.randomElement()
+    }
+
+    
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: (any Error)?) {
+        
     }
 }
