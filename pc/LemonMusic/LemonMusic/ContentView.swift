@@ -21,49 +21,54 @@ struct ContentView: View {
     var body: some View {
         
         NavigationSplitView {
-            HStack {
-                Text("Music")
-                Spacer()
-            }
-            .padding()
-            .background(Color.white)
-            
-            List {
-                Section("音乐库") {
-
-                    NavigationLink {
-                        SongListView()
-                            .background(Color("background"))
-                            .onAppear {
-//                                let workspace = NSWorkspace.shared
-//                                if let url = URL(string: "x - apple.systempreferences:com.apple.preference.security?Privacy_FullDiskAccess") {
-//                                    workspace.open(url)
-//                                    print("请求权限")
-//                                } else {
-//                                    print("没有请求权限")
-//                                }
-                            }
-                    } label: {
-                        Text("歌曲")
-                            .frame(height: 20)
-                    }
-                    NavigationLink {
-                    } label: {
-                        Text("歌曲")
-                            .frame(height: 20)
-                    }
-                }
+            VStack {
                 
-                Section("设备") {
-                    NavigationLink {
-                    } label: {
-                        Text("U盘")
-                            .frame(height: 20)
+                HStack {
+                    Text("Music")
+                    Spacer()
+                }
+                .padding()
+                .background(Color.white)
+                
+                List {
+                    Section("音乐库") {
+                        
+                        NavigationLink {
+                            SongListView()
+                                .background(Color("background"))
+                                .onAppear {
+                                    //                                let workspace = NSWorkspace.shared
+                                    //                                if let url = URL(string: "x - apple.systempreferences:com.apple.preference.security?Privacy_FullDiskAccess") {
+                                    //                                    workspace.open(url)
+                                    //                                    print("请求权限")
+                                    //                                } else {
+                                    //                                    print("没有请求权限")
+                                    //                                }
+                                }
+                        } label: {
+                            Text("歌曲")
+                                .frame(height: 20)
+                        }
+                        NavigationLink {
+                        } label: {
+                            Text("歌曲")
+                                .frame(height: 20)
+                        }
+                    }
+                    
+                    Section("设备") {
+                        NavigationLink {
+                        } label: {
+                            Text("U盘")
+                                .frame(height: 20)
+                        }
                     }
                 }
+                .listStyle(SidebarListStyle())
+                .toolbar(.hidden)
+                .background(Color.white)
             }
-            .listStyle(SidebarListStyle())
-            .toolbar(.hidden)
+            .frame(width: 220)
             .background(Color.white)
 
         } detail: {
@@ -325,13 +330,11 @@ struct Row: View {
                     .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
                     .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
                     .frame(width: 60, alignment: .leading)
-                
+                Spacer()
                 Text(song.artists.first?.artistName ?? "")
                     .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
                     .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
                     .frame(width: 120, alignment: .leading)
-                
-                Spacer()
             }
             .padding(.horizontal, 12)
             .contentShape(Rectangle())
