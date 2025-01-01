@@ -97,7 +97,16 @@ struct SongListView: View {
             Text("My Playlist")
                 .font(Font.system(size: 44, weight: Font.Weight.bold))
                 .padding(.horizontal, 20)
-            
+            HStack {
+                Spacer()
+            }
+            .frame(height: 180)
+            .background (
+                RoundedRectangle(cornerSize: CGSize(width: 12, height: 12))
+                    .fill(Color.white)
+            )
+            .padding(.horizontal, 20)
+
             SongListDetail(viewModel: viewModel)
                 .padding(.horizontal, 20)
             
