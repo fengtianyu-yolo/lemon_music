@@ -105,73 +105,80 @@ struct SongListView: View {
                 RoundedRectangle(cornerSize: CGSize(width: 12, height: 12))
                     .fill(Color.white)
             )
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 40)
 
             SongListDetail(viewModel: viewModel)
                 .padding(.horizontal, 20)
-            
-            VStack {
-                
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        viewModel.pre()
-                      }) {
-                          Image("pre_song")  // 替换为你的图片名称
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)  // 根据需要调整图片大小
-                      }
-                      .frame(width: 32, height: 32) // 按钮大小
-                      .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                      .contentShape(Circle()) // 确保点击区域为圆形
-                      .buttonStyle(.plain)
+            ZStack {
+                MacBlurView(material: .windowBackground)
+//                    .background(Color.red)
+                VStack {
                     
-                    Button(action: {
-                        if viewModel.playing {
-                            viewModel.pause()
-                        } else {
-                            viewModel.resume()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            viewModel.pre()
+                        }) {
+                            Image("pre_song")  // 替换为你的图片名称
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)  // 根据需要调整图片大小
                         }
-                      }) {
-                          Image(viewModel.playing ? "pause" : "play")  // 替换为你的图片名称
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 36, height: 36)  // 根据需要调整图片大小
-                      }
-                      .frame(width: 36, height: 36) // 按钮大小
-                      .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                      .contentShape(Circle()) // 确保点击区域为圆形
-                      .buttonStyle(.plain)
-                    
-                    
-                    Button(action: {
-                        viewModel.next()
-                    }) {
-                        Image("next_song")  // 替换为你的图片名称
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)  // 根据需要调整图片大小
+                        .frame(width: 32, height: 32) // 按钮大小
+                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                        .contentShape(Circle()) // 确保点击区域为圆形
+                        .buttonStyle(.plain)
+                        
+                        Button(action: {
+                            if viewModel.playing {
+                                viewModel.pause()
+                            } else {
+                                viewModel.resume()
+                            }
+                        }) {
+                            Image(viewModel.playing ? "pause" : "play")  // 替换为你的图片名称
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)  // 根据需要调整图片大小
+                        }
+                        .frame(width: 36, height: 36) // 按钮大小
+                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                        .contentShape(Circle()) // 确保点击区域为圆形
+                        .buttonStyle(.plain)
+                        
+                        
+                        Button(action: {
+                            viewModel.next()
+                        }) {
+                            Image("next_song")  // 替换为你的图片名称
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)  // 根据需要调整图片大小
+                        }
+                        .frame(width: 32, height: 32) // 按钮大小
+                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
+                        .contentShape(Circle()) // 确保点击区域为圆形
+                        .buttonStyle(.plain)
+                        Spacer()
                     }
-                    .frame(width: 32, height: 32) // 按钮大小
-                    .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                    .contentShape(Circle()) // 确保点击区域为圆形
-                    .buttonStyle(.plain)
-                    Spacer()
+                    
+                    HStack(alignment: .center, spacing: 12) {
+                        Text("0:11")
+                        Rectangle()
+                            .frame(height: 2)
+                            .background(Color("background"))
+                        Text("2:33")
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 1))
+                    .padding(.horizontal, 20)
                 }
-                
-                HStack(alignment: .center, spacing: 12) {
-                    Text("0:11")
-                    Rectangle()
-                        .frame(height: 2)
-                        .background(Color("background"))
-                    Text("2:33")
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 1))
-                .padding(.horizontal, 20)
+//                .frame(height: 80)
+//                .background(Color.clear)
+//                .clipShape(RoundedRectangle(cornerRadius: 15))
+//                .padding(.horizontal, 80)
             }
             .frame(height: 80)
-            .background(Color.white)
+//            .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding(.horizontal, 80)
         }
@@ -238,8 +245,7 @@ struct HeaderView: View {
               .background(Circle().strokeBorder(Color.green, lineWidth: 2)) // 圆形边框
               .contentShape(Circle()) // 确保点击区域为圆形
               .buttonStyle(.plain)
-            
-            
+                        
             Button(action: {
                 viewModel.next()
             }) {
@@ -327,3 +333,21 @@ struct Row: View {
 }
 
 
+
+struct MacBlurView: NSViewRepresentable {
+    typealias NSViewType = NSVisualEffectView
+    
+    // 定义模糊效果的风格，可按需修改
+    let material: NSVisualEffectView.Material
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let visualEffectView = NSVisualEffectView()
+        visualEffectView.material = material
+        visualEffectView.state = .active
+        visualEffectView.appearance = NSAppearance(named: NSAppearance.Name.vibrantLight)
+        return visualEffectView
+    }
+    
+    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {
+    }
+}
