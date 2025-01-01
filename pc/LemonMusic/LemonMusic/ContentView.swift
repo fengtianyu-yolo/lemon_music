@@ -24,7 +24,10 @@ struct ContentView: View {
             VStack {
                 
                 HStack {
-                    Text("Music")
+                    Image("logo")
+                        .frame(width: 32, height: 32)
+                    Text("LemonMusic")
+                        .font(Font.system(size: 18.0, weight: Font.Weight.bold))
                     Spacer()
                 }
                 .padding()
@@ -32,29 +35,44 @@ struct ContentView: View {
                 
                 List {
                     Section("音乐库") {
-                        
                         NavigationLink {
                             SongListView()
                                 .background(Color("background"))
                                 .onAppear {
-                                    //                                let workspace = NSWorkspace.shared
-                                    //                                if let url = URL(string: "x - apple.systempreferences:com.apple.preference.security?Privacy_FullDiskAccess") {
-                                    //                                    workspace.open(url)
-                                    //                                    print("请求权限")
-                                    //                                } else {
-                                    //                                    print("没有请求权限")
-                                    //                                }
                                 }
                         } label: {
-                            Text("歌曲")
-                                .frame(height: 20)
+                            HStack {
+                                Image( selectedItem == "songList" ? "song_list_selected" : "song_list")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 24.0, height: 24.0)
+
+                                Text("歌曲")
+                            }
+                            .frame(height: 36)
                         }
+                        .listRowBackground(Color.clear)
+                        
+                        
                         NavigationLink {
                         } label: {
-                            Text("歌曲")
-                                .frame(height: 20)
+                            
+                            HStack {
+                                Image("song_list")
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 24.0, height: 24.0)
+
+                                Text("歌曲")
+                            }
+                            .frame(height: 36)
+                            
                         }
+                        .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
+                        .listRowBackground(Color.clear)
+
                     }
+                    .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                     
                     Section("设备") {
                         NavigationLink {
@@ -67,9 +85,11 @@ struct ContentView: View {
                 .listStyle(SidebarListStyle())
                 .toolbar(.hidden)
                 .background(Color.white)
+                
             }
             .frame(width: 220)
             .background(Color.white)
+            
 
         } detail: {
             
