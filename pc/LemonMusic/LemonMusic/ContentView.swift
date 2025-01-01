@@ -84,31 +84,39 @@ struct SongListView: View {
     
     @StateObject private var viewModel = ViewModel()
     
+    func loadImage(from imageName: String) -> NSImage? {
+        
+        if let path = Bundle.main.path(forResource: imageName, ofType: nil) {
+            return NSImage(contentsOfFile: path)
+        }
+        return nil
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            /*
-            HeaderView(viewModel: viewModel)
-                .padding(.horizontal, 20)
-                .frame(height: 80)
-                .background(Color.white)
-                .ignoresSafeArea(.all) // 忽略安全区域，从窗口顶部开始布局
-             */
-            
             Text("My Playlist")
                 .font(Font.system(size: 44, weight: Font.Weight.bold))
                 .padding(.horizontal, 20)
-            HStack {
-                Spacer()
+            
+            ZStack {
+                if let image = loadImage(from: "cover.JPG") {
+                    Image(nsImage: image)
+                        .resizable()
+                        .scaledToFill()
+                }
+                HStack {
+                    Spacer()
+                }.padding(.horizontal, 40)
             }
             .frame(height: 180)
-            .background (
+            .clipShape(
                 RoundedRectangle(cornerSize: CGSize(width: 12, height: 12))
-                    .fill(Color.white)
             )
             .padding(.horizontal, 40)
 
             SongListDetail(viewModel: viewModel)
                 .padding(.horizontal, 20)
+            
             ZStack {
                 MacBlurView(material: .windowBackground)
 //                    .background(Color.red)

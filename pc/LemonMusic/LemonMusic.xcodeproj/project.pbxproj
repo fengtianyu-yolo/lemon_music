@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6130CA7B2D24EA5D00AB9959 /* cover.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 6130CA7A2D24EA5D00AB9959 /* cover.JPG */; };
 		61366FB82D110D9B000D7E3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 61366FB72D110D9B000D7E3A /* Alamofire */; };
 		613EFB932D11CC7E00BB021D /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613EFB922D11CC7E00BB021D /* MusicViewModel.swift */; };
 		617A50592D2161900036FA0A /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617A50582D2161900036FA0A /* DataModel.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6130CA7A2D24EA5D00AB9959 /* cover.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cover.JPG; sourceTree = "<group>"; };
 		613EFB922D11CC7E00BB021D /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
 		617A50582D2161900036FA0A /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		618BD5472AE0204E00E650FC /* LemonMusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LemonMusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -59,6 +61,7 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				6130CA7A2D24EA5D00AB9959 /* cover.JPG */,
 				61DE0FD62D1786F700C1EA8A /* Info.plist */,
 				618BD54A2AE0204E00E650FC /* LemonMusicApp.swift */,
 				618BD54C2AE0204E00E650FC /* ContentView.swift */,
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				618BD5522AE0205100E650FC /* Preview Assets.xcassets in Resources */,
+				6130CA7B2D24EA5D00AB9959 /* cover.JPG in Resources */,
 				618BD54F2AE0205100E650FC /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

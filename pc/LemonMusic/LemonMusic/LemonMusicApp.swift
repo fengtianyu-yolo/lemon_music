@@ -18,3 +18,10 @@ struct LemonMusicApp: App {
         .windowResizability(.contentSize)
     }
 }
+
+/*
+ 1 加个icon
+ 2 顶部加个卡片
+ 3 添加进度条
+ 4 优化修改列表样式
+ */
