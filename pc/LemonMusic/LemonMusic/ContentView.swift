@@ -130,10 +130,40 @@ struct SongListView: View {
                         .scaledToFill()
                 }
                 HStack {
+                    VStack(alignment: .leading, spacing: 12.0) {
+                        Text("正在播放")
+                            .font(Font.system(size: 12.0))
+                            .foregroundStyle(.gray)
+                        
+                        Text("富士山下")
+                            .font(Font.system(size: 32, weight: .heavy))
+                            .padding(.bottom, 16)
+                        
+                        Button {
+                            print("回到这首歌曲")
+                        } label: {
+                            Text("回到这里")
+                                .font(Font.system(size: 12.0))
+                                .foregroundStyle(.white)
+                        }
+                        .frame(width: 88, height: 32) // 按钮大小
+                        .background(Color.black) // 圆形边框
+                        .foregroundStyle(.white)
+                        .clipShape(
+                            RoundedRectangle(cornerSize: CGSize(width: 16, height: 16))
+                        )
+                        .buttonStyle(.plain)
+                    }
                     Spacer()
-                }.padding(.horizontal, 40)
+                    VStack {
+//                        Text("我送你离开")
+//                        Text("千里之外")
+                        Text("正在搜索歌词 ...")
+                            .foregroundStyle(.white)
+                    }
+                }.padding(40)
             }
-            .frame(height: 180)
+            .frame(height: 200)
             .clipShape(
                 RoundedRectangle(cornerSize: CGSize(width: 12, height: 12))
             )
@@ -142,6 +172,7 @@ struct SongListView: View {
             SongListDetail(viewModel: viewModel)
                 .padding(.horizontal, 20)
             
+            // 毛玻璃效果实现
             ZStack {
                 MacBlurView(material: .windowBackground)
 //                    .background(Color.red)
