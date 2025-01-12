@@ -15,11 +15,13 @@ class ViewModel: NSObject, ObservableObject {
     
     @Published var selectedSong: SongModel? {
         didSet {
-            self.play()
+//            self.play()
+            self.getSongStream()
         }
     }
     
     var audioPlayer: AVAudioPlayer?
+    var player: AVPlayer?
     
     @Published var playing: Bool = false
         
@@ -55,9 +57,6 @@ class ViewModel: NSObject, ObservableObject {
         if !song.sqFilePath.isEmpty {
             print("path = \(song.sqFilePath)")
             let fileURL = URL(fileURLWithPath: song.sqFilePath)
-            self.getM3u8(filepath: song.sqFilePath)
-            return
-            
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
                 audioPlayer?.delegate = self
@@ -69,6 +68,31 @@ class ViewModel: NSObject, ObservableObject {
             }
         } else {
             print("没有无损音乐")
+        }
+    }
+    
+    func getSongStream() {
+        let song = selectedSong ?? data.first
+        guard let song = song else {
+            return
+        }
+        self.getM3u8(filepath: song.sqFilePath)
+    }
+    
+    func play(url: String) {
+        guard let url = URL(string: url) else {
+            return
+        }
+        do {
+            player = AVPlayer(url: url)
+            player?.play()
+//            audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
+//            audioPlayer?.delegate = self
+//            audioPlayer?.prepareToPlay()
+//            audioPlayer?.play()
+            playing = true
+        } catch {
+            print("播放不了 \(error.localizedDescription)")
         }
     }
     
@@ -120,7 +144,16 @@ class ViewModel: NSObject, ObservableObject {
             print("播放失败 \(urlstring)")
             return
         }
-        
+                        
+        AF.request(url, parameters: params).responseDecodable(of: M3u8Model.self) { response in
+            switch response.result {
+            case .success(let responseModel):
+                self.play(url: responseModel.url)
+            case .failure(let error):
+                print(error)
+            }
+        }
+        /*
         AF.request(url, parameters: params, headers: ["Accept": "application/vnd.apple.mpegurl"]).responseData { response in
             switch response.result {
             case.success(let data):
@@ -133,6 +166,7 @@ class ViewModel: NSObject, ObservableObject {
                 print("请求出错: \(error)")
             }
         }
+         */
     
     }
 }

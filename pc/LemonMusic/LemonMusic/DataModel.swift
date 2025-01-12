@@ -63,3 +63,11 @@ struct ArtistModel: Equatable, Codable {
         case artistId = "artist_id"
     }
 }
+
+struct M3u8Model: Codable {
+    var url: String
+    
+    enum CodingKeys: String, CodingKey {
+        case url = "m3u8_url"
+    }
+}
