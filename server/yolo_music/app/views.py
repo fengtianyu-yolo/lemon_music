@@ -9,6 +9,7 @@ import json
 import mutagen.id3
 from .models import SongModel, ArtistModel, Song2ArtistModel
 import os
+import subprocess
 import mutagen
 from .Utils import Utils, ColorLabel
 
@@ -388,3 +389,82 @@ class Songs(View):
 class Search(View):
     def get(self, request):
         queryWord = request.GET.get('query')
+
+
+HLS_CACHE = '/Users/fengtianyu/Projects/lemon_music/hls_cache'
+
+class StreamView(View):
+
+    def get(self, request, filename):
+        input_file = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/01.mp3'
+        output_dir = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/hls'
+        output_m3u8 = self.create_hls(input_file, output_dir)
+        return JsonResponse({'m3u8': output_m3u8})
+
+    def stream_audio(self, request, filename):
+        """
+        返回m3u8文件
+        """
+        input_file = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/01.mp3'
+        if not os.path.exists(input_file):
+            return JsonResponse({'code': 404, 'msg': '文件不存在'})
+        
+        # HLS 分片目录
+        output_dir = os.join(HLS_CACHE, filename.split('.')[0])
+        m3u8_path = os.join(output_dir, 'index.m3u8')
+
+        # 生成m3u8文件
+        self.create_hls(input_file, output_dir)
+        with open(m3u8_path, 'r') as f:
+            m3u8_content = f.read()
+        return HttpResponse(m3u8_content, content_type='application/vnd.apple.mpegurl')
+
+
+    def stream_segment(self, request, filename, segment):
+        """
+        返回ts文件 hls分片
+        """
+        input_file = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/01.mp3'
+        if not os.path.exists(input_file):
+            return JsonResponse({'code': 404, 'msg': '文件不存在'})
+        
+        output_dir = os.join(HLS_CACHE, filename.split('.')[0])
+        segment_file = os.join(output_dir, f'{segment}.ts')
+        with open(segment_file, 'rb') as f:
+            segment_content = f.read()
+        return HttpResponse(segment_content, content_type='video/mp2t')
+
+
+    def create_hls(input_file, output_dir, segment_time=10):
+        """
+        创建hls文件
+        """
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        output_m3u8 = f'{output_dir}/index.m3u8'
+        command = [
+            'ffmpeg',
+            '-i', input_file,
+            '-codec: audio', 'aac',
+            '-b:a', '128k',
+            '-f', 'hls',
+            '-hls_time', str(segment_time),
+            '-hls_playlist_type', 'vod',
+            '-hls_list_size', '0',
+            '-hls_segment_filename', f'{output_dir}/%03d.ts',
+            f'{output_dir}/index.m3u8'
+        ]
+        # command = f'ffmpeg -i {input_file} -hls_time {segment_time} -hls_list_size 0 -hls_segment_filename {output_dir}/%03d.ts {output_dir}/index.m3u8'
+        print(command)
+        subprocess.run(command, check=True)
+        return output_m3u8
+
+class StreamAudio(StreamView):
+    def get(self, request, filename):
+        return self.stream_audio(request, filename)
+
+
+class StreamSegment(StreamView):
+    def get(self, request, filename, segment):
+        return self.stream_segment(request, filename, segment)
