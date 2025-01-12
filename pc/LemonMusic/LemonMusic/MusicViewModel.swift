@@ -31,19 +31,19 @@ class ViewModel: NSObject, ObservableObject {
     }
     
     func pause() {
-        guard let player = self.audioPlayer else {
-            return
-        }
-        player.pause()
-        self.playing = player.isPlaying
+//        guard let player = self.audioPlayer else {
+//            return
+//        }
+        player?.pause()
+        self.playing = false
     }
     
     func resume() {
-        guard let player = self.audioPlayer else {
-            return
-        }
-        player.play()
-        self.playing = player.isPlaying
+//        guard let player = self.audioPlayer else {
+//            return
+//        }
+        player?.play()
+        self.playing = true
     }
     
     func play() {
@@ -85,14 +85,25 @@ class ViewModel: NSObject, ObservableObject {
         }
         do {
             player = AVPlayer(url: url)
-            player?.play()
-//            audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
-//            audioPlayer?.delegate = self
-//            audioPlayer?.prepareToPlay()
-//            audioPlayer?.play()
+//            player?.play()
+            player?.currentItem?.addObserver(self, forKeyPath: "status", options: [.new], context: nil)
             playing = true
         } catch {
             print("播放不了 \(error.localizedDescription)")
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "status" {
+            let playerItem = object as? AVPlayerItem
+            if playerItem?.status == .readyToPlay {
+                player?.play()
+                playing = true
+            } else if playerItem?.status == .failed {
+                if let error = playerItem?.error {
+                    print("播放出错: \(error)")
+                }
+            }
         }
     }
     
