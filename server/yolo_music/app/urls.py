@@ -12,6 +12,10 @@ urlpatterns = [
     path('songs', Songs.as_view()),
     path('search', Search.as_view()),
     path('artist', SearchArtist.as_view()),
-    path('stream/<str:filename>', StreamAudio.as_view(), name='stream_audio'),
-    path('stream/<str:filename>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
+    # path('stream/<str:filename>', StreamAudio.as_view(), name='stream_audio'),
+    # path('stream/<str:filepath>', StreamAudio.as_view(), name='stream_audio'),
+    path('stream', StreamAudio.as_view(), name='stream_audio'),
+    # path('stream/<str:filename>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
+    # path('stream/<str:filepath>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
+    path('segment', StreamSegment.as_view(), name='stream_segment'),
 ]

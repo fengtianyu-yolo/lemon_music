@@ -55,6 +55,9 @@ class ViewModel: NSObject, ObservableObject {
         if !song.sqFilePath.isEmpty {
             print("path = \(song.sqFilePath)")
             let fileURL = URL(fileURLWithPath: song.sqFilePath)
+            self.getM3u8(filepath: song.sqFilePath)
+            return
+            
             do {
                 audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
                 audioPlayer?.delegate = self
@@ -104,6 +107,33 @@ class ViewModel: NSObject, ObservableObject {
                 print(error)
             }
         }
+    }
+    
+    func getM3u8(filepath: String) {
+        
+        let urlstring = "http://127.0.0.1:5566/stream"
+        
+        let params = [
+            "filepath": filepath
+        ]
+        guard let url = URL(string: urlstring) else {
+            print("播放失败 \(urlstring)")
+            return
+        }
+        
+        AF.request(url, parameters: params, headers: ["Accept": "application/vnd.apple.mpegurl"]).responseData { response in
+            switch response.result {
+            case.success(let data):
+                // 在这里处理成功获取到的数据
+                if let mpegurlString = String(data: data, encoding:.utf8) {
+                    
+                }
+            case.failure(let error):
+                // 处理请求失败的情况
+                print("请求出错: \(error)")
+            }
+        }
+    
     }
 }
 

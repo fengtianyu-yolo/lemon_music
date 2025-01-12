@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
 from app import urls as app_urls
+from .settings import MEDIA_ROOT, MEDIA_URL
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(app_urls))
 ]
+
+# 添加媒体文件的访问路由
+#这样，存储在 MEDIA_ROOT 中的文件就可以通过 http://your-server-address/media/ 访问了。
+urlpatterns += static(MEDIA_URL, document_root=MEDIA_ROOT)

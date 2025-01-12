@@ -6,7 +6,10 @@ from django.core.serializers import serialize
 from enum import Enum
 import json
 
+
 import mutagen.id3
+
+from yolo_music import settings
 from .models import SongModel, ArtistModel, Song2ArtistModel
 import os
 import subprocess
@@ -391,7 +394,8 @@ class Search(View):
         queryWord = request.GET.get('query')
 
 
-HLS_CACHE = '/Users/fengtianyu/Projects/lemon_music/hls_cache'
+HLS_CACHE = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/media_cache'
+MEDIA_ROOT = '/Volumes/MdieaLib/音乐库'
 
 class StreamView(View):
 
@@ -401,30 +405,63 @@ class StreamView(View):
         output_m3u8 = self.create_hls(input_file, output_dir)
         return JsonResponse({'m3u8': output_m3u8})
 
-    def stream_audio(self, request, filename):
+    def stream_audio(self, request):
         """
         返回m3u8文件
         """
-        input_file = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/01.mp3'
+        input_file = request.GET.get('filepath')
+        input_file = str(input_file)        
+        print(type(input_file))
+        """
+        if filepath:
+            input_file = filepath
+        else:
+            input_file = os.path.join(MEDIA_ROOT, filename)
+            print(f"get input file: {0}", input_file)
+            if not os.path.exists(input_file):
+                return JsonResponse({'code': 404, 'msg': '文件不存在'})
+        """
+        
         if not os.path.exists(input_file):
             return JsonResponse({'code': 404, 'msg': '文件不存在'})
         
-        # HLS 分片目录
-        output_dir = os.join(HLS_CACHE, filename.split('.')[0])
-        m3u8_path = os.join(output_dir, 'index.m3u8')
+        # if len(filename) == 0:
+        filename = input_file.split('/')[-1]
+        print(filename)
+
+        # HLS 分片目录        
+        output_dir = os.path.join(HLS_CACHE, filename.replace('.', '-'))
+        m3u8_path = os.path.join(output_dir, 'index.m3u8')
 
         # 生成m3u8文件
-        self.create_hls(input_file, output_dir)
+        m3u8_url = self.create_hls(input_file, output_dir)
+        
+        return JsonResponse({"m3u8_url": request.build_absolute_uri(m3u8_url)})
+    
+        # return JsonResponse({'m3u8': m3u8_path})
         with open(m3u8_path, 'r') as f:
-            m3u8_content = f.read()
+            m3u8_content = f.read()        
         return HttpResponse(m3u8_content, content_type='application/vnd.apple.mpegurl')
 
 
-    def stream_segment(self, request, filename, segment):
+    def stream_segment(self, request, filename, filepath, segment):
         """
         返回ts文件 hls分片
         """
-        input_file = '/Volumes/MdieaLib/音乐库/音乐/2021/01/01/01/01.mp3'
+        # if request.GET.get('segment'):
+        segment = request.GET.get('segment')
+        input_file = request.GET.get('filepath')
+
+        """
+        if filepath:
+            input_file = filepath
+        else:
+            input_file = os.path.join(MEDIA_ROOT, filename)
+
+        if len(filename) == 0:
+            filename = filepath.split('/')[-1]
+        """
+
         if not os.path.exists(input_file):
             return JsonResponse({'code': 404, 'msg': '文件不存在'})
         
@@ -435,36 +472,52 @@ class StreamView(View):
         return HttpResponse(segment_content, content_type='video/mp2t')
 
 
-    def create_hls(input_file, output_dir, segment_time=10):
+    def create_hls(self, input_file: str, output_dir: str, segment_time=10):
         """
         创建hls文件
         """
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
+        temp_file = f'{output_dir}/intermediate.wav'
+        tmp_command = [
+            'ffmpeg',
+            '-i', input_file,
+            '-c:a', 'pcm_s16le',
+            '-ar', '44100',
+            temp_file
+        ]
+        subprocess.run(tmp_command, check=True)
+
         output_m3u8 = f'{output_dir}/index.m3u8'
         command = [
             'ffmpeg',
-            '-i', input_file,
-            '-codec: audio', 'aac',
+            '-i', temp_file,
+            '-c:a', 'aac',
+            '-c:v', 'copy',
             '-b:a', '128k',
             '-f', 'hls',
             '-hls_time', str(segment_time),
             '-hls_playlist_type', 'vod',
             '-hls_list_size', '0',
             '-hls_segment_filename', f'{output_dir}/%03d.ts',
-            f'{output_dir}/index.m3u8'
-        ]
-        # command = f'ffmpeg -i {input_file} -hls_time {segment_time} -hls_list_size 0 -hls_segment_filename {output_dir}/%03d.ts {output_dir}/index.m3u8'
-        print(command)
+            output_m3u8
+        ]        
         subprocess.run(command, check=True)
-        return output_m3u8
+        # return output_m3u8
+
+        relative_path = os.path.relpath(output_m3u8, settings.MEDIA_ROOT)
+        return f"{settings.MEDIA_URL}{relative_path}"
+        
 
 class StreamAudio(StreamView):
     def get(self, request, filename):
         return self.stream_audio(request, filename)
+    
+    def get(self, request):
+        return self.stream_audio(request)
 
 
 class StreamSegment(StreamView):
-    def get(self, request, filename, segment):
+    def get(self, request, filename, segment):        
         return self.stream_segment(request, filename, segment)
