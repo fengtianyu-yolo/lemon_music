@@ -21,3 +21,16 @@ class ArtistModel(models.Model):
 class Song2ArtistModel(models.Model):
     song = models.ForeignKey(SongModel, on_delete=models.CASCADE)
     artist = models.ForeignKey(ArtistModel, on_delete=models.CASCADE)    
+
+
+class DeviceModel(models.Model):    
+    device_id = models.AutoField(primary_key=True)
+    device_name = models.CharField(max_length=255)
+    device_type = models.IntegerField()    
+
+class DeviceSongsModel(models.Model):
+    device = models.ForeignKey(DeviceModel, on_delete=models.CASCADE)
+    song = models.ForeignKey(SongModel, on_delete=models.CASCADE)
+    play_count = models.IntegerField()
+    added_time = models.DateTimeField(auto_now_add=True)
+
