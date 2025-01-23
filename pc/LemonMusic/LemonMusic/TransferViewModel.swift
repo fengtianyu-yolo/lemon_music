@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import AppKit
 
 /*
  1. 查找所有的无损音乐
@@ -19,8 +20,69 @@ import Alamofire
 
 class TransferViewModel {
     
-    var data: [SongModel] = []
-    var destinationPath: String = ""
+    private var data: [SongModel] = []
+    private var destinationPath: String = ""
+    private var deviceId = ""
+    private var transferHistory: [TransferHistoryModel] = []
+    
+    init() {
+//        super.init()
+        setupVolumeMonitor()
+        tryFetchDeviceId()
+        fetchAllSong()
+        fetchHistory()
+    }
+    
+    /// 获取U盘的UUID
+    func tryFetchDeviceId() {
+        // 获取所有挂载的卷
+        
+        let mountedVolumes = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeUUIDStringKey], options: [])
+        
+        if let volumes = mountedVolumes {
+            for volume in volumes {
+                if let uuid = try? volume.resourceValues(forKeys: [.volumeUUIDStringKey]).volumeUUIDString {
+                    deviceId = uuid
+                    break
+                }
+            }
+        }
+    }
+
+    private func setupVolumeMonitor() {
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(notification: )), name: NSWorkspace.didMountNotification, object: nil)
+    }
+        
+    @objc func receiveNotification(notification: NSNotification) {
+        tryFetchDeviceId()
+    }
+    
+    func fetchAllSong() {
+        AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
+            switch response.result {
+            case .success(let responseModel):
+                self.data = responseModel.data
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
+    func fetchHistory() {
+        
+        let params = [
+            "device_id": deviceId
+        ]
+        
+        AF.request("http://127.0.0.1:5566/history", parameters: params).responseDecodable(of: TransferHistoryResponseModel.self) { response in
+            switch response.result {
+            case .success(let responseModel):
+                self.transferHistory = responseModel.data
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
     
     // 查找所有的无损音乐
     func getLosslessSongs() -> [SongModel] {
@@ -79,4 +141,8 @@ class TransferViewModel {
             }
         }
     }
+}
+
+class UsedModels: Codable {
+    
 }

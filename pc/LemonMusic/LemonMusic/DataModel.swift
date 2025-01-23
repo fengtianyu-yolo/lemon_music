@@ -71,3 +71,20 @@ struct M3u8Model: Codable {
         case url = "m3u8_url"
     }
 }
+
+struct TransferHistoryResponseModel: Codable {
+    var code: String
+    var message: String
+    var data: [TransferHistoryModel]
+}
+
+
+struct TransferHistoryModel: Codable {
+    var deviceId: String
+    var songId: String
+    
+    enum CodingKeys: String, CodingKey {
+        case deviceId = "device_id"
+        case songId = "song_id"
+    }
+}
