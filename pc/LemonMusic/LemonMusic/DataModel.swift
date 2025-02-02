@@ -11,7 +11,7 @@ struct SongListResponseModel: Codable {
     var data: [SongModel]
 }
 
-struct SongModel: Equatable, Identifiable, Codable {
+struct SongModel: Equatable, Identifiable, Codable, Hashable {
     
     var id: Int {
         return songId
@@ -29,6 +29,12 @@ struct SongModel: Equatable, Identifiable, Codable {
     var addedTime: String?
     var updatedTime: String?
     var artists: [ArtistModel]
+    
+    var formattedDuration: String {
+        let minute = duration / 60
+        let second = duration % 60
+        return String(format: "%02d:%02d", minute, second)
+    }
     
     var artistName: String {
         if artists.isEmpty {
@@ -54,7 +60,7 @@ struct SongModel: Equatable, Identifiable, Codable {
     }
 }
 
-struct ArtistModel: Equatable, Codable {
+struct ArtistModel: Equatable, Codable, Hashable {
     var artistName: String
     var artistId: Int
     

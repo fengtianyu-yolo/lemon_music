@@ -15,8 +15,7 @@ class ViewModel: NSObject, ObservableObject {
     
     @Published var selectedSong: SongModel? {
         didSet {
-//            self.play()
-            self.getSongStream()
+            self.requestSongStream()
         }
     }
     
@@ -27,70 +26,28 @@ class ViewModel: NSObject, ObservableObject {
         
     override init() {
         super.init()
-        get()
+        requestSongList()
     }
-    
+        
+    /// 暂停播放
     func pause() {
-//        guard let player = self.audioPlayer else {
-//            return
-//        }
         player?.pause()
         self.playing = false
     }
-    
+        
+    /// 继续播放
     func resume() {
-//        guard let player = self.audioPlayer else {
-//            return
-//        }
         player?.play()
         self.playing = true
-    }
-    
-    func play() {
-        
-        let song = selectedSong ?? data.first
-        
-        guard let song = song else {
-            return
-        }
-        
-        if !song.sqFilePath.isEmpty {
-            print("path = \(song.sqFilePath)")
-            let fileURL = URL(fileURLWithPath: song.sqFilePath)
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: fileURL)
-                audioPlayer?.delegate = self
-                audioPlayer?.prepareToPlay()
-                audioPlayer?.play()
-                playing = true
-            } catch {
-                print("播放不了 \(error.localizedDescription)")
-            }
-        } else {
-            print("没有无损音乐")
-        }
-    }
-    
-    func getSongStream() {
-        let song = selectedSong ?? data.first
-        guard let song = song else {
-            return
-        }
-        self.getM3u8(filepath: song.sqFilePath)
     }
     
     func play(url: String) {
         guard let url = URL(string: url) else {
             return
         }
-        do {
-            player = AVPlayer(url: url)
-//            player?.play()
-            player?.currentItem?.addObserver(self, forKeyPath: "status", options: [.new], context: nil)
-            playing = true
-        } catch {
-            print("播放不了 \(error.localizedDescription)")
-        }
+        player = AVPlayer(url: url)
+        player?.currentItem?.addObserver(self, forKeyPath: "status", options: [.new], context: nil)
+        playing = true
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -132,22 +89,27 @@ class ViewModel: NSObject, ObservableObject {
         }
     }
     
-    // MARK: - Data
-    func get() {
-        AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
-            switch response.result {
-            case .success(let responseModel):
-                self.data = responseModel.data
-            case .failure(let error):
-                print(error)
-            }
+    // MARK: - Load Data
+    
+    func requestSongStream() {
+        let song = selectedSong ?? data.first
+        guard let song = song else {
+            return
         }
+        requestM3u8File(filepath: song.sqFilePath)
+    }
+        
+    /// 请求歌曲列表
+    func requestSongList() {
+        if !data.isEmpty {
+            return
+        }
+        self.data = MusciLib.shared.data
     }
     
-    func getM3u8(filepath: String) {
-        
+    /// 请求m3u8文件
+    func requestM3u8File(filepath: String) {
         let urlstring = "http://127.0.0.1:5566/stream"
-        
         let params = [
             "filepath": filepath
         ]
@@ -155,7 +117,6 @@ class ViewModel: NSObject, ObservableObject {
             print("播放失败 \(urlstring)")
             return
         }
-                        
         AF.request(url, parameters: params).responseDecodable(of: M3u8Model.self) { response in
             switch response.result {
             case .success(let responseModel):
@@ -164,21 +125,7 @@ class ViewModel: NSObject, ObservableObject {
                 print(error)
             }
         }
-        /*
-        AF.request(url, parameters: params, headers: ["Accept": "application/vnd.apple.mpegurl"]).responseData { response in
-            switch response.result {
-            case.success(let data):
-                // 在这里处理成功获取到的数据
-                if let mpegurlString = String(data: data, encoding:.utf8) {
-                    
-                }
-            case.failure(let error):
-                // 处理请求失败的情况
-                print("请求出错: \(error)")
-            }
-        }
-         */
-    
+  
     }
 }
 

@@ -11,6 +11,7 @@ import AVFoundation
 import AppKit
 
 struct ContentView: View {
+
     let categoies = [
         "音乐库",
         "歌手"
@@ -22,7 +23,6 @@ struct ContentView: View {
         
         NavigationSplitView {
             VStack {
-                
                 HStack {
                     Image("logo")
                         .frame(width: 32, height: 32)
@@ -53,10 +53,8 @@ struct ContentView: View {
                         }
                         .listRowBackground(Color.clear)
                         
-                        
                         NavigationLink {
                         } label: {
-                            
                             HStack {
                                 Image("song_list")
                                     .resizable()
@@ -70,13 +68,12 @@ struct ContentView: View {
                         }
                         .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                         .listRowBackground(Color.clear)
-
                     }
                     .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                     
                     Section("设备") {
                         NavigationLink {
-                            
+                            TransferView()
                         } label: {
                             Text("U盘")
                                 .frame(height: 20)
@@ -86,7 +83,6 @@ struct ContentView: View {
                 .listStyle(SidebarListStyle())
                 .toolbar(.hidden)
                 .background(Color.white)
-                
             }
             .frame(width: 220)
             .background(Color.white)
@@ -96,7 +92,6 @@ struct ContentView: View {
             
         }
         .background(Color("background"))
-
     }
 }
 
@@ -157,8 +152,6 @@ struct SongListView: View {
                     }
                     Spacer()
                     VStack {
-//                        Text("我送你离开")
-//                        Text("千里之外")
                         Text("正在搜索歌词 ...")
                             .foregroundStyle(.white)
                     }
@@ -176,7 +169,6 @@ struct SongListView: View {
             // 毛玻璃效果实现
             ZStack {
                 MacBlurView(material: .windowBackground)
-//                    .background(Color.red)
                 VStack {
                     
                     HStack {
@@ -237,20 +229,12 @@ struct SongListView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 1))
                     .padding(.horizontal, 20)
                 }
-//                .frame(height: 80)
-//                .background(Color.clear)
-//                .clipShape(RoundedRectangle(cornerRadius: 15))
-//                .padding(.horizontal, 80)
             }
             .frame(height: 80)
-//            .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding(.horizontal, 80)
         }
         .padding(.bottom, 20)
-
-        
-       
     }
 }
 
@@ -265,10 +249,6 @@ struct HeaderView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 32, height: 32)
-//                .background(Color.green)
-            
-//            RectangularWaveView(color: .red)
-//                .frame(width: 40, height: 40)
             
             VStack(alignment: .leading, spacing: 2.0) {
                 Text(viewModel.selectedSong?.songName ?? "")

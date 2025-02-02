@@ -20,16 +20,15 @@ import AppKit
 
 class TransferViewModel {
     
-    private var data: [SongModel] = []
-    private var destinationPath: String = ""
     private var deviceId = ""
+    private var deviceName = ""
+    private var devicePath = ""
     private var transferHistory: [TransferHistoryModel] = []
     
     init() {
 //        super.init()
         setupVolumeMonitor()
         tryFetchDeviceId()
-        fetchAllSong()
         fetchHistory()
     }
     
@@ -41,9 +40,18 @@ class TransferViewModel {
         
         if let volumes = mountedVolumes {
             for volume in volumes {
-                if let uuid = try? volume.resourceValues(forKeys: [.volumeUUIDStringKey]).volumeUUIDString {
-                    deviceId = uuid
-                    break
+                if let values = try? volume.resourceValues(forKeys: [.volumeUUIDStringKey, .volumeLocalizedNameKey, .volumeIsRemovableKey, .volumeIsInternalKey, .pathKey, .volumeAvailableCapacityKey]) {
+                    if let removable = values.volumeIsRemovable, removable, let internalDevice = values.volumeIsInternal, !internalDevice, let path = values.path {
+                        print("U盘 UUID = " + (values.volumeUUIDString ?? "is nil"))
+                        print("U盘 name = " + (values.volumeLocalizedName ?? "is nil"))
+                        print("U盘 isRemovable = " + (values.volumeIsRemovable?.description ?? "is nil"))
+                        print("U盘 isInternal = " + (values.volumeIsInternal?.description ?? "is nil"))
+                        print("U盘 path = " + (values.path ?? "is nil"))
+                        print("U盘 availableCapacity = " + (values.volumeAvailableCapacity?.description ?? "is nil"))
+                        deviceId = values.volumeUUIDString ?? ""
+                        deviceName = values.volumeLocalizedName ?? ""
+                        devicePath = path
+                    }
                 }
             }
         }
@@ -55,17 +63,6 @@ class TransferViewModel {
         
     @objc func receiveNotification(notification: NSNotification) {
         tryFetchDeviceId()
-    }
-    
-    func fetchAllSong() {
-        AF.request("http://127.0.0.1:5566/songs").responseDecodable(of: SongListResponseModel.self) { response in
-            switch response.result {
-            case .success(let responseModel):
-                self.data = responseModel.data
-            case .failure(let error):
-                print(error)
-            }
-        }
     }
     
     func fetchHistory() {
@@ -87,7 +84,7 @@ class TransferViewModel {
     // 查找所有的无损音乐
     func getLosslessSongs() -> [SongModel] {
         var losslessSongs: [SongModel] = []
-        for song in data {
+        for song in MusciLib.shared.data {
             if song.mediaType == 2 {
                 losslessSongs.append(song)
             }
@@ -100,7 +97,7 @@ class TransferViewModel {
         let losslessSongs = getLosslessSongs()
         for song in losslessSongs {
             let sourcePath = song.sqFilePath
-            let destinationPath = self.destinationPath + "/" + song.sqFileName
+            let destinationPath = self.devicePath + "/" + song.sqFileName
             do {
                 try FileManager.default.copyItem(atPath: sourcePath, toPath: destinationPath)
             } catch {
@@ -116,7 +113,7 @@ class TransferViewModel {
         for song in losslessSongs {
             transferList += song.songName + "\n"
         }
-        let filePath = self.destinationPath + "/transfer_list.txt"
+        let filePath = self.devicePath + "/transfer_list.txt"
         do {
             try transferList.write(toFile: filePath, atomically: true, encoding: .utf8)
         } catch {

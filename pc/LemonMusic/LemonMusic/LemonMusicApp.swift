@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct LemonMusicApp: App {
+    
+    let musciLib = MusciLib.shared
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
