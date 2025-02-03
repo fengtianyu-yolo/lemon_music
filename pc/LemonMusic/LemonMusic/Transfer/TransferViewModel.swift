@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import AppKit
+import Combine
 
 /*
  1. 查找所有的无损音乐
@@ -24,45 +25,23 @@ class TransferViewModel {
     private var deviceName = ""
     private var devicePath = ""
     private var transferHistory: [TransferHistoryModel] = []
+    private var cancellables = Set<AnyCancellable>()
+
+    var data = [TransferInfoModel]()
     
     init() {
-//        super.init()
         setupVolumeMonitor()
         tryFetchDeviceId()
+        dataInit()
         fetchHistory()
     }
     
-    /// 获取U盘的UUID
-    func tryFetchDeviceId() {
-        // 获取所有挂载的卷
-        
-        let mountedVolumes = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeUUIDStringKey], options: [])
-        
-        if let volumes = mountedVolumes {
-            for volume in volumes {
-                if let values = try? volume.resourceValues(forKeys: [.volumeUUIDStringKey, .volumeLocalizedNameKey, .volumeIsRemovableKey, .volumeIsInternalKey, .pathKey, .volumeAvailableCapacityKey]) {
-                    if let removable = values.volumeIsRemovable, removable, let internalDevice = values.volumeIsInternal, !internalDevice, let path = values.path {
-                        print("U盘 UUID = " + (values.volumeUUIDString ?? "is nil"))
-                        print("U盘 name = " + (values.volumeLocalizedName ?? "is nil"))
-                        print("U盘 isRemovable = " + (values.volumeIsRemovable?.description ?? "is nil"))
-                        print("U盘 isInternal = " + (values.volumeIsInternal?.description ?? "is nil"))
-                        print("U盘 path = " + (values.path ?? "is nil"))
-                        print("U盘 availableCapacity = " + (values.volumeAvailableCapacity?.description ?? "is nil"))
-                        deviceId = values.volumeUUIDString ?? ""
-                        deviceName = values.volumeLocalizedName ?? ""
-                        devicePath = path
-                    }
-                }
-            }
+    func dataInit() {
+        data = MusciLib.shared.data.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
+        MusciLib.shared.$data.sink { songs in
+            self.data = songs.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
         }
-    }
-
-    private func setupVolumeMonitor() {
-        NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(notification: )), name: NSWorkspace.didMountNotification, object: nil)
-    }
-        
-    @objc func receiveNotification(notification: NSNotification) {
-        tryFetchDeviceId()
+        .store(in: &cancellables)
     }
     
     func fetchHistory() {
@@ -138,6 +117,65 @@ class TransferViewModel {
             }
         }
     }
+}
+
+extension TransferViewModel {
+    
+    /// 获取U盘的UUID
+    func tryFetchDeviceId() {
+        // 获取所有挂载的卷
+        
+        let mountedVolumes = FileManager.default.mountedVolumeURLs(includingResourceValuesForKeys: [.volumeUUIDStringKey], options: [])
+        
+        if let volumes = mountedVolumes {
+            for volume in volumes {
+                if let values = try? volume.resourceValues(forKeys: [.volumeUUIDStringKey, .volumeLocalizedNameKey, .volumeIsRemovableKey, .volumeIsInternalKey, .pathKey, .volumeAvailableCapacityKey]) {
+                    if let removable = values.volumeIsRemovable, removable, let internalDevice = values.volumeIsInternal, !internalDevice, let path = values.path {
+                        print("U盘 UUID = " + (values.volumeUUIDString ?? "is nil"))
+                        print("U盘 name = " + (values.volumeLocalizedName ?? "is nil"))
+                        print("U盘 isRemovable = " + (values.volumeIsRemovable?.description ?? "is nil"))
+                        print("U盘 isInternal = " + (values.volumeIsInternal?.description ?? "is nil"))
+                        print("U盘 path = " + (values.path ?? "is nil"))
+                        print("U盘 availableCapacity = " + (values.volumeAvailableCapacity?.description ?? "is nil"))
+                        deviceId = values.volumeUUIDString ?? ""
+                        deviceName = values.volumeLocalizedName ?? ""
+                        devicePath = path
+                    }
+                }
+            }
+        }
+    }
+
+    private func setupVolumeMonitor() {
+        NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(notification: )), name: NSWorkspace.didMountNotification, object: nil)
+    }
+        
+    @objc func receiveNotification(notification: NSNotification) {
+        tryFetchDeviceId()
+    }
+    
+}
+
+class TransferInfoModel: ObservableObject, Hashable, Equatable {
+            
+    var song: SongModel
+    var hasTransfered: Bool = false
+    var selected: Bool = false
+    
+    init(song: SongModel, hasTransfered: Bool, selected: Bool) {
+        self.song = song
+        self.hasTransfered = hasTransfered
+        self.selected = selected
+    }
+    
+    static func == (lhs: TransferInfoModel, rhs: TransferInfoModel) -> Bool {
+        return lhs.song.songId == rhs.song.songId
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(song.songId)
+    }
+    
 }
 
 class UsedModels: Codable {

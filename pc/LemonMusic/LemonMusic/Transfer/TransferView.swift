@@ -9,12 +9,15 @@ import SwiftUI
 
 struct TransferView: View {
     @State private var isOn = false
+    
+    private var viewModel = TransferViewModel()
+    
     var body: some View {
         VStack {
             HStack {
                 Button(action: {
                 }) {
-                    Text("全部拷贝")
+                    Text("开始同步")
                         .font(.system(size: 14))
                         .foregroundColor(.black)
                 }
@@ -30,8 +33,8 @@ struct TransferView: View {
                 Spacer()
             }
             List {
-                ForEach(Array(MusciLib.shared.data.enumerated()), id: \.element) { index, song in
-                    TransferRowView(song: song, selected: false, isOn: $isOn)
+                ForEach(Array(viewModel.data.enumerated()), id: \.element) { index, model in
+                    TransferRowView(song: model.song, selected: false, isOn: $isOn)
                         .listStyle(PlainListStyle())
                         .frame(height: 24)
                         .listRowInsets(EdgeInsets())
