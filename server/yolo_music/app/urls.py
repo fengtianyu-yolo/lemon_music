@@ -2,6 +2,7 @@ from django.urls import path
 from .views import test, TestView, Test2View, Test4View, RefreshList, Songs
 from .views import StreamAudio, StreamView, StreamSegment
 from .search_module.SearchView import Search, SearchArtist
+from .device_transfer.DeviceView import DeviceView
 
 urlpatterns = [
     path('test/', test),
@@ -18,4 +19,5 @@ urlpatterns = [
     # path('stream/<str:filename>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
     # path('stream/<str:filepath>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
     path('segment', StreamSegment.as_view(), name='stream_segment'),
+    path('device', DeviceView.as_view()),
 ]

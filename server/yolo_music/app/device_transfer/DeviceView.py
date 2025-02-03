@@ -1,6 +1,6 @@
 from django.views import View
 from django.http import JsonResponse
-from app.models.device_songs import DeviceSongsModel
+from app.models import DeviceSongsModel
 
 class DeviceView(View):
     def get(self, request):
@@ -21,13 +21,7 @@ class DeviceView(View):
             # 将查询结果转换为字典列表
             songs_list = []
             for song in device_songs:
-                songs_list.append({
-                    'id': song.id,
-                    'device_id': song.device_id,
-                    'song_id': song.song_id,
-                    'song_name': song.song_name,
-                    # 根据实际模型字段添加其他需要的数据
-                })
+                songs_list.append(song.song_id)
             
             return JsonResponse({
                 'code': 200,
@@ -46,23 +40,38 @@ class DeviceView(View):
         """添加设备的歌曲数据"""
         # 获取请求参数
         device_id = request.POST.get('device_id')
-        song_id = request.POST.get('song_id')
-        song_name = request.POST.get('song_name')
+        song_ids = request.POST.get('song_ids')
 
-        if not device_id or not song_id or not song_name:
+        if not device_id or not song_ids:
             return JsonResponse({
                 'code': 400,
                 'message': '缺少必要参数'
             }, status=400)
 
         try:
-            # 创建新的设备歌曲数据对象
-            device_song = DeviceSongsModel(device_id=device_id, song_id=song_id, song_name=song_name)
-            device_song.save()
+            if not DeviceModel.objects.filter(device_id=device_id).exists():
+                # 创建新的设备对象
+                device = DeviceModel()
+                device.device_id = device_id
+                device.save()
+            else:
+                # 获取已存在的设备对象
+                device = DeviceModel.objects.get(device_id=device_id)
+            
+            # 遍历歌曲列表，添加歌曲数据
+            for song_id in song_ids:
+                # 获取歌曲对象
+                song = SongModel.objects.get(song_id=song_id)
+                # 创建新的设备歌曲数据对象
+                device_song = DeviceSongsModel()
+                device_song.device = device
+                device_song.song = song
+                device_song.save()
             return JsonResponse({
                 'code': 200,
-                'message': '添加成功'
+               'message': '添加成功'
             })
+                      
         except Exception as e:
             return JsonResponse({
                 'code': 500,
