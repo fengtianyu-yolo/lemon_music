@@ -19,21 +19,33 @@ import Combine
  */
 
 
-class TransferViewModel {
+class TransferViewModel: ObservableObject {
     
-    private var deviceId = ""
+    private var deviceId = "" {
+        didSet {
+            fetchHistory()
+        }
+    }
     private var deviceName = ""
     private var devicePath = ""
-    private var transferHistory: [TransferHistoryModel] = []
+    private var deviceAvailableCapacity = 0
+    private var transferHistory: [String] = [] {
+        didSet {
+            sortData()
+        }
+    }
     private var cancellables = Set<AnyCancellable>()
 
     var data = [TransferInfoModel]()
     
+    @Published var transfering: Bool = false
+    
     init() {
+        // 获取设备
         setupVolumeMonitor()
         tryFetchDeviceId()
+        // 初始化数据
         dataInit()
-        fetchHistory()
     }
     
     func dataInit() {
@@ -43,81 +55,106 @@ class TransferViewModel {
         }
         .store(in: &cancellables)
     }
+        
+    /// 数据排序: 已经转移过的音乐放在前面,播放次数高的音乐放在前面
+    func sortData() {
+        data.forEach { model in
+            if transferHistory.contains("\(model.song.songId)") {
+                model.hasTransfered = true
+            }
+        }
+        data.sort { !$0.hasTransfered && $1.hasTransfered }
+//        data.sort { $0.song.playCount > $1.song.playCount }
+    }
+
+    func getFileSize(filePath: String) -> Int64 {
+        let fileManager = FileManager.default
+        do {
+            let attr = try fileManager.attributesOfItem(atPath: filePath)
+            return attr[FileAttributeKey.size] as! Int64
+        } catch {
+            print("Error: \(error)")
+        }
+        return 0
+    }
     
+    // 将无损音乐转移至指定目录
+    func transfer() {
+        DispatchQueue.main.async { [weak self] in
+            self?.transfering = true
+        }
+        
+        var songIds: [String] = []
+        var totalSize: Int64 = 0
+        deviceAvailableCapacity = 1 * 1024 * 1024 * 1024
+        for song in data {
+            guard totalSize < deviceAvailableCapacity else {
+                print("U盘空间不足")
+                break
+            }
+            guard !song.song.sqFilePath.isEmpty else {
+                continue
+            }
+            do {
+                try FileManager.default.copyItem(atPath: song.song.sqFilePath, toPath: self.devicePath + "/" + song.song.sqFileName)
+                songIds.append("\(song.song.songId)")
+                DispatchQueue.main.async {
+                    song.hasTransfered = true
+                }
+                totalSize += getFileSize(filePath: song.song.sqFilePath)
+                print("[Transfer]: 同步 - \(song.song.songName), 使用空间 - \(Double(totalSize) / 1024.0 / 1024.0)MB")
+            } catch {
+                print("Error: \(error)")
+            }
+        }
+        DispatchQueue.main.async { [weak self] in
+            self?.transfering = false
+        }
+        reportTransferList(songIds: songIds)
+    }
+    
+}
+
+// MARK: - Network
+
+extension TransferViewModel {
+    
+    /// 获取设备的同步记录
     func fetchHistory() {
         
+        guard !deviceId.isEmpty else {
+            print("Device id is empty.")
+            return
+        }
         let params = [
             "device_id": deviceId
         ]
-        
-        AF.request("http://127.0.0.1:5566/history", parameters: params).responseDecodable(of: TransferHistoryResponseModel.self) { response in
+        AF.request("http://127.0.0.1:5566/device", parameters: params).responseDecodable(of: TransferHistoryResponseModel.self) { response in
             switch response.result {
             case .success(let responseModel):
-                self.transferHistory = responseModel.data
+                self.transferHistory = responseModel.data ?? []
+                print("Transfer history fetched successfully. \(self.transferHistory)")
             case .failure(let error):
                 print(error)
             }
         }
     }
-    
-    // 查找所有的无损音乐
-    func getLosslessSongs() -> [SongModel] {
-        var losslessSongs: [SongModel] = []
-        for song in MusciLib.shared.data {
-            if song.mediaType == 2 {
-                losslessSongs.append(song)
-            }
-        }
-        return losslessSongs
-    }
-    
-    // 将无损音乐转移至指定目录
-    func transferLosslessSongs() {
-        let losslessSongs = getLosslessSongs()
-        for song in losslessSongs {
-            let sourcePath = song.sqFilePath
-            let destinationPath = self.devicePath + "/" + song.sqFileName
-            do {
-                try FileManager.default.copyItem(atPath: sourcePath, toPath: destinationPath)
-            } catch {
-                print("Error: \(error)")
-            }
-        }
-    }
-    
-    // 将转移的无损音乐列表写入文件
-    func writeTransferList() {
-        let losslessSongs = getLosslessSongs()
-        var transferList: String = ""
-        for song in losslessSongs {
-            transferList += song.songName + "\n"
-        }
-        let filePath = self.devicePath + "/transfer_list.txt"
-        do {
-            try transferList.write(toFile: filePath, atomically: true, encoding: .utf8)
-        } catch {
-            print("Error: \(error)")
-        }
-    }
-    
+
     // 将转移的无损音乐列表上报至服务器
-    func reportTransferList() {
-        let losslessSongs = getLosslessSongs()
-        var transferList: [String] = []
-        for song in losslessSongs {
-            transferList.append(song.songName)
-        }
-        let parameters: [String: Any] = ["transferList": transferList]
-        AF.request("http://localhost:8080/transfer", method: .post, parameters: parameters, encoding: JSONEncoding.default).responseJSON { response in
+    func reportTransferList(songIds: [String]) {
+        let parameters: [String: Any] = ["song_ids": songIds, "device_id": deviceId]
+        AF.request("http://127.0.0.1:5566/device", method: .post, parameters: parameters, encoding: JSONEncoding.default).responseDecodable(of: TransferHistoryResponseModel.self) { response in
             switch response.result {
-            case .success:
-                print("Transfer list reported successfully.")
+            case .success(let responseModel):
+                print("Transfer history fetched successfully. \(responseModel)")
             case .failure(let error):
-                print("Error: \(error)")
+                print(error)
             }
         }
     }
 }
+
+// MARK: - U盘相关
 
 extension TransferViewModel {
     
@@ -140,6 +177,7 @@ extension TransferViewModel {
                         deviceId = values.volumeUUIDString ?? ""
                         deviceName = values.volumeLocalizedName ?? ""
                         devicePath = path
+                        deviceAvailableCapacity = values.volumeAvailableCapacity ?? 0
                     }
                 }
             }
@@ -159,8 +197,8 @@ extension TransferViewModel {
 class TransferInfoModel: ObservableObject, Hashable, Equatable {
             
     var song: SongModel
-    var hasTransfered: Bool = false
-    var selected: Bool = false
+    @Published var hasTransfered: Bool = false
+    @Published var selected: Bool = false
     
     init(song: SongModel, hasTransfered: Bool, selected: Bool) {
         self.song = song
@@ -175,9 +213,5 @@ class TransferInfoModel: ObservableObject, Hashable, Equatable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(song.songId)
     }
-    
-}
-
-class UsedModels: Codable {
     
 }

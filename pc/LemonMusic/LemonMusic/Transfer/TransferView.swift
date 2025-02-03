@@ -10,16 +10,25 @@ import SwiftUI
 struct TransferView: View {
     @State private var isOn = false
     
-    private var viewModel = TransferViewModel()
+    @StateObject private var viewModel = TransferViewModel()
     
     var body: some View {
         VStack {
             HStack {
                 Button(action: {
+                    DispatchQueue.global().async {
+                        viewModel.transfer()
+                    }                    
                 }) {
-                    Text("开始同步")
-                        .font(.system(size: 14))
-                        .foregroundColor(.black)
+                    if viewModel.transfering {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .scaleEffect(0.5)
+                    } else {
+                        Text("开始同步")
+                            .font(.system(size: 14))
+                            .foregroundColor(.black)
+                    }
                 }
                 .padding(.leading, 12)
 
@@ -34,7 +43,7 @@ struct TransferView: View {
             }
             List {
                 ForEach(Array(viewModel.data.enumerated()), id: \.element) { index, model in
-                    TransferRowView(song: model.song, selected: false, isOn: $isOn)
+                    TransferRowView(model: model, isOn: $isOn)
                         .listStyle(PlainListStyle())
                         .frame(height: 24)
                         .listRowInsets(EdgeInsets())

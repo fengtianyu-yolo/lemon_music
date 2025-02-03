@@ -24,7 +24,7 @@ class Song2ArtistModel(models.Model):
 
 
 class DeviceModel(models.Model):    
-    device_id = models.AutoField(primary_key=True)
+    device_id = models.CharField(primary_key=True, max_length=255)
     device_name = models.CharField(max_length=255)
 
 class DeviceSongsModel(models.Model):

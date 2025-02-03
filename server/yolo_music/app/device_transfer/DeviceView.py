@@ -1,7 +1,10 @@
 from django.views import View
 from django.http import JsonResponse
-from app.models import DeviceSongsModel
+from app.models import DeviceSongsModel, DeviceModel, SongModel
+from django.views.decorators.csrf import csrf_exempt
+import json
 
+# @csrf_exempt
 class DeviceView(View):
     def get(self, request):
         """获取设备的所有歌曲数据"""
@@ -34,19 +37,21 @@ class DeviceView(View):
                 'code': 500,
                 'message': f'服务器错误: {str(e)}'
             }, status=500)
-
-
+    
+    # @csrf_exempt
     def post(self, request):
         """添加设备的歌曲数据"""
         # 获取请求参数
-        device_id = request.POST.get('device_id')
-        song_ids = request.POST.get('song_ids')
-
+        requestData = json.loads(request.body)
+        device_id = requestData.get('device_id')
+        song_ids = requestData.get('song_ids')
+        print(song_ids)
+        print(device_id)
         if not device_id or not song_ids:
             return JsonResponse({
                 'code': 400,
                 'message': '缺少必要参数'
-            }, status=400)
+            }, status=200)
 
         try:
             if not DeviceModel.objects.filter(device_id=device_id).exists():
@@ -105,6 +110,7 @@ class DeviceView(View):
                 'code': 500,
                 'message': f'服务器错误: {str(e)}'
             }, status=500)
+    
     def delete(self, request):
         """删除设备的歌曲数据"""
         # 获取请求参数
