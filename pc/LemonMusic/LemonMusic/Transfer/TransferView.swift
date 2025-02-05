@@ -66,19 +66,26 @@ struct TransferView: View {
             .background(Color.white)
             
             HStack {
-                HStack {
+                HStack(spacing: 16.0) {
                     VStack(alignment: .leading) {
-                        Text("使用空间")
+                        Text("可用空间")
                             .font(.system(size: 12))
                             .foregroundColor(.black.opacity(0.4))
                             .padding(.bottom, 10)
                         HStack {
-                            Text("449 MB")
+                            Text("\(viewModel.deviceAvailableCapacity) GB")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundStyle(Color.black)
                             Spacer()
-                            Text("65%")
-                                .backgroundStyle(Color.green.opacity(0.3))
+                            Text("\(viewModel.deviceCapacityUsage)%")
+                                .padding(.horizontal, 8.0)
+                                .padding(.vertical, 4.0)
+                                .background(Color.green.opacity(0.2))
+                                .clipShape(RoundedRectangle(cornerRadius: 16.0))
+                                .overlay(content: {
+                                    RoundedRectangle(cornerRadius: 16.0)
+                                           .stroke(Color.green.opacity(0.8), lineWidth: 1)
+                                })
                                 .foregroundStyle(Color.green.opacity(0.8))
                         }
                         .frame(width: 160)
@@ -86,11 +93,11 @@ struct TransferView: View {
                     .padding(.leading, 16)
                     .padding(.top, 16)
                     .padding(.bottom, 16)
-                    .padding(.trailing, 44)
+                    .padding(.trailing, 16)
                     .background(Color.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                    .clipShape(RoundedRectangle(cornerRadius: 12.0))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 6)
+                        RoundedRectangle(cornerRadius: 12.0)
                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                     )
                     
@@ -100,7 +107,7 @@ struct TransferView: View {
                             .foregroundColor(.black.opacity(0.4))
                             .padding(.bottom, 10)
                         HStack {
-                            Text("449 MB")
+                            Text("\(viewModel.transferSongsCount)")
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundStyle(Color.black)
                             Spacer()
@@ -121,62 +128,62 @@ struct TransferView: View {
                     Spacer()
                 }
                 .padding(12)
-                .background(Color.cyan.opacity(0.1))
             }
             .padding(22)
             .background(Color.white)
             
-            
-            Divider()
-            
-            Text("歌曲列表")
+            HStack(spacing: 0) {
+                Toggle(isOn: $isOn) {
+                    EmptyView()
+                }
+                
+                Text("歌曲")
+                    .foregroundColor(Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: .regular))
+                    .frame(width: 300, alignment: .leading)
+                    .padding(.leading, 24)
+                
+                Text("时长")
+                    .foregroundColor(Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: .regular))
+                    .frame(width: 60, alignment: .leading)
+                Spacer()
+                Text("歌手")
+                    .foregroundColor(Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: .regular))
+                    .frame(width: 120, alignment: .leading)
+                Spacer()
+                Text("播放次数")
+                    .foregroundColor(Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: .regular))
+                    .frame(width: 120, alignment: .leading)
+                Spacer()
+                Text("状态")
+                    .foregroundColor(Color("cell_text"))
+                    .font(Font.system(size: 14.0, weight: .regular))
+                    .frame(width: 120, alignment: .leading)
+            }
+            .frame(height: 44.0)
+            .padding(.horizontal, 14)
+//            .background(Color.gray.opacity(0.2))
+            .background(Color.cyan.opacity(0.1))
+
             
             List {
-                Section {
-                    ForEach(Array(viewModel.data.enumerated()), id: \.element) { index, model in
-                        TransferRowView(model: model, isOn: $isOn)
-                            .listStyle(PlainListStyle())
-                            .frame(height: 24)
-                            .listRowInsets(EdgeInsets())
-                            .listRowSeparator(.hidden) // 隐藏分隔线
-                            .background( index % 2 == 0 ? Color.white : Color.gray.opacity(0.1))
-                    }
-                } header: {
-                    HStack(spacing: 12) {
-                        Toggle(isOn: $isOn) {
-                            EmptyView()
-                        }.hidden()
-                        
-                        Text("歌曲")
-                            .foregroundColor(Color.black)
-                            .font(Font.system(size: 14.0, weight: .regular))
-                            .frame(width: 300, alignment: .leading)
-                            .padding(.leading, 24)
-                        
-                        Text("时长")
-                            .foregroundColor(Color("cell_text"))
-                            .font(Font.system(size: 14.0, weight: .regular))
-                            .frame(width: 60, alignment: .leading)
-                        Spacer()
-                        Text("歌手")
-                            .foregroundColor(Color("cell_text"))
-                            .font(Font.system(size: 14.0, weight: .regular))
-                            .frame(width: 120, alignment: .leading)
-                        
-                        Spacer()
-                        Text("状态")
-                            .foregroundColor(Color("cell_text"))
-                            .font(Font.system(size: 14.0, weight: .regular))
-                            .frame(width: 120, alignment: .leading)
-                    }
-                    .padding(.horizontal, 12)
-                } footer: {
-                    
+                ForEach(Array(viewModel.data.enumerated()), id: \.element) { index, model in
+                    TransferRowView(model: model, isOn: $isOn)
+                        .listStyle(PlainListStyle())
+                        .frame(height: 44)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowSeparator(.hidden) // 隐藏分隔线
+                    //                            .background( index % 2 == 0 ? Color.white : Color.gray.opacity(0.1))
+                        .background( Color.white)
                 }
-
                 
             }
+            .padding(0)
         }
+        .background(Color.white)
     }
 }
 
