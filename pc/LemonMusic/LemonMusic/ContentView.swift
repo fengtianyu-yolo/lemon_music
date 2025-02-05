@@ -23,15 +23,19 @@ struct ContentView: View {
         
         NavigationSplitView {
             VStack {
-                HStack {
-                    Image("logo")
-                        .frame(width: 32, height: 32)
-                    Text("LemonMusic")
-                        .font(Font.system(size: 18.0, weight: Font.Weight.bold))
+                HStack(spacing: 0) {
+                    Text("Lemon")
+                        .font(Font.custom("Chalkboard SE", size: 18.0))
+                        .foregroundStyle(Color.yellow)
+                    Text(".Music")
+                        .font(Font.custom("Chalkboard SE", size: 18.0))
+                        .foregroundStyle(Color.black)
                     Spacer()
                 }
+                .frame(height: 24)
                 .padding()
                 .background(Color.white)
+                
                 
                 List {
                     Section("音乐库") {

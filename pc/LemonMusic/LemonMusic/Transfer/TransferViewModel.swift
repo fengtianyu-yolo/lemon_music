@@ -26,7 +26,7 @@ class TransferViewModel: ObservableObject {
             fetchHistory()
         }
     }
-    private var deviceName = ""
+    @Published var deviceName = ""
     private var devicePath = ""
     private var deviceAvailableCapacity = 0
     private var transferHistory: [String] = [] {
@@ -83,7 +83,7 @@ class TransferViewModel: ObservableObject {
         DispatchQueue.main.async { [weak self] in
             self?.transfering = true
         }
-        
+        /*
         var songIds: [String] = []
         var totalSize: Int64 = 0
         deviceAvailableCapacity = 1 * 1024 * 1024 * 1024
@@ -111,6 +111,7 @@ class TransferViewModel: ObservableObject {
             self?.transfering = false
         }
         reportTransferList(songIds: songIds)
+         */
     }
     
 }
