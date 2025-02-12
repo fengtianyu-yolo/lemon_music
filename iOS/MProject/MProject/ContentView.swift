@@ -1,8 +1,8 @@
 //
 //  ContentView.swift
-//  NMusic
+//  MProject
 //
-//  Created by 冯天宇 on 2025/2/1.
+//  Created by fengtianyu on 2025/2/12.
 //
 
 import SwiftUI
@@ -21,10 +21,4 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-}
-
-class ViewModel {
-    func registerObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification), name: .someNotification, object: nil)
-    }
 }
