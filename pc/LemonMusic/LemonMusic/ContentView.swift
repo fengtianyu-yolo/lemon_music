@@ -21,81 +21,87 @@ struct ContentView: View {
         
     var body: some View {
         
-        NavigationSplitView {
-            VStack {
-                HStack(spacing: 0) {
-                    Text("Lemon")
-                        .font(Font.custom("Chalkboard SE", size: 18.0))
-                        .foregroundStyle(Color.yellow)
-                    Text(".Music")
-                        .font(Font.custom("Chalkboard SE", size: 18.0))
-                        .foregroundStyle(Color.black)
-                    Spacer()
-                }
-                .frame(height: 24)
-                .padding()
-                .background(Color.white)
-                
-                
-                List {
-                    Section("音乐库") {
-                        NavigationLink {
-                            SongListView()
-                                .background(Color("background"))
-                                .onAppear {
+        ZStack(alignment: .leading) {
+            NavigationSplitView {
+                VStack {
+                    HStack(spacing: 0) {
+                        Text("Lemon")
+                            .font(Font.custom("Chalkboard SE", size: 18.0))
+                            .foregroundStyle(Color.yellow)
+                        Text(".Music")
+                            .font(Font.custom("Chalkboard SE", size: 18.0))
+                            .foregroundStyle(Color.black)
+                        Spacer()
+                    }
+                    .frame(height: 24)
+                    .padding()
+                    .background(Color.white)
+                    
+                    
+                    List {
+                        Section("音乐库") {
+                            NavigationLink {
+                                SongListView()
+                                    .background(Color("background"))
+                                    .onAppear {
+                                    }
+                            } label: {
+                                HStack {
+                                    Image( selectedItem == "songList" ? "song_list_selected" : "song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 24.0, height: 24.0)
+                                    
+                                    Text("歌曲")
                                 }
-                        } label: {
-                            HStack {
-                                Image( selectedItem == "songList" ? "song_list_selected" : "song_list")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 24.0, height: 24.0)
-
-                                Text("歌曲")
+                                .frame(height: 36)
                             }
-                            .frame(height: 36)
-                        }
-                        .listRowBackground(Color.clear)
-                        
-                        NavigationLink {
-                        } label: {
-                            HStack {
-                                Image("song_list")
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 24.0, height: 24.0)
-
-                                Text("歌曲")
-                            }
-                            .frame(height: 36)
+                            .listRowBackground(Color.clear)
                             
+                            NavigationLink {
+                            } label: {
+                                HStack {
+                                    Image("song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 24.0, height: 24.0)
+                                    
+                                    Text("歌曲")
+                                }
+                                .frame(height: 36)
+                                
+                            }
+                            .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
+                            .listRowBackground(Color.clear)
                         }
                         .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
-                        .listRowBackground(Color.clear)
-                    }
-                    .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
-                    
-                    Section("设备") {
-                        NavigationLink {
-                            TransferView()
-                        } label: {
-                            Text("U盘")
-                                .frame(height: 20)
+                        
+                        Section("设备") {
+                            NavigationLink {
+                                TransferView()
+                            } label: {
+                                Text("U盘")
+                                    .frame(height: 20)
+                            }
                         }
                     }
+                    .listStyle(SidebarListStyle())
+                    .toolbar(.hidden)
+                    .background(Color.white)
                 }
-                .listStyle(SidebarListStyle())
-                .toolbar(.hidden)
+                .frame(width: 220)
                 .background(Color.white)
+            } detail: {
             }
-            .frame(width: 220)
-            .background(Color.white)
+            .background(Color("background"))
             
-
-        } detail: {
-            
+            Rectangle()
+                .frame(width: 8)
+                .foregroundStyle(.white)
+                .offset(x: 216)
+                .edgesIgnoringSafeArea(.all)
         }
-        .background(Color("background"))
+        
     }
 }
 
