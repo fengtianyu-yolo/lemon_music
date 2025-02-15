@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		617B19C22D4DB4AA00E687F8 /* NMusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NMusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		615B1FF12D5C2E38006F94CD /* MProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		617B19C42D4DB4AA00E687F8 /* NMusic */ = {
+		615B1FF32D5C2E38006F94CD /* MProject */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NMusic;
+			path = MProject;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		617B19BF2D4DB4AA00E687F8 /* Frameworks */ = {
+		615B1FEE2D5C2E38006F94CD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -29,18 +29,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		617B19B92D4DB4AA00E687F8 = {
+		615B1FE82D5C2E38006F94CD = {
 			isa = PBXGroup;
 			children = (
-				617B19C42D4DB4AA00E687F8 /* NMusic */,
-				617B19C32D4DB4AA00E687F8 /* Products */,
+				615B1FF32D5C2E38006F94CD /* MProject */,
+				615B1FF22D5C2E38006F94CD /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		617B19C32D4DB4AA00E687F8 /* Products */ = {
+		615B1FF22D5C2E38006F94CD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				617B19C22D4DB4AA00E687F8 /* NMusic.app */,
+				615B1FF12D5C2E38006F94CD /* MProject.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,64 +48,64 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		617B19C12D4DB4AA00E687F8 /* NMusic */ = {
+		615B1FF02D5C2E38006F94CD /* MProject */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 617B19D02D4DB4AC00E687F8 /* Build configuration list for PBXNativeTarget "NMusic" */;
+			buildConfigurationList = 615B1FFF2D5C2E3A006F94CD /* Build configuration list for PBXNativeTarget "MProject" */;
 			buildPhases = (
-				617B19BE2D4DB4AA00E687F8 /* Sources */,
-				617B19BF2D4DB4AA00E687F8 /* Frameworks */,
-				617B19C02D4DB4AA00E687F8 /* Resources */,
+				615B1FED2D5C2E38006F94CD /* Sources */,
+				615B1FEE2D5C2E38006F94CD /* Frameworks */,
+				615B1FEF2D5C2E38006F94CD /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				617B19C42D4DB4AA00E687F8 /* NMusic */,
+				615B1FF32D5C2E38006F94CD /* MProject */,
 			);
-			name = NMusic;
+			name = MProject;
 			packageProductDependencies = (
 			);
-			productName = NMusic;
-			productReference = 617B19C22D4DB4AA00E687F8 /* NMusic.app */;
+			productName = MProject;
+			productReference = 615B1FF12D5C2E38006F94CD /* MProject.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		617B19BA2D4DB4AA00E687F8 /* Project object */ = {
+		615B1FE92D5C2E38006F94CD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
-					617B19C12D4DB4AA00E687F8 = {
+					615B1FF02D5C2E38006F94CD = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
 			};
-			buildConfigurationList = 617B19BD2D4DB4AA00E687F8 /* Build configuration list for PBXProject "NMusic" */;
+			buildConfigurationList = 615B1FEC2D5C2E38006F94CD /* Build configuration list for PBXProject "MProject" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 617B19B92D4DB4AA00E687F8;
+			mainGroup = 615B1FE82D5C2E38006F94CD;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 617B19C32D4DB4AA00E687F8 /* Products */;
+			productRefGroup = 615B1FF22D5C2E38006F94CD /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				617B19C12D4DB4AA00E687F8 /* NMusic */,
+				615B1FF02D5C2E38006F94CD /* MProject */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		617B19C02D4DB4AA00E687F8 /* Resources */ = {
+		615B1FEF2D5C2E38006F94CD /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -115,7 +115,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		617B19BE2D4DB4AA00E687F8 /* Sources */ = {
+		615B1FED2D5C2E38006F94CD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -125,7 +125,7 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		617B19CE2D4DB4AC00E687F8 /* Debug */ = {
+		615B1FFD2D5C2E3A006F94CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -188,7 +188,7 @@
 			};
 			name = Debug;
 		};
-		617B19CF2D4DB4AC00E687F8 /* Release */ = {
+		615B1FFE2D5C2E3A006F94CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -244,14 +244,14 @@
 			};
 			name = Release;
 		};
-		617B19D12D4DB4AC00E687F8 /* Debug */ = {
+		615B20002D5C2E3A006F94CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NMusic/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"MProject/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -264,7 +264,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mypisces.NMusic;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tmp.MProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -272,14 +272,14 @@
 			};
 			name = Debug;
 		};
-		617B19D22D4DB4AC00E687F8 /* Release */ = {
+		615B20012D5C2E3A006F94CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"NMusic/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"MProject/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -292,7 +292,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mypisces.NMusic;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tmp.MProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -303,25 +303,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		617B19BD2D4DB4AA00E687F8 /* Build configuration list for PBXProject "NMusic" */ = {
+		615B1FEC2D5C2E38006F94CD /* Build configuration list for PBXProject "MProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				617B19CE2D4DB4AC00E687F8 /* Debug */,
-				617B19CF2D4DB4AC00E687F8 /* Release */,
+				615B1FFD2D5C2E3A006F94CD /* Debug */,
+				615B1FFE2D5C2E3A006F94CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		617B19D02D4DB4AC00E687F8 /* Build configuration list for PBXNativeTarget "NMusic" */ = {
+		615B1FFF2D5C2E3A006F94CD /* Build configuration list for PBXNativeTarget "MProject" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				617B19D12D4DB4AC00E687F8 /* Debug */,
-				617B19D22D4DB4AC00E687F8 /* Release */,
+				615B20002D5C2E3A006F94CD /* Debug */,
+				615B20012D5C2E3A006F94CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 617B19BA2D4DB4AA00E687F8 /* Project object */;
+	rootObject = 615B1FE92D5C2E38006F94CD /* Project object */;
 }
