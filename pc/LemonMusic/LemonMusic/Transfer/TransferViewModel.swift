@@ -26,11 +26,17 @@ class TransferViewModel: ObservableObject {
             fetchHistory()
         }
     }
-    @Published var deviceName = ""
     private var devicePath = ""
-    @Published var deviceAvailableCapacity = 0
+    var deviceAvailableCapacity: Int64 = 0 {
+        didSet {
+            deviceFormattedCapacity = Int(deviceAvailableCapacity / 1000 / 1000 / 1000)
+        }
+    }
+    @Published var deviceName = ""
+    @Published var deviceFormattedCapacity: Int = 0
     @Published var deviceCapacityUsage = 0
     @Published var transferSongsCount = 0
+    let bufferSize = 1024 * 1024 * 50 // 50 MB
     private var transferHistory: [String] = [] {
         didSet {
             sortData()
@@ -38,9 +44,12 @@ class TransferViewModel: ObservableObject {
     }
     private var cancellables = Set<AnyCancellable>()
 
-    var data = [TransferInfoModel]()
+    @Published var data = [TransferInfoModel]()
+    @Published var usbDatas = [TransferInfoModel]()
     
     @Published var transfering: Bool = false
+    @Published var currentFile = ""
+    @Published var currentFileSize = ""
     
     init() {
         // 获取设备
@@ -87,29 +96,32 @@ class TransferViewModel: ObservableObject {
         }
         
         var songIds: [String] = []
-        var totalSize: Int64 = 0
         for song in data {
-//            guard totalSize < deviceAvailableCapacity else {
-//                print("U盘空间不足")
-//                break
-//            }
+            guard deviceAvailableCapacity > bufferSize else {
+                print("U盘空间不足")
+                break
+            }
             guard !song.song.sqFilePath.isEmpty else {
                 continue
             }
             do {
                 try FileManager.default.copyItem(atPath: song.song.sqFilePath, toPath: self.devicePath + "/" + song.song.sqFileName)
                 songIds.append("\(song.song.songId)")
+                let filesize = getFileSize(filePath: song.song.sqFilePath)
                 DispatchQueue.main.async {
                     song.hasTransfered = true
                     self.transferSongsCount = self.transferSongsCount + 1
+                    self.currentFile = song.song.songName
+                    self.currentFileSize = "\(Int(filesize / 1024 / 1024)) M"
+                    self.deviceAvailableCapacity -= filesize
+                    self.usbDatas.insert(song, at: 0)
                 }
-                totalSize += getFileSize(filePath: song.song.sqFilePath)
-                print("[Transfer]: 同步 - \(song.song.songName), 使用空间 - \(Double(totalSize) / 1024.0 / 1024.0)MB")
             } catch let error as NSError {
                 if error.domain == NSCocoaErrorDomain && error.code == 516 {
                     DispatchQueue.main.async {
                         song.hasTransfered = true
                         self.transferSongsCount = self.transferSongsCount + 1
+                        self.usbDatas.insert(song, at: 0)
                     }
                     print("目标路径下已存在同名文件，无法复制。")
                 } else {
@@ -184,15 +196,14 @@ extension TransferViewModel {
                         print("U盘 isRemovable = " + (values.volumeIsRemovable?.description ?? "is nil"))
                         print("U盘 isInternal = " + (values.volumeIsInternal?.description ?? "is nil"))
                         print("U盘 path = " + (values.path ?? "is nil"))
-                        let total =  (values.volumeTotalCapacity ?? 0) / 1000 / 1000 / 1000
+                        let total =  Int64(values.volumeTotalCapacity ?? 0)
                         print("U盘 total Capacity = \(total)")
-                        let capacity = (Double(values.volumeAvailableCapacity ?? 0)) / 1024.0 / 1024.0 / 1024.0
-                        print("U盘 availableCapacity = \(capacity)")
+                        print("U盘 availableCapacity = \(Int(values.volumeAvailableCapacity ?? 0))")
                         deviceId = values.volumeUUIDString ?? ""
                         deviceName = values.volumeLocalizedName ?? ""
                         devicePath = path
-                        deviceAvailableCapacity = (values.volumeAvailableCapacity ?? 0) / 1000 / 1000 / 1000
-                        deviceCapacityUsage = Int(deviceAvailableCapacity / total * 100)
+                        deviceAvailableCapacity = Int64((values.volumeAvailableCapacity ?? 0))
+                        deviceCapacityUsage = Int(deviceAvailableCapacity / total) * 100
                     }
                 }
             }
