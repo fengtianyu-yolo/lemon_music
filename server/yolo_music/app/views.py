@@ -5,16 +5,116 @@ from django.views import View
 from django.core.serializers import serialize
 from enum import Enum
 import json
-
-
 import mutagen.id3
-
-from yolo_music import settings
-from .models import SongModel, ArtistModel, Song2ArtistModel
+from rest_framework.views import APIView
 import os
 import subprocess
 import mutagen
 from .Utils import Utils, ColorLabel
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .models import Song, Artist, File, Tag
+from django.core.files.base import ContentFile
+
+from yolo_music import settings
+from .models import SongModel, ArtistModel, Song2ArtistModel
+from .models import Artist, Tag, File, Song
+
+# Refactor 
+
+class MusicScanner(APIView):
+
+    def get(self, request):
+        root_path = '/Volumes/MdieaLib/音乐库'
+        for root, dirs, files in os.walk(root_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                if file.endswith(('.mp3', '.flac', '.ape', '.wav')):
+                    self._process_audio_file(file_path)      
+                else:
+                    print('Not audio file: {}'.format(file_path))
+        return Response({"message": "ok"}, status=200)
+
+
+    def _process_audio_file(self, file_path):
+        try:
+            audio = mutagen.File(file_path, easy=True)
+            title = audio.get('TIT2')
+            artists = audio.get('TPE1', [])
+            format = os.path.splitext(file_path)[1][1:].lower()
+            artist_objs = self._get_or_create_artist(artists)
+            song = self._get_or_create_song(title, artist_objs, format)
+            # 提取歌曲时长
+        except Exception as e:
+            pass
+
+    def _get_or_create_artist(self, names):
+        artist_objs = []
+        for artist_name in names:
+            artist, _ = Artist.objects.get_or_create(name=artist_name)
+            artist_objs.append(artist)
+        return artist_objs
+
+    def _get_or_create_song(self, title, artist_objs):
+        song_qs = Song.objects.filter(title=title)
+        for artist_obj in artist_objs:
+            song_qs = song_qs.filter(artists==artist_obj)
+        
+        if song_qs.exists():
+            song = song_qs.first()
+        else:
+            song = Song.objects.create(title=title)
+            song.artists.set(artist_objs)
+        return song
+
+    def _get_or_create_tag(self, names):
+        tag_objs = []
+        for tag_name in names:
+            tag, _ = Tag.objects.get_or_create(name=tag_name)
+            tag_objs.append(tag)
+        return tag_objs
+
+@api_view('GET')
+def get_tags(request):
+    tags = Tag.objects.all()
+    tag_list = []
+    for tag in tags:
+        tag_list.append(tag.name)
+    return JsonResponse({'code': 200, 'data': tag_list})
+
+@api_view(['POST'])
+def create_tag(request):
+    """ 创建标签 """
+    name = request.data.get('name')
+    if not name:
+        return Response({'code': 400,'message': 'Name is required'}, status=400)
+    tag, created = Tag.objects.get_or_create(name=name)
+    if created:
+        return Response({'code': 200, 'message': 'Tag created successfully', 'data': tag.name}, status=200)
+    else:
+        return Response({'code': 200,'message': 'Tag already exists', 'data': tag.name}, status=200)
+
+@api_view(['DELETE'])
+def delete_tag(request, tag_id):
+    """ 删除标签 """
+    try:
+        tag = Tag.objects.get(id=tag_id)
+        tag.delete()
+        return Response({'code': 200,'message': 'Tag deleted successfully'}, status=200)
+    except Tag.DoesNotExist:
+        return Response({'code': 404, 'message': 'Tag not found'}, status=404)
+
+@api_view(['GET'])
+def get_all_songs(request):
+    songs = Song.objects.all()
+    serializer = SongSerializer(songs, many=True)
+    return Response(serializer.data)    
+
+@api_view(['GET'])
+def add_tag_to_song(request):
+    pass
 
 # Create your views here.
 
