@@ -3,6 +3,8 @@ from .views import test, TestView, Test2View, Test4View, RefreshList, Songs
 from .views import StreamAudio, StreamView, StreamSegment
 from .search_module.SearchView import Search, SearchArtist
 from .device_transfer.DeviceView import DeviceView
+from .views import MusicScanner  # 添加这行导入语句
+from .views import get_song_list
 
 urlpatterns = [
     path('test/', test),
@@ -20,4 +22,6 @@ urlpatterns = [
     # path('stream/<str:filepath>/<str:segment>', StreamSegment.as_view(), name='stream_segment'),
     path('segment', StreamSegment.as_view(), name='stream_segment'),
     path('device', DeviceView.as_view()),
+    path('scan', MusicScanner.as_view()),
+    path('songs/list', get_song_list, name='song_list'),
 ]

@@ -1,25 +1,20 @@
 from rest_framework import serializers
-from .models import Song, File, Artist, Tag 
-
-class SongSerializer(serializers.ModelSerializer):
-    artists = ArtistSerializer(many=True)
-    tags = TagSerializer(many=True)
-    File = FileSerializer(many=True)
-    class Meta:
-        model = Song
-        fields = '__all__'
-
-class FileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = File
-        fields = '__all__'
+from .models import Song, Artist, File
 
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        fields = '__all__'
+        fields = ['id', 'name']
 
-class TagSerializer(serializers.ModelSerializer):
+class FileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tag
-        fields = '__all__'
+        model = File
+        fields = ['file_path', 'format_type']
+
+class SongSerializer(serializers.ModelSerializer):
+    artists = ArtistSerializer(many=True, read_only=True)
+    files = FileSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Song
+        fields = ['id', 'title', 'duration', 'cover', 'artists', 'files', 'play_count']

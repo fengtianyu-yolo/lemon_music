@@ -21,10 +21,70 @@ from django.core.files.base import ContentFile
 from yolo_music import settings
 from .models import SongModel, ArtistModel, Song2ArtistModel
 from .models import Artist, Tag, File, Song
+from datetime import datetime
 
 # Refactor 
 
+class Logger:
+    def __init__(self):
+        self.log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/logs'
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
+        
+        self.log_file = os.path.join(
+            self.log_dir, 
+            f'music_scanner_{datetime.now().strftime("%Y%m%d")}.log'
+        )
+    
+    def log(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        with open(self.log_file, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')
+
+    def info(self, message):
+        self.log(f'[INFO] {message}')
+    
+    def error(self, message):
+        self.log(f'[ERROR] {message}')
+    
+    def warning(self, message):
+        self.log(f'[WARNING] {message}')
+    
+    def write_unknown_file(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/unknown_file.txt'
+        with open(log_dir, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')
+    
+    def write_parsefailed_file(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/parse_failed.txt'
+        with open(log_dir, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')
+    
+    def write_handlefailed_file(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/handle_failed.txt'
+        with open(log_dir, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')
+    
+    def write_success_file(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/success.txt'
+        with open(log_dir, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')
+    
+    def write_nosinger_file(self, message):
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        log_dir = '/Users/fengtianyu/Projects/lemon_music/server/yolo_music/no_singer.txt'
+        with open(log_dir, 'a', encoding='utf-8') as f:
+            f.write(f'[{timestamp}] {message}\n')        
+
 class MusicScanner(APIView):
+    
+    def __init__(self):
+        super().__init__()
+        self.logger = Logger()
 
     def get(self, request):
         root_path = '/Volumes/MdieaLib/音乐库'
@@ -34,30 +94,114 @@ class MusicScanner(APIView):
                 if file.endswith(('.mp3', '.flac', '.ape', '.wav')):
                     self._process_audio_file(file_path)      
                 else:
-                    print('Not audio file: {}'.format(file_path))
-        return Response({"message": "ok"}, status=200)
+                    self.logger.write_unknown_file(f'Not audio file: {file_path}')
 
+        return Response({"message": "ok"}, status=200)
 
     def _process_audio_file(self, file_path):
         try:
+            # 解析音频文件
             audio = mutagen.File(file_path, easy=True)
-            title = audio.get('TIT2')
-            artists = audio.get('TPE1', [])
-            format = os.path.splitext(file_path)[1][1:].lower()
-            artist_objs = self._get_or_create_artist(artists)
-            song = self._get_or_create_song(title, artist_objs, format)
-            # 提取歌曲时长
+            if not audio:
+                self.logger.write_parsefailed_file(f'无法解析音频文件: {file_path}')
+                return
+
+            # 获取基本信息
+            title = audio.get('title', [os.path.splitext(os.path.basename(file_path))[0]])[0]
+            artist_names = audio.get('artist', [])
+            
+            # 如果没有获取到标题和歌手信息，检查是否为 wav 文件
+            if (not title or not artist_names) and file_path.lower().endswith('.wav'):
+                file_name = os.path.splitext(os.path.basename(file_path))[0]
+                if '-' in file_name:
+                    parts = file_name.split('-', 1)  # 只分割第一个'-'
+                    if len(parts) == 2:
+                        artist_names = [parts[0].strip()]
+                        title = parts[1].strip()
+
+            # 如果没有歌手信息，记录日志并返回
+            if not artist_names:
+                self.logger.write_nosinger_file(f'无法获取歌手信息: {file_path}')
+                return
+                
+            duration = int(audio.info.length) if hasattr(audio.info, 'length') else 0
+            format_type = os.path.splitext(file_path)[1][1:].lower()
+            file_size = os.path.getsize(file_path)
+
+            # 创建或获取 Artist 对象
+            artists = []
+            if artist_names:
+                # 处理可能的多个歌手名字
+                if isinstance(artist_names, list):
+                    raw_artist = artist_names[0]
+                else:
+                    raw_artist = artist_names
+                
+                # 处理不同的分隔符
+                if '、' in raw_artist:
+                    artist_list = raw_artist.split('、')
+                elif '/' in raw_artist:
+                    artist_list = raw_artist.split('/')
+                elif '&' in raw_artist:
+                    artist_list = raw_artist.split('&')
+                else:
+                    artist_list = [raw_artist]
+                
+                # 为每个歌手创建记录
+                for name in artist_list:
+                    name = name.strip()
+                    if name:
+                        artist, _ = Artist.objects.get_or_create(name=name)
+                        artists.append(artist)
+
+            # 创建或获取 Song 对象
+            song, created = Song.objects.get_or_create(
+                title=title,                
+                defaults={
+                    'duration': duration,
+                    'play_count': 0  # 新歌曲播放次数初始化为0
+                }
+            )
+
+            # 设置歌手
+            song.artists.set(artists)
+
+            # 创建 File 对象
+            file_obj, _ = File.objects.get_or_create(
+                file_path=file_path,
+                defaults={
+                    'song': song,
+                    'file_size': file_size,
+                    'format_type': format_type
+                }
+            )
+
+            # 处理封面（如果是MP3文件）
+            if format_type == 'mp3':
+                try:
+                    mp3_file = mutagen.mp3.MP3(file_path)
+                    for tag in mp3_file.tags.values():
+                        if tag.FrameID == 'APIC':
+                            cover_file = ContentFile(tag.data)
+                            song.cover.save(f'cover/{title}.jpg', cover_file, save=True)
+                            break
+                except Exception as e:
+                    print(f"提取封面失败: {e}")
+
+            self.logger.write_success_file(f'成功处理音频文件: {file_path}')
+
         except Exception as e:
-            pass
+            self.logger.write_handlefailed_file(f'处理文件失败: {file_path} {str(e)}')            
+
 
     def _get_or_create_artist(self, names):
         artist_objs = []
-        for artist_name in names:
-            artist, _ = Artist.objects.get_or_create(name=artist_name)
-            artist_objs.append(artist)
+        # for artist_name in names:
+        #     artist, _ = Artist.objects.get_or_create(name=artist_name)
+        #     artist_objs.append(artist)
         return artist_objs
 
-    def _get_or_create_song(self, title, artist_objs):
+    def _get_or_create_song(self, title, artist_objs, format):
         song_qs = Song.objects.filter(title=title)
         for artist_obj in artist_objs:
             song_qs = song_qs.filter(artists==artist_obj)
@@ -66,6 +210,24 @@ class MusicScanner(APIView):
             song = song_qs.first()
         else:
             song = Song.objects.create(title=title)
+            # 如果是 MP3 文件，尝试提取封面
+            if format == 'mp3':
+                try:
+                    # 使用 mutagen.mp3 读取文件
+                    audio = mutagen.mp3.MP3(file_path)
+                    # 获取 APIC 标签（专辑封面）
+                    for tag in audio.tags.values():
+                        if tag.FrameID == 'APIC':
+                            # 创建一个临时文件名
+                            cover_filename = f"covers/{title}_{hash(str(artist_objs))}.jpg"
+                            # 使用 ContentFile 创建文件对象
+                            cover_file = ContentFile(tag.data)
+                            # 保存封面图片
+                            song.cover.save(cover_filename, cover_file, save=True)
+                            break
+                except Exception as e:
+                    print(f"提取封面失败: {e}")
+            
             song.artists.set(artist_objs)
         return song
 
@@ -76,7 +238,9 @@ class MusicScanner(APIView):
             tag_objs.append(tag)
         return tag_objs
 
-@api_view('GET')
+
+
+@api_view(['GET'])
 def get_tags(request):
     tags = Tag.objects.all()
     tag_list = []
@@ -621,3 +785,16 @@ class StreamAudio(StreamView):
 class StreamSegment(StreamView):
     def get(self, request, filename, segment):        
         return self.stream_segment(request, filename, segment)
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import SongSerializer
+
+@api_view(['GET'])
+def get_song_list(request):
+    songs = Song.objects.all().prefetch_related('artists', 'files')
+    serializer = SongSerializer(songs, many=True)
+    return Response({
+        'code': 200,
+        'data': serializer.data
+    })

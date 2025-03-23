@@ -44,12 +44,6 @@ class Tag(models.Model):
     added_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)
 
-class File(models.Model):
-    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='files')
-    file_path = models.CharField(max_length=1024)
-    file_size = models.IntegerField()
-    format_type = models.CharField(max_length=10)
-
 class Song(models.Model):
     """歌曲基础信息"""
     title = models.CharField(max_length=255)
@@ -61,3 +55,8 @@ class Song(models.Model):
     added_time = models.DateTimeField(auto_now_add=True)
     updated_time = models.DateTimeField(auto_now=True)    
     
+class File(models.Model):
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='files')
+    file_path = models.CharField(max_length=1024)
+    file_size = models.IntegerField()
+    format_type = models.CharField(max_length=10)

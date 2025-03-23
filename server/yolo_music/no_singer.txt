@@ -1,0 +1,23 @@
+[2025-03-23 10:47:22] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/毛不易 - 故乡游 (Live).flac
+[2025-03-23 10:47:22] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/毛不易 - 青春 (Live).flac
+[2025-03-23 10:47:22] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/毛不易 - 像我这样的人.flac
+[2025-03-23 10:47:22] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/毛不易、岳云鹏 - 一纸情书 (Live完整版).flac
+[2025-03-23 10:47:29] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/许嵩 - 千古.flac
+[2025-03-23 10:48:14] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/任夏-同床知己.mp3
+[2025-03-23 10:48:16] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/魏佳艺-风雨无阻[flac].flac
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/01.Intro AE 86.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/02.God's Hands On The Wheel.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/03.Never Mind.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/04.The Discovery.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/05.Lost Good Things.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/06.We Roll.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/07.My Limbo.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/08.The Way Of A Man.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/09.Gloves 2 Ali.ape
+[2025-03-23 10:48:19] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/10.First Date.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/11.A Racer'S Dream.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/12.Lost In Hell.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/13.Tanning In Your Sunray.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/14.Driving To Heaven.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/15.Champion.ape
+[2025-03-23 10:48:20] 无法获取歌手信息: /Volumes/MdieaLib/音乐库/16.Initial D Teaser.ape
