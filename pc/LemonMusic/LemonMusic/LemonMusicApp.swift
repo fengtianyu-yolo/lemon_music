@@ -15,7 +15,7 @@ struct LemonMusicApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(width: 1200, height: 800)
+                .frame(width: 1200, height: 800)                
         }
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
