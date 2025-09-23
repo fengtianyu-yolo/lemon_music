@@ -71,6 +71,24 @@ struct ContentView: View {
                             }
                             .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                             .listRowBackground(Color.clear)
+                            
+                            NavigationLink {
+                                TagListView()
+                                    .ignoresSafeArea()
+                            } label: {
+                                HStack {
+//                                    Image("song_list")
+//                                        .resizable()
+//                                        .scaledToFill()
+//                                        .frame(width: 24.0, height: 24.0)
+                                    
+                                    Text("标签")
+                                }
+                                .frame(height: 18)
+                                
+                            }
+                            .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
+                            .listRowBackground(Color.clear)
                         }
                         .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                         

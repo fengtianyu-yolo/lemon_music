@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,10 @@
 		6130CA7B2D24EA5D00AB9959 /* cover.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 6130CA7A2D24EA5D00AB9959 /* cover.JPG */; };
 		61366FB82D110D9B000D7E3A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 61366FB72D110D9B000D7E3A /* Alamofire */; };
 		613EFB932D11CC7E00BB021D /* MusicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613EFB922D11CC7E00BB021D /* MusicViewModel.swift */; };
+		615363DF2E82314400FB3FE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 615363DE2E82314400FB3FE7 /* Alamofire */; };
+		615363E42E8231A400FB3FE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 615363E32E8231A400FB3FE7 /* Alamofire */; };
+		615363E72E8231D100FB3FE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 615363E62E8231D100FB3FE7 /* Alamofire */; };
+		615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615363EB2E82337F00FB3FE7 /* TagListView.swift */; };
 		617A50592D2161900036FA0A /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617A50582D2161900036FA0A /* DataModel.swift */; };
 		617B19D42D4DC16300E687F8 /* MusciLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B19D32D4DC16300E687F8 /* MusciLib.swift */; };
 		617B19D72D4DC28100E687F8 /* TransferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B19D62D4DC28100E687F8 /* TransferView.swift */; };
@@ -27,6 +31,7 @@
 		6128B0522D41EDA1007E5B19 /* TransferViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferViewModel.swift; sourceTree = "<group>"; };
 		6130CA7A2D24EA5D00AB9959 /* cover.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cover.JPG; sourceTree = "<group>"; };
 		613EFB922D11CC7E00BB021D /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
+		615363EB2E82337F00FB3FE7 /* TagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagListView.swift; sourceTree = "<group>"; };
 		617A50582D2161900036FA0A /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		617B19D32D4DC16300E687F8 /* MusciLib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusciLib.swift; sourceTree = "<group>"; };
 		617B19D62D4DC28100E687F8 /* TransferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferView.swift; sourceTree = "<group>"; };
@@ -45,7 +50,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				615363E72E8231D100FB3FE7 /* Alamofire in Frameworks */,
 				61366FB82D110D9B000D7E3A /* Alamofire in Frameworks */,
+				615363E42E8231A400FB3FE7 /* Alamofire in Frameworks */,
+				615363DF2E82314400FB3FE7 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +67,14 @@
 				611F93DF2E10C89000D93A67 /* SongListView.swift */,
 			);
 			path = Libray;
+			sourceTree = "<group>";
+		};
+		615363EA2E82332900FB3FE7 /* Tags */ = {
+			isa = PBXGroup;
+			children = (
+				615363EB2E82337F00FB3FE7 /* TagListView.swift */,
+			);
+			path = Tags;
 			sourceTree = "<group>";
 		};
 		617B19D52D4DC26900E687F8 /* Transfer */ = {
@@ -90,6 +106,7 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				615363EA2E82332900FB3FE7 /* Tags */,
 				611F93DE2E10C88000D93A67 /* Libray */,
 				617B19D52D4DC26900E687F8 /* Transfer */,
 				6130CA7A2D24EA5D00AB9959 /* cover.JPG */,
@@ -158,7 +175,7 @@
 			);
 			mainGroup = 618BD53E2AE0204E00E650FC;
 			packageReferences = (
-				613EFB912D11CC2D00BB021D /* XCLocalSwiftPackageReference "../../../Alamofire" */,
+				615363E52E8231D100FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 618BD5482AE0204E00E650FC /* Products */;
 			projectDirPath = "";
@@ -192,6 +209,7 @@
 				617A50592D2161900036FA0A /* DataModel.swift in Sources */,
 				618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */,
 				617B19D42D4DC16300E687F8 /* MusciLib.swift in Sources */,
+				615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */,
 				618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */,
 				6128B0532D41EDA1007E5B19 /* TransferViewModel.swift in Sources */,
 				611F93E02E10C89000D93A67 /* SongListView.swift in Sources */,
@@ -392,15 +410,32 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		613EFB912D11CC2D00BB021D /* XCLocalSwiftPackageReference "../../../Alamofire" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../../Alamofire;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		61366FB62D110D9B000D7E3A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		615363DD2E82314400FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		615363E22E8231A400FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		615363E52E8231D100FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
 			requirement = {
@@ -414,6 +449,21 @@
 		61366FB72D110D9B000D7E3A /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 61366FB62D110D9B000D7E3A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		615363DE2E82314400FB3FE7 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 615363DD2E82314400FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		615363E32E8231A400FB3FE7 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 615363E22E8231A400FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		615363E62E8231D100FB3FE7 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 615363E52E8231D100FB3FE7 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
