@@ -35,7 +35,7 @@ struct ContentView: View {
                     }
                     .frame(height: 24)
                     .padding()
-                    .background(Color.white)
+                    .background(Color("sidebar_background"))
                     
                     
                     List {
@@ -103,10 +103,11 @@ struct ContentView: View {
                     }
                     .listStyle(SidebarListStyle())
                     .toolbar(.hidden)
-                    .background(Color.white)
+                    .background(Color("sidebar_background"))
+                    .tint(.green) // 改成绿色
                 }
                 .frame(width: 220)
-                .background(Color.white)
+                .background(Color("sidebar_background"))
             } detail: {
             }
             .background(Color.white)
