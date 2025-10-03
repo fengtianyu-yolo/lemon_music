@@ -6,6 +6,8 @@ from django.urls import path
 # from .views import MusicScanner  # 添加这行导入语句
 # from .views import get_song_list
 from .views.music_scanner import MusicScannerView
+from .views.query_song import all_songs, unrecognized_files
+from .views.update_song import update_song
 
 urlpatterns = [
     # path('test/', test),
@@ -25,5 +27,8 @@ urlpatterns = [
     # path('device', DeviceView.as_view()),
     # path('scan', MusicScanner.as_view()),
     # path('songs/list', get_song_list, name='song_list'),
-    path('scan', MusicScannerView.as_view(), name='scan_music')
+    path('scan', MusicScannerView.as_view(), name='scan_music'),
+    path('songs', all_songs, name='songs'),
+    path('unknows', unrecognized_files, name='unrecognized_songs'),
+    path('update', update_song, name='update_song'),
 ]

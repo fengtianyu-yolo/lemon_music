@@ -96,7 +96,7 @@ class ViewModel: NSObject, ObservableObject {
         guard let song = song else {
             return
         }
-        requestM3u8File(filepath: song.sqFilePath)
+        requestM3u8File(filepath: song.audioFiles.first?.filePath ?? "")
     }
         
     /// 请求歌曲列表

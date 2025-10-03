@@ -37,7 +37,7 @@ struct SongListView: View {
         VStack(alignment: .leading, spacing: 0) {
             
             Text("My Playlist")
-                .font(Font.system(size: 44, weight: Font.Weight.bold))
+                .font(Font.custom("Chalkboard SE", size: 44.0))
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16.0)
                         
@@ -54,13 +54,10 @@ struct SongListView: View {
                     } label: {
                         Label("Add to Playlist", systemImage: "text.badge.plus")
                     }
-                    
                     Divider()
-                    
                     Button(action: {  }) {
                         Label("显示简介", systemImage: "info.circle")
                     }
-                    
                 }
 //                if showTagList {
 //                    VStack {
@@ -76,76 +73,8 @@ struct SongListView: View {
 //            }
 //            .padding(.top, 24.0)
             
-            LibraryHeaderView()
-            /*
-            // 毛玻璃效果实现
-            ZStack {
-                MacBlurView(material: .windowBackground)
-                VStack {
-                    
-                    HStack {
-                        Spacer()
-                        Button(action: {
-                            viewModel.pre()
-                        }) {
-                            Image("pre_song")  // 替换为你的图片名称
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20)  // 根据需要调整图片大小
-                        }
-                        .frame(width: 32, height: 32) // 按钮大小
-                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                        .contentShape(Circle()) // 确保点击区域为圆形
-                        .buttonStyle(.plain)
-                        
-                        Button(action: {
-                            if viewModel.playing {
-                                viewModel.pause()
-                            } else {
-                                viewModel.resume()
-                            }
-                        }) {
-                            Image(viewModel.playing ? "pause" : "play")  // 替换为你的图片名称
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 36, height: 36)  // 根据需要调整图片大小
-                        }
-                        .frame(width: 36, height: 36) // 按钮大小
-                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                        .contentShape(Circle()) // 确保点击区域为圆形
-                        .buttonStyle(.plain)
-                        
-                        
-                        Button(action: {
-                            viewModel.next()
-                        }) {
-                            Image("next_song")  // 替换为你的图片名称
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 20, height: 20)  // 根据需要调整图片大小
-                        }
-                        .frame(width: 32, height: 32) // 按钮大小
-                        .background(Circle().strokeBorder(Color.clear, lineWidth: 2)) // 圆形边框
-                        .contentShape(Circle()) // 确保点击区域为圆形
-                        .buttonStyle(.plain)
-                        Spacer()
-                    }
-                    
-                    HStack(alignment: .center, spacing: 12) {
-                        Text("0:11")
-                        Rectangle()
-                            .frame(height: 2)
-                            .background(Color("background"))
-                        Text("2:33")
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 1))
-                    .padding(.horizontal, 20)
-                }
-            }
-            .frame(height: 80)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-            .padding(.horizontal, 80)
-             */
+//            LibraryHeaderView()
+            HorizontalScrollableGrid()
         }
         .padding(.bottom, 0)
     }
@@ -201,8 +130,6 @@ struct LibraryHeaderView: View {
         }
         .padding(.horizontal, 16.0)
         .padding(.vertical, 16.0)
-//        .background(Color.red)
-//        .frame(height: 22.0)
     }
 }
 
@@ -211,175 +138,196 @@ struct SongListDetail: View {
     @StateObject var viewModel: ViewModel
 
     // 跟踪选中的行ID
-    @State private var selectedItemID: Int? = nil
-    @State private var lastSelectedItemID: Int? = nil
-    @State private var showSelectionIndicator = true
-    
+    @State private var selectedSong: SongModel?
+    @State private var playingSong: SongModel?
 
-    var body: some View {
-        /*
-        List(viewModel.data, id: \.songId) { song in
-            SongItemRow(song: song, selected: viewModel.selectedSong?.songId == song.songId)
-                .frame(height: viewModel.selectedSong?.songId == song.songId ? 44: 44)
-                .onTapGesture {
-                    viewModel.selectedSong = song
-                }
-                .listRowInsets(EdgeInsets())
-                .listRowSeparator(.hidden) // 隐藏分隔线
-
-        }
-        .listStyle(PlainListStyle())
-        .scrollContentBackground(.hidden)
-        .onAppear {
-        }
-        */
-        Table(viewModel.data) {
-            TableColumn("名称", value: \.songName)
-            TableColumn("时长", value: \.formattedDuration)
-            TableColumn("歌手", value: \.artistName)
-        }
-        .onTapGesture {
-            // 处理单击事件
-            if let selected = selectedItemID {
-                if lastSelectedItemID == selected {
-                    // 双击同一行，可以触发不同操作
-                    withAnimation(.spring()) {
-                        // 添加脉冲动画效果
-                        showSelectionIndicator = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            showSelectionIndicator = true
-                        }
-                    }
-                    print("Double-clicked: \(viewModel.data.first(where: { $0.id == selected })?.songName ?? "")")
-                } else {
-                    // 点击不同行
-                    lastSelectedItemID = selectedItemID
-                }
-            }
-        }
-        // 行高亮效果
-        .overlay(selectionIndicator)
-        // 键盘导航支持
-        .onKeyPress(.downArrow) {
-            moveSelection(by: 1)
-            return .handled
-        }
-        .onKeyPress(.upArrow) {
-            moveSelection(by: -1)
-            return .handled
-        }
-        .onKeyPress(.return) {
-            if let selected = selectedItemID, let item = viewModel.data.first(where: { $0.songId == selected }) {
-                print("执行操作: \(item.songName)")
-            }
-            return .handled
-        }
-        // 默认选择第一行
-        .onAppear {
-            if viewModel.data.count > 0 {
-                selectedItemID = viewModel.data[0].songId
-            }
-        }
-    }
-    
-    
-    // 选择指示器（高亮效果）
-    private var selectionIndicator: some View {
-        Group {
-            if showSelectionIndicator, let selectedID = selectedItemID,
-               let index = viewModel.data.firstIndex(where: { $0.songId == selectedID }) {
-                Rectangle()
-                    .fill(Color.accentColor.opacity(0.2))
-                    .border(Color.accentColor.opacity(0.5), width: 1)
-                    .frame(height: 22)
-                    .padding(.horizontal, -1) // 扩展到列边缘
-                    .offset(y: CGFloat(index) * 30 - 1) // 计算行位置
-                    .allowsHitTesting(false) // 不影响正常点击
-                    .zIndex(-1) // 在内容下方
-            }
-        }
-    }
-    
-    // 键盘移动选择
-    private func moveSelection(by offset: Int) {
-        guard let current = selectedItemID,
-              let index = viewModel.data.firstIndex(where: { $0.songId == current }) else {
-            return
-        }
-        
-        let newIndex = index + offset
-        guard newIndex >= 0 && newIndex < viewModel.data.count else {
-            return
-        }
-        
-        selectedItemID = viewModel.data[newIndex].id
-        lastSelectedItemID = selectedItemID
-    }
-}
-
-// 增强的表格行点击处理
-struct TableRowClickModifier: ViewModifier {
-    let action: () -> Void
-    @State private var lastClickTime: Date? = nil
-    
-    func body(content: Content) -> some View {
-        content
-            .contentShape(Rectangle())
-            .onTapGesture(count: 1) {
-                let now = Date()
-                if let lastTime = lastClickTime, now.timeIntervalSince(lastTime) < 0.4 {
-                    // 检测双击
-                    lastClickTime = nil
-                    print("Double click detected")
-                } else {
-                    // 单击
-                    action()
-                    lastClickTime = now
-                }
-            }
-    }
-}
-
-extension View {
-    func onRowClick(_ action: @escaping () -> Void) -> some View {
-        modifier(TableRowClickModifier(action: action))
-    }
-}
-struct SongItemRow: View {
-    
-    var song: SongModel
-    
-    var selected: Bool
+    // 定义列宽，这是最关键的部分，需要手动调整
+    let colWidth1: CGFloat = 300 // 标题
+    let colWidth2: CGFloat = 80  // 时长
+    let colWidth3: CGFloat = 200 // 歌手
+    let colWidth4: CGFloat = 150 // 专辑
     
     var body: some View {
         
-        VStack {
-            HStack(spacing: 12) {
-                Text(song.songName)
-//                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
-                    .foregroundStyle(Color.black)
-                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
-                    .frame(width: 300, alignment: .leading)
-                    .padding(.leading, 24)
+        VStack(spacing: 0) { // 使用 VStack 容纳列头和列表，并移除默认间距
+            // MARK: - 列头
+            HStack {
+                // Checkbox 占位符
+                Image(systemName: "checkmark.circle")
+                    .frame(width: 20)
+                    .opacity(0) // 隐藏，只用于占位
                 
-                Text("\(song.formattedDuration)")
-//                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
-                    .foregroundStyle(Color.black)
-                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
-                    .frame(width: 60, alignment: .leading)
-                Spacer()
-                Text(song.artists.first?.artistName ?? "")
-//                    .foregroundColor( selected ? Color("cell_text_selected") : Color("cell_text"))
-                    .foregroundStyle(Color.black)
-                    .font(Font.system(size: 14.0, weight: selected ? .bold : .regular))
-                    .frame(width: 120, alignment: .leading)
+                // 播放图标占位
+                Image(systemName: "play.fill")
+                    .frame(width: 20)
+                    .opacity(0) // 隐藏，只用于占位
+                
+                Text("标题")
+                    .font(.subheadline)
+                    .frame(width: colWidth1, alignment: .leading)
+                Text("时长")
+                    .font(.subheadline)
+                    .frame(width: colWidth2, alignment: .leading)
+                Text("歌手")
+                    .font(.subheadline)
+                    .frame(width: colWidth3, alignment: .leading)
+                Spacer() // 推开剩余空间
             }
-            .padding(.horizontal, 12)
-            .contentShape(Rectangle())
+            .padding(.horizontal, 16) // 列头与行内容保持一致的水平内边距
+            .padding(.vertical, 5)
+            .background(Color.secondary.opacity(0.1)) // 列头背景色
             
-            Divider()
+            // MARK: - 歌曲列表
+            List {
+                ForEach(Array(viewModel.data.enumerated()), id: \.element.id) { index, song in
+                    SongListRow(song: song,
+                                isPlaying: playingSong == song,
+                                isSelected: selectedSong == song,
+                                colWidth1: colWidth1,
+                                colWidth2: colWidth2,
+                                colWidth3: colWidth3,
+                                colWidth4: colWidth4,
+                                rowIndex: index,
+                                onSingleTap: { song in
+                        print("select song \(song.songName)")
+                        selectedSong = song
+                    }, onDoubleTap: { song in
+                        print("play song \(song.songName)")
+                        playingSong = song
+                    }
+                    )
+                    .listRowSeparator(.hidden) // 隐藏 List 默认分隔线
+//                    .listRowBackground(selectedSong == song ? Color.accentColor.opacity(0.2) : Color.clear) // 自定义选中背景
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)) // 移除默认行内边距
+                }
+                
+            }
+            .listStyle(.plain) // 使用 PlainListStyle 移除默认列表样式
         }
-        .padding(4)
+    }
+}
+
+// 自定义行视图
+struct SongListRow: View {
+    let song: SongModel
+    let isPlaying: Bool
+    let isSelected: Bool
+    let colWidth1: CGFloat
+    let colWidth2: CGFloat
+    let colWidth3: CGFloat
+    let colWidth4: CGFloat
+    let rowIndex: Int
+    let onSingleTap: (SongModel) -> Void // 新增：单击闭包
+    let onDoubleTap: (SongModel) -> Void
+        
+    var body: some View {
+        let singleTap = TapGesture(count: 1)
+            .onEnded {
+                onSingleTap(song)
+            }
+        
+        let doubleTap = TapGesture(count: 2)
+            .onEnded {
+                onDoubleTap(song)
+            }
+        HStack {
+            // Checkbox (占位符)
+            Image(systemName: "checkmark.circle")
+                .frame(width: 20)
+                .opacity(0) // 隐藏，或者根据你的数据决定是否显示
+            
+            // 播放图标
+            Image(systemName: isPlaying ? "play.fill" : "music.note")
+                .foregroundColor(isPlaying ? .accentColor : .secondary)
+                .frame(width: 20)
+            
+            Text(song.songName)
+                .frame(width: colWidth1, alignment: .leading)
+            Text(song.formattedDuration)
+                .frame(width: colWidth2, alignment: .leading)
+            Text(song.articsName)
+                .frame(width: colWidth3, alignment: .leading)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            Spacer() // 推开剩余空间
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4) // 垂直内边距
+        .background(
+            Group {
+                if isSelected {
+                    Color.accentColor.opacity(0.2)
+                } else if rowIndex % 2 == 0 { // 偶数行
+                    Color.clear // 或者一个非常浅的颜色
+                } else { // 奇数行
+                    Color.secondary.opacity(0.1) // 稍微深一点的颜色
+                }
+            }
+        )
+        .contentShape(Rectangle()) // 使整行区域可点击
+        .gesture(doubleTap) // 先定义双击手势
+        .simultaneousGesture(singleTap) // 使用 simultaneousGesture 允许单击手势同时发生，但会优先完成
+    }
+}
+
+
+// 1. 数据模型：代表你的每个可点击按钮
+struct TagItem: Identifiable, Hashable {
+    let id = UUID()
+    let name: String
+    let color: Color // 可以给每个按钮不同的颜色
+}
+
+struct HorizontalScrollableGrid: View {
+    let tags: [TagItem] = [
+        TagItem(name: "流行", color: .red),
+        TagItem(name: "摇滚", color: .blue),
+        TagItem(name: "爵士", color: .green),
+        TagItem(name: "古典", color: .purple),
+        TagItem(name: "民谣", color: .orange),
+        TagItem(name: "电子", color: .pink),
+        TagItem(name: "说唱", color: .cyan),
+        TagItem(name: "R&B", color: .indigo),
+        TagItem(name: "乡村", color: .brown),
+        TagItem(name: "金属", color: .gray),
+        TagItem(name: "独立", color: .mint),
+        TagItem(name: "世界音乐", color: .teal),
+        TagItem(name: "氛围", color: .yellow)
+    ]
+
+    // 可以在这里管理选中状态
+    @State private var selectedTag: TagItem?
+
+    var body: some View {
+        // 2. ScrollView 设置为横向滚动
+        ScrollView(.horizontal, showsIndicators: true) {
+            // 3. Grid 负责布局
+            Grid(alignment: .leading, horizontalSpacing: 10, verticalSpacing: 8) { // 调整间距
+                // 4. GridRow 用于创建行。这里我们只创建一行，所有按钮都在这一行里。
+                // 如果你想多行排列，需要更复杂的逻辑，例如使用 LazyHGrid 或手动分组
+                GridRow {
+                    ForEach(tags) { tag in
+                        // 5. 可点击的 Button
+                        Button {
+                            selectedTag = tag
+                            print("点击了标签: \(tag.name)")
+                        } label: {
+                            Text(tag.name)
+                                .font(.subheadline)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 4)
+                                .background(tag.id == selectedTag?.id ? tag.color : tag.color.opacity(0.3))
+                                .foregroundColor(.white)
+                                .cornerRadius(4)
+                        }
+                        .buttonStyle(.plain) // macOS 上，为了自定义按钮样式，通常用 .plain
+                    }
+                }
+            }
+            .padding(.horizontal) // 为整个 Grid 添加水平内边距，使其不贴边
+        }
+        .frame(height: 50) // 给 ScrollView 一个固定的高度，以便它能横向滚动
+        .background(Color.white) // 可以给滚动视图一个背景色
     }
 }
 

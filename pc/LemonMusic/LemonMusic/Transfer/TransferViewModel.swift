@@ -70,7 +70,7 @@ class TransferViewModel: ObservableObject {
     /// 数据排序: 已经转移过的音乐放在前面,播放次数高的音乐放在前面
     func sortData() {
         data.forEach { model in
-            if transferHistory.contains("\(model.song.songId)") {
+            if transferHistory.contains("\(model.song.id)") {
                 model.hasTransfered = true
             }
         }
@@ -101,13 +101,13 @@ class TransferViewModel: ObservableObject {
                 print("U盘空间不足")
                 break
             }
-            guard !song.song.sqFilePath.isEmpty else {
+            guard !song.song.audioFiles.isEmpty else {
                 continue
             }
             do {
-                try FileManager.default.copyItem(atPath: song.song.sqFilePath, toPath: self.devicePath + "/" + song.song.sqFileName)
-                songIds.append("\(song.song.songId)")
-                let filesize = getFileSize(filePath: song.song.sqFilePath)
+                try FileManager.default.copyItem(atPath: song.song.audioFiles.first!.filePath, toPath: self.devicePath + "/" + song.song.audioFiles.first!.filePath)
+                songIds.append("\(song.song.id)")
+                let filesize = getFileSize(filePath: song.song.audioFiles.first?.filePath ?? "")
                 DispatchQueue.main.async {
                     song.hasTransfered = true
                     self.transferSongsCount = self.transferSongsCount + 1
@@ -211,11 +211,11 @@ extension TransferViewModel {
     }
 
     private func setupVolumeMonitor() {
-        NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(notification: )), name: NSWorkspace.didMountNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(receiveNotification(notification: )), name: NSWorkspace.didMountNotification, object: nil)
     }
         
     @objc func receiveNotification(notification: NSNotification) {
-        tryFetchDeviceId()
+//        tryFetchDeviceId()
     }
     
 }
@@ -233,11 +233,11 @@ class TransferInfoModel: ObservableObject, Hashable, Equatable {
     }
     
     static func == (lhs: TransferInfoModel, rhs: TransferInfoModel) -> Bool {
-        return lhs.song.songId == rhs.song.songId
+        return lhs.song.id == rhs.song.id
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(song.songId)
+        hasher.combine(song.id)
     }
     
 }

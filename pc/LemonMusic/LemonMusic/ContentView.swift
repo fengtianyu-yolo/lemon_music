@@ -45,10 +45,11 @@ struct ContentView: View {
                                     .ignoresSafeArea()
                             } label: {
                                 HStack {
-//                                    Image( selectedItem == "songList" ? "song_list_selected" : "song_list")
-//                                        .resizable()
-//                                        .scaledToFill()
-//                                        .frame(width: 24.0, height: 24.0)
+                                    Image( selectedItem == "songList" ? "song_list_selected" : "song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 12.0, height: 12.0)
+                                        .foregroundStyle(selectedItem == "songList" ? Color.white : Color.black)
                                     
                                     Text("歌曲")
                                 }
@@ -59,10 +60,10 @@ struct ContentView: View {
                             NavigationLink {
                             } label: {
                                 HStack {
-//                                    Image("song_list")
-//                                        .resizable()
-//                                        .scaledToFill()
-//                                        .frame(width: 24.0, height: 24.0)
+                                    Image("song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 12.0, height: 12.0)
                                     
                                     Text("歌手")
                                 }
@@ -77,10 +78,10 @@ struct ContentView: View {
                                     .ignoresSafeArea()
                             } label: {
                                 HStack {
-//                                    Image("song_list")
-//                                        .resizable()
-//                                        .scaledToFill()
-//                                        .frame(width: 24.0, height: 24.0)
+                                    Image("song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 12.0, height: 12.0)
                                     
                                     Text("标签")
                                 }
@@ -145,7 +146,7 @@ struct HeaderView: View {
                     .font(Font.system(size: 14.0))
                     .foregroundColor(Color("title", bundle: nil))
 
-                Text(viewModel.selectedSong?.artistName ?? "")
+                Text(viewModel.selectedSong?.articsName ?? "")
                     .font(Font.system(size: 12.0))
                     .foregroundColor(Color("subtitle", bundle: nil))
 

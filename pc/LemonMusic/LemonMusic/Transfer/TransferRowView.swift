@@ -28,7 +28,7 @@ struct TransferRowView: View {
                     .font(Font.system(size: 14.0, weight: .regular))
                     .frame(width: 60, alignment: .leading)
                 Spacer()
-                Text(model.song.artists.first?.artistName ?? "")
+                Text(model.song.articsName)
                     .foregroundColor(Color("cell_text"))
                     .font(Font.system(size: 14.0, weight: .regular))
                     .frame(width: 120, alignment: .leading)                
