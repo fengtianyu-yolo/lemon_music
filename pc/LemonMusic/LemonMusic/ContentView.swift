@@ -90,6 +90,24 @@ struct ContentView: View {
                             }
                             .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                             .listRowBackground(Color.clear)
+                            
+                            NavigationLink {
+                                UnRecognizedListView()
+                                    .ignoresSafeArea()
+                            } label: {
+                                HStack {
+                                    Image("song_list")
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 12.0, height: 12.0)
+                                    
+                                    Text("待处理")
+                                }
+                                .frame(height: 18)
+                                
+                            }
+                            .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
+                            .listRowBackground(Color.clear)
                         }
                         .listRowInsets(.init(top: 8, leading: 8, bottom: 8, trailing: 8))
                         
@@ -118,6 +136,7 @@ struct ContentView: View {
                 .foregroundStyle(.white)
                 .offset(x: 216)
                 .edgesIgnoringSafeArea(.all)
+            ToastView()
         }
     }
         

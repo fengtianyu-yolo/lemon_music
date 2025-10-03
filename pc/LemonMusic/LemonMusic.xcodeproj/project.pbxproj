@@ -24,6 +24,9 @@
 		618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BD54C2AE0204E00E650FC /* ContentView.swift */; };
 		618BD54F2AE0205100E650FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 618BD54E2AE0205100E650FC /* Assets.xcassets */; };
 		618BD5522AE0205100E650FC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 618BD5512AE0205100E650FC /* Preview Assets.xcassets */; };
+		61EBA25D2E8F79D100F5AD21 /* UnRecognizedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA25C2E8F79D100F5AD21 /* UnRecognizedListView.swift */; };
+		61EBA25F2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA25E2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift */; };
+		61EBA2622E8FAA4B00F5AD21 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +46,9 @@
 		618BD5512AE0205100E650FC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		618BD5532AE0205100E650FC /* LemonMusic.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LemonMusic.entitlements; sourceTree = "<group>"; };
 		61DE0FD62D1786F700C1EA8A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		61EBA25C2E8F79D100F5AD21 /* UnRecognizedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnRecognizedListView.swift; sourceTree = "<group>"; };
+		61EBA25E2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnRecognizedViewModel.swift; sourceTree = "<group>"; };
+		61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,8 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA2602E8FAA3C00F5AD21 /* Tools */,
+				61EBA25B2E8F79B700F5AD21 /* UnRecognized */,
 				615363EA2E82332900FB3FE7 /* Tags */,
 				611F93DE2E10C88000D93A67 /* Libray */,
 				617B19D52D4DC26900E687F8 /* Transfer */,
@@ -128,6 +136,23 @@
 				618BD5512AE0205100E650FC /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		61EBA25B2E8F79B700F5AD21 /* UnRecognized */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA25C2E8F79D100F5AD21 /* UnRecognizedListView.swift */,
+				61EBA25E2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift */,
+			);
+			path = UnRecognized;
+			sourceTree = "<group>";
+		};
+		61EBA2602E8FAA3C00F5AD21 /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */,
+			);
+			path = Tools;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +234,10 @@
 				617A50592D2161900036FA0A /* DataModel.swift in Sources */,
 				618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */,
 				617B19D42D4DC16300E687F8 /* MusciLib.swift in Sources */,
+				61EBA25D2E8F79D100F5AD21 /* UnRecognizedListView.swift in Sources */,
 				615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */,
+				61EBA2622E8FAA4B00F5AD21 /* ToastView.swift in Sources */,
+				61EBA25F2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift in Sources */,
 				618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */,
 				6128B0532D41EDA1007E5B19 /* TransferViewModel.swift in Sources */,
 				611F93E02E10C89000D93A67 /* SongListView.swift in Sources */,

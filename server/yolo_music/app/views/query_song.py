@@ -39,6 +39,9 @@ def unrecognized_files(request):
     """
 
     unrecognized_songs = UnmatchedMusic.objects.all()
-    data = [{"file_path": f.file_path, "text1": f.elem1, "text2": f.elem2} for f in unrecognized_songs]
+    dataList = [{"filename": f.file_name, "file_path": f.file_path, "text1": f.elem1, "text2": f.elem2} for f in unrecognized_songs]
+    response = {
+        "data": dataList
+    }
 
-    return JsonResponse(data, safe=False)
+    return JsonResponse(response, safe=False)

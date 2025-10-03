@@ -79,7 +79,6 @@ class MusicScannerView(View):
 
                 # 多人合唱，一条Song，关联所有歌手
                 if len(artist_names) > 1:
-                    # song, created = Song.objects.get_or_create(title=title)
                     song = Song.objects.create(title=title)                    
                     added += 1                    
                     if duration:
@@ -89,7 +88,7 @@ class MusicScannerView(View):
                         artist, _ = Artist.objects.get_or_create(name=artist_name)
                         song.artists.add(artist)
                     if cover_data and not song.cover:
-                        filename = f"covers/{song.id}_cover.jpg"
+                        filename = f"{song.id}_cover.jpg"
                         song.cover.save(filename, ContentFile(cover_data), save=False)
                     for f in files:
                         processed_count += 1
@@ -105,18 +104,15 @@ class MusicScannerView(View):
                 else:
                     # 单人演唱或同名不同歌手各自演唱
                     for artist_name in artist_names:
-                        song, created = Song.objects.get_or_create(title=title)
-                        if created:
-                            added += 1
-                        else:
-                            updated += 1
+                        song = Song.objects.create(title=title)                        
+                        added += 1                        
                         if duration:
                             song.duration = duration
                         song.save()
                         artist, _ = Artist.objects.get_or_create(name=artist_name)
                         song.artists.add(artist)
                         if cover_data and not song.cover:
-                            filename = f"covers/{song.id}_cover.jpg"
+                            filename = f"{song.id}_cover.jpg"
                             song.cover.save(filename, ContentFile(cover_data), save=False)
                         for f in files:
                             processed_count += 1
@@ -183,10 +179,35 @@ class MusicScannerView(View):
             return "HQ"
         return "UNKNOWN"
 
-    def _parse_from_filename(self, filename: str):
+    def _parse_from_filename(self, filename: str):        
         parts = re.split(r"\s*[-—–]\s*", filename, maxsplit=1)
         if len(parts) == 2:
             title, artists_str = parts[0], parts[1]
         else:
             title, artists_str = filename, ""
         return title.strip(), artists_str
+    
+    def exist(self, title, artist, files) -> bool:
+        """
+        检查数据库中是否已存在该歌曲
+        检查逻辑：
+        1. 先按标题过滤
+        2. 再比较歌手集合是否相等
+        3. 最后检查文件路径是否已存在
+        """
+        # 先按标题过滤
+        songs = Song.objects.filter(title=title)
+        for song in songs:
+            db_artist_names = list(song.artists.values_list('name', flat=True))
+            db_artist_names_set = set(db_artist_names)
+            # 比较两个集合是否相等 
+            if db_artist_names_set == set(artist):
+                # 进一步检查文件路径是否已存在
+                existing_files = set(song.audiofile_set.values_list('file', flat=True))
+                input_files = set(str(f.resolve()) for f in files)
+                if existing_files & input_files:
+                    return True
+        return False
+
+
+        
