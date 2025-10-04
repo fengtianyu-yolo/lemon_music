@@ -10,6 +10,14 @@ import Alamofire
 
 class TagViewModel: ObservableObject {
     @Published var tagList: [TagModel] = []
+    @Published var songs: [SongModel] = []
+    @Published var selectedTag: TagModel? {
+        didSet {
+            if let id = selectedTag?.id {
+                self.requestTagSongs(tagId: id)
+            }
+        }
+    }
     
     init() {
         requestTagList()
@@ -23,6 +31,23 @@ class TagViewModel: ObservableObject {
         self.tagList = DataCenter.shared.tagList
     }
 
+    func requestTagSongs(tagId: Int) {
+        var params = Parameters()
+        params["tag_id"] = tagId
+        
+        AF.request("http://127.0.0.1:5566/tag/songlist", method: .post, parameters: params).responseDecodable(of: SongListResponseModel.self) { respose in
+            print(respose)
+            
+            switch respose.result {
+            case .success(let dataModel):
+                self.songs = dataModel.data
+            case .failure(let error):
+                print(error)
+                ToastManager.shared.show(error.localizedDescription)
+            }
+        }
+    }
+        
     func create(tagName: String) {
         var params = Parameters()
         params["tag"] = tagName

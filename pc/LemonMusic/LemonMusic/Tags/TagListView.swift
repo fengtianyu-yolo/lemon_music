@@ -66,9 +66,11 @@ struct TagListContentView: View {
                                 .frame(height: 36)
                                 .padding(.vertical, 4)
                                 .listRowInsets(EdgeInsets())
+                                .listRowBackground(tag.id == viewModel.selectedTag?.id ? Color.accentColor.opacity(0.2) : Color.white)
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     print("click \(tag.tagName)")
+                                    viewModel.selectedTag = tag
                                 }
                         }
                     }
@@ -82,23 +84,20 @@ struct TagListContentView: View {
                 
                 // Right side: songs list
                 List {
-                    Text("凤凰传奇")
+                    Text(viewModel.selectedTag?.tagName ?? "")
                         .font(.title2)
+                        .bold()
                         .padding(.bottom, 8)
-                    ForEach([
-                        ("山河图", "3:47"),
-                        ("我从草原来", "3:40"),
-                        ("最炫民族风", "4:20")
-                    ], id: \.0) { song, duration in
+                    ForEach(viewModel.songs) { song in
                         HStack {
                             Rectangle()
                                 .fill(Color.gray)
                                 .frame(width: 50, height: 50)
                                 .cornerRadius(4)
                             VStack(alignment: .leading) {
-                                Text(song)
+                                Text(song.songName)
                                     .font(.body)
-                                Text(duration)
+                                Text(song.formattedDuration)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
