@@ -17,7 +17,6 @@
 		615363E72E8231D100FB3FE7 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 615363E62E8231D100FB3FE7 /* Alamofire */; };
 		615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 615363EB2E82337F00FB3FE7 /* TagListView.swift */; };
 		617A50592D2161900036FA0A /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617A50582D2161900036FA0A /* DataModel.swift */; };
-		617B19D42D4DC16300E687F8 /* MusciLib.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B19D32D4DC16300E687F8 /* MusciLib.swift */; };
 		617B19D72D4DC28100E687F8 /* TransferView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B19D62D4DC28100E687F8 /* TransferView.swift */; };
 		617B19D92D4DC45900E687F8 /* TransferRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617B19D82D4DC45900E687F8 /* TransferRowView.swift */; };
 		618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 618BD54A2AE0204E00E650FC /* LemonMusicApp.swift */; };
@@ -27,6 +26,12 @@
 		61EBA25D2E8F79D100F5AD21 /* UnRecognizedListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA25C2E8F79D100F5AD21 /* UnRecognizedListView.swift */; };
 		61EBA25F2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA25E2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift */; };
 		61EBA2622E8FAA4B00F5AD21 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */; };
+		61EBA2642E90080700F5AD21 /* TagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2632E90080700F5AD21 /* TagViewModel.swift */; };
+		61EBA2672E90EEB900F5AD21 /* DataCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2662E90EEB900F5AD21 /* DataCenter.swift */; };
+		61EBA26A2E90EEE500F5AD21 /* SongModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2692E90EEE500F5AD21 /* SongModel.swift */; };
+		61EBA26C2E90EF0200F5AD21 /* AudioFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA26B2E90EF0200F5AD21 /* AudioFileModel.swift */; };
+		61EBA26E2E90EF1A00F5AD21 /* ArtistModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA26D2E90EF1A00F5AD21 /* ArtistModel.swift */; };
+		61EBA2712E90EFB900F5AD21 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2702E90EFB900F5AD21 /* TagModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,7 +41,6 @@
 		613EFB922D11CC7E00BB021D /* MusicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicViewModel.swift; sourceTree = "<group>"; };
 		615363EB2E82337F00FB3FE7 /* TagListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagListView.swift; sourceTree = "<group>"; };
 		617A50582D2161900036FA0A /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
-		617B19D32D4DC16300E687F8 /* MusciLib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusciLib.swift; sourceTree = "<group>"; };
 		617B19D62D4DC28100E687F8 /* TransferView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferView.swift; sourceTree = "<group>"; };
 		617B19D82D4DC45900E687F8 /* TransferRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferRowView.swift; sourceTree = "<group>"; };
 		618BD5472AE0204E00E650FC /* LemonMusic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LemonMusic.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,6 +53,12 @@
 		61EBA25C2E8F79D100F5AD21 /* UnRecognizedListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnRecognizedListView.swift; sourceTree = "<group>"; };
 		61EBA25E2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnRecognizedViewModel.swift; sourceTree = "<group>"; };
 		61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		61EBA2632E90080700F5AD21 /* TagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagViewModel.swift; sourceTree = "<group>"; };
+		61EBA2662E90EEB900F5AD21 /* DataCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCenter.swift; sourceTree = "<group>"; };
+		61EBA2692E90EEE500F5AD21 /* SongModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongModel.swift; sourceTree = "<group>"; };
+		61EBA26B2E90EF0200F5AD21 /* AudioFileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileModel.swift; sourceTree = "<group>"; };
+		61EBA26D2E90EF1A00F5AD21 /* ArtistModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistModel.swift; sourceTree = "<group>"; };
+		61EBA2702E90EFB900F5AD21 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +79,7 @@
 		611F93DE2E10C88000D93A67 /* Libray */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA2682E90EED700F5AD21 /* Model */,
 				613EFB922D11CC7E00BB021D /* MusicViewModel.swift */,
 				611F93DF2E10C89000D93A67 /* SongListView.swift */,
 			);
@@ -78,7 +89,9 @@
 		615363EA2E82332900FB3FE7 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA26F2E90EFA900F5AD21 /* Model */,
 				615363EB2E82337F00FB3FE7 /* TagListView.swift */,
+				61EBA2632E90080700F5AD21 /* TagViewModel.swift */,
 			);
 			path = Tags;
 			sourceTree = "<group>";
@@ -112,6 +125,7 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA2652E90EEAB00F5AD21 /* Core */,
 				61EBA2602E8FAA3C00F5AD21 /* Tools */,
 				61EBA25B2E8F79B700F5AD21 /* UnRecognized */,
 				615363EA2E82332900FB3FE7 /* Tags */,
@@ -125,7 +139,6 @@
 				618BD5532AE0205100E650FC /* LemonMusic.entitlements */,
 				618BD5502AE0205100E650FC /* Preview Content */,
 				617A50582D2161900036FA0A /* DataModel.swift */,
-				617B19D32D4DC16300E687F8 /* MusciLib.swift */,
 			);
 			path = LemonMusic;
 			sourceTree = "<group>";
@@ -153,6 +166,32 @@
 				61EBA2612E8FAA4B00F5AD21 /* ToastView.swift */,
 			);
 			path = Tools;
+			sourceTree = "<group>";
+		};
+		61EBA2652E90EEAB00F5AD21 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2662E90EEB900F5AD21 /* DataCenter.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		61EBA2682E90EED700F5AD21 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2692E90EEE500F5AD21 /* SongModel.swift */,
+				61EBA26B2E90EF0200F5AD21 /* AudioFileModel.swift */,
+				61EBA26D2E90EF1A00F5AD21 /* ArtistModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		61EBA26F2E90EFA900F5AD21 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2702E90EFB900F5AD21 /* TagModel.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,16 +269,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				617B19D92D4DC45900E687F8 /* TransferRowView.swift in Sources */,
+				61EBA26C2E90EF0200F5AD21 /* AudioFileModel.swift in Sources */,
 				613EFB932D11CC7E00BB021D /* MusicViewModel.swift in Sources */,
+				61EBA26A2E90EEE500F5AD21 /* SongModel.swift in Sources */,
+				61EBA26E2E90EF1A00F5AD21 /* ArtistModel.swift in Sources */,
 				617A50592D2161900036FA0A /* DataModel.swift in Sources */,
 				618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */,
-				617B19D42D4DC16300E687F8 /* MusciLib.swift in Sources */,
 				61EBA25D2E8F79D100F5AD21 /* UnRecognizedListView.swift in Sources */,
 				615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */,
 				61EBA2622E8FAA4B00F5AD21 /* ToastView.swift in Sources */,
 				61EBA25F2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift in Sources */,
+				61EBA2642E90080700F5AD21 /* TagViewModel.swift in Sources */,
+				61EBA2712E90EFB900F5AD21 /* TagModel.swift in Sources */,
 				618BD54B2AE0204E00E650FC /* LemonMusicApp.swift in Sources */,
 				6128B0532D41EDA1007E5B19 /* TransferViewModel.swift in Sources */,
+				61EBA2672E90EEB900F5AD21 /* DataCenter.swift in Sources */,
 				611F93E02E10C89000D93A67 /* SongListView.swift in Sources */,
 				617B19D72D4DC28100E687F8 /* TransferView.swift in Sources */,
 			);

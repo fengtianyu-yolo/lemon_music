@@ -10,7 +10,8 @@ import SwiftUI
 @main
 struct LemonMusicApp: App {
     
-    let musciLib = MusciLib.shared
+//    let musciLib = MusciLib.shared
+    let dataCenter = DataCenter.shared
     
     var body: some Scene {
         WindowGroup {

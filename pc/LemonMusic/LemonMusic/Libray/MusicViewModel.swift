@@ -104,7 +104,7 @@ class ViewModel: NSObject, ObservableObject {
         if !data.isEmpty {
             return
         }
-        self.data = MusciLib.shared.data
+        self.data = DataCenter.shared.songList
     }
     
     /// 请求m3u8文件

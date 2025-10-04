@@ -28,9 +28,8 @@ struct TagListHeaderView: View {
 }
 
 struct TagListContentView: View {
-    @State private var showDialog = false
     @State private var inputText = ""
-    @State var tagList = ["陈慧娴", "凤凰传奇", "江珊", "刘可", "任夏"]
+    @StateObject var viewModel = TagViewModel()
     
     var body: some View {
         
@@ -50,12 +49,11 @@ struct TagListContentView: View {
                         .padding(.horizontal, 4.0)
                         .padding(.top, 4.0)
                         .onSubmit {
-                            tagList.insert(inputText, at: 0)
-                            inputText = ""
+                            viewModel.create(tagName: inputText)
                         }
                     
                     Button("+", action: {
-                        showDialog = true
+                        viewModel.create(tagName: inputText)
                     })
                     .buttonStyle(.plain)
                     .frame(width: 200, height: 24)
@@ -63,11 +61,15 @@ struct TagListContentView: View {
                     Divider()
    
                     List {
-                        ForEach(tagList, id: \.self) { name in
-                            Text(name)
+                        ForEach(viewModel.tagList, id: \.self) { tag in
+                            Text(tag.tagName)
                                 .frame(height: 36)
                                 .padding(.vertical, 4)
                                 .listRowInsets(EdgeInsets())
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    print("click \(tag.tagName)")
+                                }
                         }
                     }
                     .frame(maxWidth: 200)
@@ -107,11 +109,6 @@ struct TagListContentView: View {
                 .padding(.horizontal)
             }
         }
-//        .overlay {
-//            if showDialog {
-//                CreatePlaylistDialog(isPresented: $showDialog)
-//            }
-//        }
     }
 }
 

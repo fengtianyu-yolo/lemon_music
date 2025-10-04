@@ -60,11 +60,11 @@ class TransferViewModel: ObservableObject {
     }
     
     func dataInit() {
-        data = MusciLib.shared.data.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
-        MusciLib.shared.$data.sink { songs in
-            self.data = songs.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
-        }
-        .store(in: &cancellables)
+//        data = MusciLib.shared.data.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
+//        MusciLib.shared.$data.sink { songs in
+//            self.data = songs.map({ TransferInfoModel(song: $0, hasTransfered: false, selected: false) })
+//        }
+//        .store(in: &cancellables)
     }
         
     /// 数据排序: 已经转移过的音乐放在前面,播放次数高的音乐放在前面
