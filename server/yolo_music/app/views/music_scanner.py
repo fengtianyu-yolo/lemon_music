@@ -2,13 +2,12 @@ import os
 from pathlib import Path
 from mutagen.mp3 import MP3
 from mutagen.id3 import ID3
-
+from mutagen import File
 from django.http import JsonResponse
 from django.views import View
 from django.core.files.base import ContentFile
 import re
 import difflib
-
 from ..models import Song, Artist, AudioFile
 from app.models import UnmatchedMusic
 
@@ -210,4 +209,88 @@ class MusicScannerView(View):
         return False
 
 
-        
+class MusicRefreshView(View):
+    
+    def get(self, request):
+        """
+        重新遍历 UnmatchedMusic 表，尝试将未匹配的音乐入库
+        """
+        unmatched_list = UnmatchedMusic.objects.all()
+        added, updated, skipped = 0, 0, 0
+
+        for unmatched in unmatched_list:
+            filename = unmatched.file_name
+            filepath = unmatched.file_path
+            elem1 = unmatched.elem1
+            elem2 = unmatched.elem2
+            
+            # 检查两个字符串是否在artists表中存在
+            artist_objs = []
+            artist1 = Artist.objects.filter(name=elem1).first()
+            artist2 = Artist.objects.filter(name=elem2).first()
+
+            if not artist1 and not artist2:
+                # 都不存在，跳过
+                skipped += 1
+                continue
+
+            if artist1:
+                artist_objs.append(artist1)
+                title = elem2            
+            elif artist2:
+                artist_objs.append(artist2)
+                title = elem1
+            else:
+                # 都存在，无法判断谁是歌手谁是标题，跳过
+                skipped += 1
+                continue
+            
+            # 检查song表是否有该title的数据
+            song = Song.objects.filter(title=title).first()
+            if not song:
+                # 创建song
+                try:
+                    audio = File(filepath)
+                except Exception as e:
+                    print("解析音频文件失败:", e)
+                    audio = None
+                duration = int(audio.info.length) if audio and audio.info else 0
+                song = Song.objects.create(title=title, duration=duration)
+                for artist in artist_objs:
+                    song.artists.add(artist)
+                song.save()
+                added += 1
+            else:
+                updated += 1
+
+            # 创建audiofile并关联
+            from pathlib import Path
+            f = Path(filepath)
+            quality = "HQ" if f.suffix.lower() in [".flac", ".wav", ".ape"] else "SQ"
+            AudioFile.objects.get_or_create(
+                song=song,
+                file=filepath,
+                defaults={
+                    "quality": quality,
+                    "size": f.stat().st_size
+                }
+            )
+            # 删除unmatched数据
+            unmatched.delete()
+
+        return JsonResponse({
+            "status": "ok",
+            "added": added,
+            "updated": updated,
+            "skipped": skipped,
+            "total": added + updated
+        })
+
+
+class MusicReset(View):
+    def get(self, request):
+        Song.objects.all().delete()
+        Artist.objects.all().delete()
+        AudioFile.objects.all().delete()
+        UnmatchedMusic.objects.all().delete()
+        return JsonResponse({"status": "ok", "message": "数据库已重置"})

@@ -2,13 +2,14 @@ from django.http import JsonResponse
 from urllib.parse import parse_qs, unquote
 import json
 from ..models import Song, Artist, AudioFile, UnmatchedMusic
+from ..models import Tag
 import re
 from mutagen import File
 from pathlib import Path
 
 def update_song(request):
     """
-    更新或创建歌曲信息的视图函数
+    手动更新歌曲的歌手和歌曲名
     """
     if request.method != 'POST':
         return JsonResponse({"error": "Only POST method is allowed."}, status=405)
@@ -30,7 +31,7 @@ def update_song(request):
             return JsonResponse({"error": "title和artists字段必填"}, status=400)
 
         # 分割artists字段
-        artist_names = [a.strip() for a in re.split(r"[、&/]", artists_field) if a.strip()]
+        artist_names = [a.strip() for a in re.split(r"[、&/,]", artists_field) if a.strip()]
         # 把artist_names转成set以去重
         artist_names_set = set(artist_names)
 
@@ -92,3 +93,22 @@ def update_song(request):
     except Exception as e:
         print("更新或创建歌曲失败:", e)
         return JsonResponse({"error": str(e)}, status=500)
+
+def add_tag_to_song(request):
+    """
+    给歌曲添加标签
+    """
+    try:
+        body = request.body.decode('utf-8')
+        params = parse_qs(body)
+        song_id = unquote(params.get('song_id', [''])[0])
+        tag_id = unquote(params.get('tag_id', [''])[0])
+        song = Song.objects.get(id=song_id)
+        # tag, _ = Tag.objects.get_or_create(name=tag_name)
+        tag = Tag.objects.get(id=tag_id)
+        song.tags.add(tag)
+        song.save()    
+    except Exception as e:
+        return JsonResponse({"error": "Invalid request body"}, status=400)
+    return JsonResponse({"success": True, "message": "标签添加成功"})
+    

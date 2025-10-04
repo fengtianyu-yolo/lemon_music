@@ -5,9 +5,10 @@ from django.urls import path
 # from .device_transfer.DeviceView import DeviceView
 # from .views import MusicScanner  # 添加这行导入语句
 # from .views import get_song_list
-from .views.music_scanner import MusicScannerView
-from .views.query_song import all_songs, unrecognized_files
-from .views.update_song import update_song
+from .views.music_scanner import MusicScannerView, MusicRefreshView
+from .views.query_song import all_songs, unrecognized_files, query_tags, query_tag_songs
+from .views.update_song import update_song,add_tag_to_song
+from .views.create_tag import create_tag
 
 urlpatterns = [
     # path('test/', test),
@@ -28,7 +29,12 @@ urlpatterns = [
     # path('scan', MusicScanner.as_view()),
     # path('songs/list', get_song_list, name='song_list'),
     path('scan', MusicScannerView.as_view(), name='scan_music'),
+    path('refresh', MusicRefreshView.as_view(), name='scan_music'),
     path('songs', all_songs, name='songs'),
     path('unknows', unrecognized_files, name='unrecognized_songs'),
     path('update', update_song, name='update_song'),
+    path('tag/create', create_tag, name='create_tag'),
+    path('tags', query_tags, name='create_tag'),
+    path('song/addtag', add_tag_to_song, name='add_tag'),
+    path('tag/songlist', query_tag_songs, name='tag_songs'),
 ]
