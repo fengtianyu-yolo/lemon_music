@@ -41,7 +41,6 @@ struct SongListView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16.0)
                         
-//            ZStack(alignment: .trailing) {
             SongListDetail(viewModel: viewModel)
                 .contextMenu {
                     Menu {
@@ -59,22 +58,9 @@ struct SongListView: View {
                         Label("显示简介", systemImage: "info.circle")
                     }
                 }
-//                if showTagList {
-//                    VStack {
-//                        Text("日出BGM")
-//                            .padding(.horizontal, 6.0)
-//                            .padding(.vertical, 4.0)
-//                            .background(RoundedRectangle(cornerRadius: 4.0))
-//                    }
-//                    .frame(width: 180, height: 220)
-//                    .background(Color.white)
-//                    
-//                }
-//            }
-//            .padding(.top, 24.0)
-            
+
 //            LibraryHeaderView()
-            HorizontalScrollableGrid()
+            HorizontalScrollableGrid(viewModel: viewModel)
         }
         .padding(.bottom, 0)
     }
@@ -137,10 +123,6 @@ struct SongListDetail: View {
             
     @StateObject var viewModel: ViewModel
 
-    // 跟踪选中的行ID
-    @State private var selectedSong: SongModel?
-    @State private var playingSong: SongModel?
-
     // 定义列宽，这是最关键的部分，需要手动调整
     let colWidth1: CGFloat = 300 // 标题
     let colWidth2: CGFloat = 80  // 时长
@@ -181,8 +163,8 @@ struct SongListDetail: View {
             List {
                 ForEach(Array(viewModel.data.enumerated()), id: \.element.id) { index, song in
                     SongListRow(song: song,
-                                isPlaying: playingSong == song,
-                                isSelected: selectedSong == song,
+                                isPlaying: viewModel.playingSong == song,
+                                isSelected: viewModel.selectedSong == song,
                                 colWidth1: colWidth1,
                                 colWidth2: colWidth2,
                                 colWidth3: colWidth3,
@@ -190,15 +172,15 @@ struct SongListDetail: View {
                                 rowIndex: index,
                                 onSingleTap: { song in
                         print("select song \(song.songName)")
-                        selectedSong = song
+                        viewModel.selectedSong = song
                     }, onDoubleTap: { song in
                         print("play song \(song.songName)")
-                        playingSong = song
+                        viewModel.playingSong = song
                     }
                     )
                     .listRowSeparator(.hidden) // 隐藏 List 默认分隔线
-//                    .listRowBackground(selectedSong == song ? Color.accentColor.opacity(0.2) : Color.clear) // 自定义选中背景
                     .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)) // 移除默认行内边距
+                    .listRowBackground(Color.clear)
                 }
                 
             }
@@ -270,33 +252,9 @@ struct SongListRow: View {
     }
 }
 
-
-// 1. 数据模型：代表你的每个可点击按钮
-struct TagItem: Identifiable, Hashable {
-    let id = UUID()
-    let name: String
-    let color: Color // 可以给每个按钮不同的颜色
-}
-
 struct HorizontalScrollableGrid: View {
-    let tags: [TagItem] = [
-        TagItem(name: "流行", color: .red),
-        TagItem(name: "摇滚", color: .blue),
-        TagItem(name: "爵士", color: .green),
-        TagItem(name: "古典", color: .purple),
-        TagItem(name: "民谣", color: .orange),
-        TagItem(name: "电子", color: .pink),
-        TagItem(name: "说唱", color: .cyan),
-        TagItem(name: "R&B", color: .indigo),
-        TagItem(name: "乡村", color: .brown),
-        TagItem(name: "金属", color: .gray),
-        TagItem(name: "独立", color: .mint),
-        TagItem(name: "世界音乐", color: .teal),
-        TagItem(name: "氛围", color: .yellow)
-    ]
 
-    // 可以在这里管理选中状态
-    @State private var selectedTag: TagItem?
+    @ObservedObject var viewModel: ViewModel
 
     var body: some View {
         // 2. ScrollView 设置为横向滚动
@@ -306,17 +264,17 @@ struct HorizontalScrollableGrid: View {
                 // 4. GridRow 用于创建行。这里我们只创建一行，所有按钮都在这一行里。
                 // 如果你想多行排列，需要更复杂的逻辑，例如使用 LazyHGrid 或手动分组
                 GridRow {
-                    ForEach(tags) { tag in
+                    ForEach(DataCenter.shared.tagList) { tag in
                         // 5. 可点击的 Button
                         Button {
-                            selectedTag = tag
-                            print("点击了标签: \(tag.name)")
+                            viewModel.addTag(tag: tag)
+                            print("点击了标签: \(tag.tagName)")
                         } label: {
-                            Text(tag.name)
+                            Text(tag.tagName)
                                 .font(.subheadline)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 4)
-                                .background(tag.id == selectedTag?.id ? tag.color : tag.color.opacity(0.3))
+                                .background(viewModel.selectedTags.map({ $0.id }).contains(tag.id) ? tag.color : tag.color.opacity(0.3))
                                 .foregroundColor(.white)
                                 .cornerRadius(4)
                         }

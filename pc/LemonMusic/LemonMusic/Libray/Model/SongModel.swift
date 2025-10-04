@@ -27,7 +27,8 @@ struct SongModel: Equatable, Identifiable, Codable, Hashable {
     var playCount: Int
     var cover: String?
     var audioFiles: [SongFile]
-                
+    var tags: [TagModel]
+
     var formattedDuration: String {
         let minute = duration / 60
         let second = duration % 60
@@ -42,6 +43,7 @@ struct SongModel: Equatable, Identifiable, Codable, Hashable {
         case cover = "cover"
         case audioFiles = "audio_files"
         case playCount = "play_count"
+        case tags = "tags"
     }
 }
 

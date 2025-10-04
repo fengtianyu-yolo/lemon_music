@@ -7,16 +7,16 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct QueryTagsResponsedModel: Codable {
     var data: [TagModel]
 }
 
-struct TagModel: Codable, Hashable {
+struct TagModel: Codable, Hashable, Identifiable {
     var tagName: String
     var id: Int
-    
-    
+    var color: Color = Color.random()            
     enum CodingKeys: String, CodingKey {
         case tagName = "name"
         case id = "id"

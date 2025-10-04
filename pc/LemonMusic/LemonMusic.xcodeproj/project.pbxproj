@@ -32,6 +32,8 @@
 		61EBA26C2E90EF0200F5AD21 /* AudioFileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA26B2E90EF0200F5AD21 /* AudioFileModel.swift */; };
 		61EBA26E2E90EF1A00F5AD21 /* ArtistModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA26D2E90EF1A00F5AD21 /* ArtistModel.swift */; };
 		61EBA2712E90EFB900F5AD21 /* TagModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2702E90EFB900F5AD21 /* TagModel.swift */; };
+		61EBA2742E90F26B00F5AD21 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2732E90F26B00F5AD21 /* Color+Extension.swift */; };
+		61EBA2772E90FD7200F5AD21 /* ResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EBA2762E90FD7200F5AD21 /* ResponseModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +61,8 @@
 		61EBA26B2E90EF0200F5AD21 /* AudioFileModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFileModel.swift; sourceTree = "<group>"; };
 		61EBA26D2E90EF1A00F5AD21 /* ArtistModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtistModel.swift; sourceTree = "<group>"; };
 		61EBA2702E90EFB900F5AD21 /* TagModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagModel.swift; sourceTree = "<group>"; };
+		61EBA2732E90F26B00F5AD21 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		61EBA2762E90FD7200F5AD21 /* ResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +129,7 @@
 		618BD5492AE0204E00E650FC /* LemonMusic */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA2722E90F26100F5AD21 /* Extensions */,
 				61EBA2652E90EEAB00F5AD21 /* Core */,
 				61EBA2602E8FAA3C00F5AD21 /* Tools */,
 				61EBA25B2E8F79B700F5AD21 /* UnRecognized */,
@@ -171,6 +176,7 @@
 		61EBA2652E90EEAB00F5AD21 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				61EBA2752E90FD6800F5AD21 /* Model */,
 				61EBA2662E90EEB900F5AD21 /* DataCenter.swift */,
 			);
 			path = Core;
@@ -190,6 +196,22 @@
 			isa = PBXGroup;
 			children = (
 				61EBA2702E90EFB900F5AD21 /* TagModel.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		61EBA2722E90F26100F5AD21 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2732E90F26B00F5AD21 /* Color+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		61EBA2752E90FD6800F5AD21 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				61EBA2762E90FD7200F5AD21 /* ResponseModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -277,6 +299,7 @@
 				618BD54D2AE0204E00E650FC /* ContentView.swift in Sources */,
 				61EBA25D2E8F79D100F5AD21 /* UnRecognizedListView.swift in Sources */,
 				615363EC2E82337F00FB3FE7 /* TagListView.swift in Sources */,
+				61EBA2742E90F26B00F5AD21 /* Color+Extension.swift in Sources */,
 				61EBA2622E8FAA4B00F5AD21 /* ToastView.swift in Sources */,
 				61EBA25F2E8F7B0500F5AD21 /* UnRecognizedViewModel.swift in Sources */,
 				61EBA2642E90080700F5AD21 /* TagViewModel.swift in Sources */,
@@ -285,6 +308,7 @@
 				6128B0532D41EDA1007E5B19 /* TransferViewModel.swift in Sources */,
 				61EBA2672E90EEB900F5AD21 /* DataCenter.swift in Sources */,
 				611F93E02E10C89000D93A67 /* SongListView.swift in Sources */,
+				61EBA2772E90FD7200F5AD21 /* ResponseModel.swift in Sources */,
 				617B19D72D4DC28100E687F8 /* TransferView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -15,9 +15,12 @@ class ViewModel: NSObject, ObservableObject {
     
     @Published var selectedSong: SongModel? {
         didSet {
-//            self.requestSongStream()
+            self.updateSelectedTags()
         }
     }
+    @Published var selectedTags: [TagModel] = []
+    
+    @Published var playingSong: SongModel?
     
     var audioPlayer: AVAudioPlayer?
     var player: AVPlayer?
@@ -28,7 +31,42 @@ class ViewModel: NSObject, ObservableObject {
         super.init()
         requestSongList()
     }
+    
+    func updateSelectedTags() {
+        selectedTags = selectedSong?.tags ?? []
+        print("selected tags = \(selectedTags)")
+    }
+    
+    func addTag(tag: TagModel) {
+        if let song = selectedSong, let index = data.firstIndex(of: song) {
+            data[index].tags.append(tag)
+        }
+        selectedTags.append(tag)
+        sendRequest(tagId: tag.id, songId: selectedSong?.songId ?? 0)
+    }
+    
+    func sendRequest(tagId: Int, songId: Int) {
+        var params = Parameters()
+        params["tag_id"] = tagId
+        params["song_id"] = songId
         
+        AF.request("http://127.0.0.1:5566/song/addtag", method: .post, parameters: params).responseDecodable(of: ResponseModel.self) { respose in
+            print(respose)
+            
+            switch respose.result {
+            case .success(let dataModel):
+                if dataModel.success{
+                } else {
+                    ToastManager.shared.show(dataModel.message ?? "添加失败")
+                }
+            case .failure(let error):
+                print(error)
+                ToastManager.shared.show(error.localizedDescription)
+            }
+        }
+        
+    }
+    
     /// 暂停播放
     func pause() {
         player?.pause()
